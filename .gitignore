@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/MovieMatchMaker
+/MovieMatchMakerLib/obj
+/MovieMatchMakerLib/bin/Debug/net7.0
+/MovieMatchMakerLib/bin/Release/net7.0
