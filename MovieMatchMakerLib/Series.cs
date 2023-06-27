@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib
 {
-    public class Name
+    public class Series
     {
-        public string FirstName { get; set; }
-        public string Surname { get ; set; }
     }
 }

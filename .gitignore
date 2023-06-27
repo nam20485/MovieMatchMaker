@@ -7,3 +7,4 @@
 /MovieMatchMakerLib/bin/Debug/net7.0
 /MovieMatchMakerLib/bin/Release/net7.0
 *.sqlite
+/MovieMatchMakerLib/bin/Debug/netcoreapp2.0
