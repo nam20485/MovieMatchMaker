@@ -6,3 +6,4 @@
 /MovieMatchMakerLib/obj
 /MovieMatchMakerLib/bin/Debug/net7.0
 /MovieMatchMakerLib/bin/Release/net7.0
+*.sqlite
