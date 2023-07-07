@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieMatchMakerLib", "MovieMatchMakerLib\MovieMatchMakerLib.csproj", "{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerLib", "MovieMatchMakerLib\MovieMatchMakerLib.csproj", "{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerApp", "MovieMatchMakerApp\MovieMatchMakerApp.csproj", "{2D2361FF-C63B-4C79-9903-FC124A7EDB68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieMatchMakerLibTests", "MovieMatchMakerLibTests\MovieMatchMakerLibTests.csproj", "{C53BADD1-BBBA-448E-A828-E68B76FAE424}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

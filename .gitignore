@@ -8,3 +8,12 @@
 /MovieMatchMakerLib/bin/Release/net7.0
 *.sqlite
 /MovieMatchMakerLib/bin/Debug/netcoreapp2.0
+/MovieMatchMakerApp/bin/Debug/net7.0-windows
+/MovieMatchMakerApp/obj
+/.vs/ProjectEvaluation
+*.user
+/MovieMatchMakerLibTests/bin/Debug/net7.0
+/MovieMatchMakerLibTests/obj
+/MovieMatchMakerApp/bin/Release/net7.0-windows
+/MovieMatchMakerLib/bin/Release/netcoreapp2.0
+/MovieMatchMakerLibTests/bin/Release/net7.0
