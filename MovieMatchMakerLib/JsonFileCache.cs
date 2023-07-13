@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using TMDbLib.Objects.Movies;
@@ -13,13 +14,19 @@ namespace MovieMatchMakerLib
 {
     public class JsonFileCache : IDataCache
     {
-        public string FilePath { get; set; }
-
-        private object _lockObj = new object();
-
+        public string FilePath { get; set; }       
         public Movie.List Movies { get; set; }
         public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
+
+        private object _lockObj = new object();
+
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            //ReferenceHandler = ReferenceHandler.Preserve,
+        };
 
         public JsonFileCache()
         {
@@ -115,6 +122,15 @@ namespace MovieMatchMakerLib
             return instance;
         }
 
+        public Movie GetMovie(int movieId)
+        {
+            var movie = Movies.Find(m =>
+            {
+                return m.MovieId == movieId;
+            });
+            return movie;
+        }
+
         public async Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId)
         {
             PersonsMovieCredits instance = null;
@@ -155,27 +171,31 @@ namespace MovieMatchMakerLib
         }
 
         public void Save()
-        {
-            var json = JsonSerializer.Serialize(this, _jsonSerializerOptions);
+        {            
             lock (_lockObj)
             {
+                var json = JsonSerializer.Serialize(this, _jsonSerializerOptions);
                 File.WriteAllText(FilePath, json);               
-            }
-        }  
-        
-        public async Task SaveAsync()
-        {
-            using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
-            {
-                await JsonSerializer.SerializeAsync(fs, this, _jsonSerializerOptions);
-                fs.Close();
             }
         }
 
-        public static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        public async Task SaveAsync()
         {
-            WriteIndented = true,
-            ReadCommentHandling = JsonCommentHandling.Skip
-        };
+            using (var ms = new MemoryStream())
+            {
+                await JsonSerializer.SerializeAsync(ms, this, _jsonSerializerOptions);
+
+                lock (_lockObj)
+                {
+                    using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
+                    {
+                        ms.Position = 0;
+                        fs.CopyTo(ms);
+                        //fs.Flush();
+                        fs.Close();
+                    }
+                }
+            }        
+        }             
     }
 }

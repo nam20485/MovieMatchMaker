@@ -8,16 +8,21 @@ using TMDbLib.Objects.Movies;
 
 namespace MovieMatchMakerLib
 {
-    public class ConnectionManager
+    public class MovieNetworkDataBuilder
     {
-        private readonly IDataSource _dataSource;
+        private readonly IDataSource _dataSource;        
 
-        public ConnectionManager(IDataSource dataSource)
+        public MovieNetworkDataBuilder(IDataSource dataSource)
         {
-            _dataSource = dataSource;
+            _dataSource = dataSource;            
         }
 
-        public async Task FindMoviesConnectedToMovie(string title, int releaseYear, int degree)
+        public async Task BuildFromInitial(string title, int releaseYear, int degree)
+        {
+            await FindMoviesConnectedToMovie(title, releaseYear, degree);
+        }
+
+        private async Task FindMoviesConnectedToMovie(string title, int releaseYear, int degree)
         {
             if (degree >= 0)
             {
@@ -67,6 +72,6 @@ namespace MovieMatchMakerLib
                     //var connectedMoviesCredits = await _dataSource.GetCreditsForMovieAsync(connectedMovie.MovieId);
                 }                              
             }
-        }        
+        }   
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.People;
@@ -9,7 +10,6 @@ namespace MovieMatchMakerLib
     {
         Task<Movie> GetMovieAsync(string title, int releaseYear);       
         Task<MoviesCredits> GetCreditsForMovieAsync(int movieId);
-        Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId);
-        //Task UpdateMovieCreditsAsync(string title, int releaseYear);
+        Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId);       
     }
 }

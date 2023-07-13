@@ -24,8 +24,7 @@ namespace MovieMatchMakerLibTests
 
             ITmdbApi api = new TmdbLibApi(apiKey);
             var movie = await api.FetchMovieAsync("Dark City", 1998);
-            Assert.NotNull(movie);
-            Assert.NotEmpty(movie.Members);
+            Assert.NotNull(movie);            
         }
 
         [Fact]

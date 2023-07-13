@@ -12,6 +12,12 @@ namespace MovieMatchMakerLib
 {
     internal class DbCache : IDataCache
     {
+        public Movie.List Movies => throw new NotImplementedException();
+
+        public MoviesCredits.IntDictionary MoviesCreditsById => throw new NotImplementedException();
+
+        public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById => throw new NotImplementedException();
+
         public async Task AddMovieAsync(Movie movie)
         {
             using (var dbContext = new MovieMatchMakerContext())
@@ -99,6 +105,26 @@ namespace MovieMatchMakerLib
         }
 
         Task IDataCache.SaveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Movie GetMovie(string title, int releaseYear)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Movie GetMovie(int movieId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MoviesCredits GetMoviesCredits(int movieId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PersonsMovieCredits GetPersonsCredits(int personId)
         {
             throw new NotImplementedException();
         }
