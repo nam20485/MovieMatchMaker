@@ -172,5 +172,16 @@ namespace MovieMatchMakerLib
 
             return movieConnection;
         }
+
+        public void LoadMovieConnections(string path)
+        {
+            var loaded = MovieConnection.List.LoadFromFile(path);
+            MovieConnections.AddRange(loaded);
+        }
+
+        public void SaveMovieConnections(string path)
+        {
+            MovieConnections.SaveToFile(path);
+        }
     }
 }
