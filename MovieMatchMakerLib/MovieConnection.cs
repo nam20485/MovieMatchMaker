@@ -52,7 +52,7 @@ namespace MovieMatchMakerLib
                 File.WriteAllText(ToJson(), path);
             }
 
-            public static MovieConnection.List LoadFromFile(string path)
+            public static List LoadFromFile(string path)
             {
                 return FromJson(File.ReadAllText(path));
             }
