@@ -18,3 +18,5 @@
 /MovieMatchMakerLib/bin/Release/netcoreapp2.0
 /MovieMatchMakerLibTests/bin/Release/net7.0
 /MovieMatchMakerLib/bin/Debug
+/MovieMatchMakerApi/bin/Debug/net7.0
+/MovieMatchMakerApi/obj
