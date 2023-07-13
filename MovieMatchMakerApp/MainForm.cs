@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 using MovieMatchMakerLib;
+using MovieMatchMakerLib.Filters;
 
 namespace MovieMatchMakerApp
 {
@@ -39,10 +40,20 @@ namespace MovieMatchMakerApp
             //await _dataCache.SaveAsync();
             //
             await _connectionBuilder.FindMovieConnections();
-            _connectionBuilder.MovieConnections.SortDescending();
 
-            var meaningfulConnections = _connectionBuilder.MovieConnections.GetMeaningfulConnections(2);
-            var nonCloselyRelatedConnections = _connectionBuilder.MovieConnections.GetNonCloselyRelatedConnections();
+            var sorted = new SortFilter().Apply(_connectionBuilder.MovieConnections);
+            var greaterThan2ConnectedRoles = new MinConnectedRolesCountFilter().Apply(_connectionBuilder.MovieConnections);
+            var greaterThan4ConnectedRoles = new MinConnectedRolesCountFilter(4).Apply(_connectionBuilder.MovieConnections);
+            var max0MatchingTitleWords = new MaxMatchingTitleWordsFilter(0).Apply(_connectionBuilder.MovieConnections);
+            var max1MatchingTitleWords = new MaxMatchingTitleWordsFilter(1).Apply(_connectionBuilder.MovieConnections);
+
+            var allFilters = 
+                new MaxMatchingTitleWordsFilter().Apply(
+                    new MinConnectedRolesCountFilter().Apply(
+                        new SortFilter().Apply(_connectionBuilder.MovieConnections)));
+                
+
+            //var nonCloselyRelatedConnections = _connectionBuilder.MovieConnections.GetNonCloselyRelatedConnections();
 
             UseWaitCursor = false;
 

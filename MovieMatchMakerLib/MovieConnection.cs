@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace MovieMatchMakerLib
 {
@@ -20,7 +22,7 @@ namespace MovieMatchMakerLib
         }
 
         public class StringDictionary : Dictionary<string, MovieConnection>
-        {
+        {            
         }
 
         public class List : List<MovieConnection>
@@ -33,57 +35,26 @@ namespace MovieMatchMakerLib
             public List(IEnumerable<MovieConnection> collection)
                 : base(collection)
             {
+            }    
+            
+            public string ToJson()
+            {
+                return JsonSerializer.Serialize(this);
             }
 
-            public void SortDescending()
+            public static List FromJson(string json)
             {
-                Sort((mc1, mc2) =>
-                {
-                    return mc2.ConnectedRoles.Count.CompareTo(mc1.ConnectedRoles.Count);
-                });
+                return JsonSerializer.Deserialize<List>(json);
             }
 
-            public List GetMeaningfulConnections(int degree)
+            public void SaveToFile(string path)
             {
-                var genericList = FindAll(mc =>
-                {
-                    return mc.ConnectedRoles.Count >= degree;
-                });
-                return new List(genericList);
+                File.WriteAllText(ToJson(), path);
             }
 
-            public MovieConnection.List GetNonCloselyRelatedConnections()
+            public static MovieConnection.List LoadFromFile(string path)
             {
-                var genericList = FindAll(mc =>
-                {
-                    return StringsArentSimilar(mc.SourceMovie.Title, mc.TargetMovie.Title);
-                });
-                return new List(genericList);
-            }
-
-            private static readonly string[] commonWords =
-            {
-                "and", "but", "or",
-                "a", "an",
-                "of",
-                "the",
-                "if",
-            };
-
-            private static bool StringsArentSimilar(string str1, string str2)
-            {
-                var words1 = str1.Split(' ');
-                foreach (var word1 in words1)
-                {
-                    if (!commonWords.Contains(word1))
-                    {
-                        if (str2.Contains(word1))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
+                return FromJson(File.ReadAllText(path));
             }
         }
     }
