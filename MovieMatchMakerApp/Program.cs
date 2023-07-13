@@ -12,11 +12,6 @@ namespace MovieMatchMakerApp
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Application.Run(new MainForm());
-        }
-
-        public static string? AccessToken => Environment.GetEnvironmentVariable("TMDB_ACCESS_TOKEN");
-        public static string? ApiKey => Environment.GetEnvironmentVariable("TMDB_API_KEY");
-
-
+        }       
     }
 }

@@ -10,7 +10,7 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public void Test_GetTmdbApiKey()
         {
-            var apiKey = Auth.GetTmdbApiKey();
+            var apiKey = Auth.TmdbApiKey;
             Assert.NotNull(apiKey);
             Assert.NotEmpty(apiKey);            
         }
@@ -18,7 +18,7 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public async void Test_FetchMovieData_Exists()
         {
-            var apiKey = Auth.GetTmdbApiKey();
+            var apiKey = Auth.TmdbApiKey;
             Assert.NotNull(apiKey);
             Assert.NotEmpty(apiKey);
 
@@ -30,7 +30,7 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public async void Test_FetchMovieData_DoesNotExist()
         {
-            var apiKey = Auth.GetTmdbApiKey();
+            var apiKey = Auth.TmdbApiKey;
             Assert.NotNull(apiKey);
             Assert.NotEmpty(apiKey);
 

@@ -13,7 +13,7 @@ namespace MovieMatchMakerLib
 
         public ApiDataSource()
         {
-            _tmdbApi = new TmdbLibApi(Auth.GetTmdbApiKey());
+            _tmdbApi = new TmdbLibApi(Auth.TmdbApiKey);
         }
 
         public async Task<MoviesCredits> GetCreditsForMovieAsync(int movieId)
