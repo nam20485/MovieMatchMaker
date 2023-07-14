@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.Utils
 {
     public class PrintStopwatch : Stopwatch
     {
@@ -13,7 +13,7 @@ namespace MovieMatchMakerLib
 
         public PrintStopwatch()
             : this(_defaultMessageFormat)
-        { 
+        {
         }
 
         public PrintStopwatch(string messageFormat)

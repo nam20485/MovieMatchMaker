@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib
 {
@@ -29,6 +30,7 @@ namespace MovieMatchMakerLib
         public bool Equals(MovieConnection other)
         {
             return !(other is null) &&
+                    // allow for reversed source and target movies (they are the "same" connection)
                    (EqualityComparer<Movie>.Default.Equals(SourceMovie, other.SourceMovie) &&
                     EqualityComparer<Movie>.Default.Equals(TargetMovie, other.TargetMovie)) ||
                    (EqualityComparer<Movie>.Default.Equals(SourceMovie, other.TargetMovie) &&

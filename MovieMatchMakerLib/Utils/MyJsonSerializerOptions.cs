@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.Utils
 {
     internal class MyJsonSerializerOptions
-    {        
+    {
         public static JsonSerializerOptions JsonSerializerOptions => new JsonSerializerOptions()
         {
             WriteIndented = true,

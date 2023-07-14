@@ -26,6 +26,7 @@ namespace MovieMatchMakerLib
                 movie = await _dataSource.GetMovieAsync(title, releaseYear);
                 if (movie != null)
                 {
+                    // TODO: does this work? (won't movies be stored int he cache as Fetched = true?)
                     movie.Fetched = true;
                     await _dataCache.AddMovieAsync(movie);
                 }

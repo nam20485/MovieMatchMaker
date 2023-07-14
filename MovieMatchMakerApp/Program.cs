@@ -2,6 +2,7 @@
 using MovieMatchMakerLib;
 using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
+using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerApp
 {
