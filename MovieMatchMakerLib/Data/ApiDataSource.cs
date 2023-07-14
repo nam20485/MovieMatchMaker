@@ -2,7 +2,7 @@
 using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.TmdbApi;
 
-namespace MovieMatchMakerLib.DataSource
+namespace MovieMatchMakerLib.Data
 {
     public class ApiDataSource : IDataSource
     {
@@ -28,7 +28,7 @@ namespace MovieMatchMakerLib.DataSource
             return null;
         }
 
-        public async Task<Model.Movie> GetMovieAsync(string title, int releaseYear)
+        public async Task<Movie> GetMovieAsync(string title, int releaseYear)
         {
             return await _tmdbApi.FetchMovieAsync(title, releaseYear);
         }

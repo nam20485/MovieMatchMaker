@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-using MovieMatchMakerLib.DataSource;
 using MovieMatchMakerLib.Model;
 
-namespace MovieMatchMakerLib.DataCache
+namespace MovieMatchMakerLib.Data
 {
     public interface IDataCache : IDataSource
     {
@@ -23,5 +22,7 @@ namespace MovieMatchMakerLib.DataCache
         PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; }
 
         Movie GetMovie(int movieId);
+        void Save();
+        void Clear();
     }
 }

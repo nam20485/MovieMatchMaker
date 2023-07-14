@@ -1,7 +1,3 @@
-using MovieMatchMakerLib;
-
-using Xunit;
-using FluentAssertions;
 using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLibTests

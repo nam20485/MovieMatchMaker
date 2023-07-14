@@ -5,7 +5,7 @@ using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using MovieMatchMakerLib.Utils;
 using MovieMatchMakerLib.Model;
-using MovieMatchMakerLib.DataCache;
+using MovieMatchMakerLib.Data;
 
 namespace MovieMatchMakerLib
 {

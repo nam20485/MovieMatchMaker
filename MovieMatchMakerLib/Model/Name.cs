@@ -8,7 +8,7 @@ namespace MovieMatchMakerLib.Model
 {
     public class Name : IEquatable<Name>
     {
-        [Key]
+        //[Key]
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }

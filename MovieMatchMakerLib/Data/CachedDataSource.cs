@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-using MovieMatchMakerLib.DataCache;
 using MovieMatchMakerLib.Model;
 
-namespace MovieMatchMakerLib.DataSource
+namespace MovieMatchMakerLib.Data
 {
     public class CachedDataSource : IDataSource
     {

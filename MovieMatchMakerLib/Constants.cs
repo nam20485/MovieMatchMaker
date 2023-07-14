@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MovieMatchMakerLib
+﻿namespace MovieMatchMakerLib
 {
     public static class Constants
     {

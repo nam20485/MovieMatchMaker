@@ -2,7 +2,7 @@
 
 using MovieMatchMakerLib.Model;
 
-namespace MovieMatchMakerLib.DataSource
+namespace MovieMatchMakerLib.Data
 {
     public interface IDataSource
     {

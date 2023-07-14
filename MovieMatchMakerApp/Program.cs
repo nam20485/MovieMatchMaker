@@ -1,25 +1,23 @@
 ﻿using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib;
-using System.Diagnostics;
 using MovieMatchMakerLib.Utils;
-using MovieMatchMakerLib.DataCache;
-using MovieMatchMakerLib.DataSource;
+using MovieMatchMakerLib.Data;
 
 namespace MovieMatchMakerApp
 {
     internal class Program
-    {      
-        private static readonly MovieNetworkDataBuilder _movieNetworkDataBuilder;
-        private static readonly IDataCache _dataCache;
+    {
+        private static readonly MovieNetworkDataBuilder _movieNetworkDataBuilder;        
         private static readonly MovieConnectionBuilder _connectionBuilder;
 
         static Program()
         {
-            _dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);
             var apiDataSource = new ApiDataSource();
-            var cachedDataSource = new CachedDataSource(_dataCache, apiDataSource);
+            var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);            
+            var cachedDataSource = new CachedDataSource(dataCache, apiDataSource);
+
             _movieNetworkDataBuilder = new MovieNetworkDataBuilder(cachedDataSource);
-            _connectionBuilder = new MovieConnectionBuilder(_dataCache);                        
+            _connectionBuilder = new MovieConnectionBuilder(dataCache);                        
         }     
 
         static int Main(string[] args)

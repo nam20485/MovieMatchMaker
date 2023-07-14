@@ -6,20 +6,21 @@ using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.Utils;
 
 
-namespace MovieMatchMakerLib.DataCache
+namespace MovieMatchMakerLib.Data
 {
     public class JsonFileCache : IDataCache
     {
         public string FilePath { get; set; }
-        public Model.Movie.List Movies { get; set; }
+
+        public Movie.List Movies { get; set; }
         public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
 
-        private object _lockObj = new object();
+        private readonly object _lockObj = new object();
 
         public JsonFileCache()
         {
-            Movies = new Model.Movie.List();
+            Movies = new Movie.List();
             PersonsMovieCreditsById = new PersonsMovieCredits.IntDictionary();
             MoviesCreditsById = new MoviesCredits.IntDictionary();
         }
@@ -34,7 +35,7 @@ namespace MovieMatchMakerLib.DataCache
             //await SaveAsync();
         }
 
-        public async Task AddMovieAsync(Model.Movie movie)
+        public async Task AddMovieAsync(Movie movie)
         {
             await Task.Run(() =>
             {
@@ -64,7 +65,7 @@ namespace MovieMatchMakerLib.DataCache
             }
         }
 
-        public void AddMovie(Model.Movie movie)
+        public void AddMovie(Movie movie)
         {
             if (!Movies.Contains(movie))
             {
@@ -97,21 +98,21 @@ namespace MovieMatchMakerLib.DataCache
             return instance;
         }
 
-        public async Task<Model.Movie> GetMovieAsync(string title, int releaseYear)
+        public async Task<Movie> GetMovieAsync(string title, int releaseYear)
         {
-            Model.Movie instance = null;
+            Movie instance = null;
             await Task.Run(() =>
             {
                 instance = Movies.Find(m =>
                 {
                     return m.Title == title &&
-                            m.ReleaseYear == releaseYear;
+                           m.ReleaseYear == releaseYear;
                 });
             });
             return instance;
         }
 
-        public Model.Movie GetMovie(int movieId)
+        public Movie GetMovie(int movieId)
         {
             var movie = Movies.Find(m =>
             {
