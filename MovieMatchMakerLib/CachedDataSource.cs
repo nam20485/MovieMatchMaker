@@ -31,6 +31,10 @@ namespace MovieMatchMakerLib
                     await _dataCache.AddMovieAsync(movie);
                 }
             }
+            else
+            {
+                movie.Fetched = false;
+            }
 
             return movie;
         }       

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieMatchMakerLibTests
 {
-    internal class ConnectionBuilderTests
+    public class ConnectionBuilderTests
     {
     }
 

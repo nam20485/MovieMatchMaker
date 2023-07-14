@@ -12,17 +12,13 @@ namespace MovieMatchMakerApp
         private const string Slogan = "Find movies you didn't know you liked";
         private const string Header = $"{Title} - {Slogan}!";
 
-        private static string AppDataPath => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        private static string FilePath => Path.Combine(AppDataPath, "moviematchmaker.json");
-        private static string MovieConnectionsFilePath => Path.Combine(AppDataPath, "movieconnections.json");
-
         private static readonly MovieNetworkDataBuilder _movieNetworkDataBuilder;
         private static readonly IDataCache _dataCache;
         private static readonly MovieConnectionBuilder _connectionBuilder;
 
         static Program()
         {
-            _dataCache = JsonFileCache.Load(FilePath);
+            _dataCache = JsonFileCache.Load(MovieNetworkDataBuilderBase.FilePath);
             var apiDataSource = new ApiDataSource();
             var cachedDataSource = new CachedDataSource(_dataCache, apiDataSource);
             _movieNetworkDataBuilder = new MovieNetworkDataBuilder(cachedDataSource);
@@ -44,7 +40,7 @@ namespace MovieMatchMakerApp
             {
                 stopWatch.Start("Loading movie connections from file... ", false);
 
-                _connectionBuilder.LoadMovieConnections(MovieConnectionsFilePath);
+                _connectionBuilder.LoadMovieConnections(MovieConnectionBuilderBase.FilePath);
                 movieConnectionsLoaded = true;                
 
                 stopWatch.Stop("loaded");
@@ -64,7 +60,7 @@ namespace MovieMatchMakerApp
 
                 stopWatch.Start("Saving movie connections to file... ", false);
 
-                _connectionBuilder.SaveMovieConnections(MovieConnectionsFilePath);
+                _connectionBuilder.SaveMovieConnections(MovieConnectionBuilderBase.FilePath);
 
                 stopWatch.Stop("saved");
             }

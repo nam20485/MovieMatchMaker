@@ -50,11 +50,7 @@ namespace MovieMatchMakerLib
         public static bool operator !=(MovieConnection left, MovieConnection right)
         {
             return !(left == right);
-        }
-
-        public class StringDictionary : Dictionary<string, MovieConnection>
-        {            
-        }
+        }    
 
         public class List : List<MovieConnection>
         {            
