@@ -75,10 +75,12 @@ namespace MovieMatchMakerApp
                 stopWatch.Start("Applying filters... ", false);
 
                 var sorted = new SortFilter().Apply(_connectionBuilder.MovieConnections);
-                var greaterThan2ConnectedRoles = new MinConnectedRolesCountFilter().Apply(_connectionBuilder.MovieConnections);
-                var greaterThan4ConnectedRoles = new MinConnectedRolesCountFilter(5).Apply(_connectionBuilder.MovieConnections);
-                var greaterThan10ConnectedRoles = new MinConnectedRolesCountFilter(10).Apply(_connectionBuilder.MovieConnections);
-                var greaterThan20ConnectedRoles = new MinConnectedRolesCountFilter(20).Apply(_connectionBuilder.MovieConnections);
+                var greaterThan2ConnectedRoles = new MinConnectedRolesCountFilter(2).Apply(_connectionBuilder.MovieConnections);
+                var greaterThan4ConnectedRoles = new MinConnectedRolesCountFilter(4).Apply(_connectionBuilder.MovieConnections);
+                var greaterThan8ConnectedRoles = new MinConnectedRolesCountFilter(8).Apply(_connectionBuilder.MovieConnections);
+                var greaterThan16ConnectedRoles = new MinConnectedRolesCountFilter(16).Apply(_connectionBuilder.MovieConnections);
+                var greaterThan32ConnectedRoles = new MinConnectedRolesCountFilter(32).Apply(_connectionBuilder.MovieConnections);
+                var greaterThan64ConnectedRoles = new MinConnectedRolesCountFilter(64).Apply(_connectionBuilder.MovieConnections);
                 var max0MatchingTitleWords = new MaxMatchingTitleWordsFilter(0).Apply(_connectionBuilder.MovieConnections);
                 var max1MatchingTitleWords = new MaxMatchingTitleWordsFilter(1).Apply(_connectionBuilder.MovieConnections);
                 var max2MatchingTitleWords = new MaxMatchingTitleWordsFilter(2).Apply(_connectionBuilder.MovieConnections);
