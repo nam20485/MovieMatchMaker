@@ -20,3 +20,7 @@
 /MovieMatchMakerLib/bin/Debug
 /MovieMatchMakerApi/bin/Debug/net7.0
 /MovieMatchMakerApi/obj
+/MovieMatchMakerApi/bin/Release/net7.0
+/MovieMatchMakerApp/bin
+/MovieMatchMakerApp00000/bin
+/MovieMatchMakerApp00000/obj
