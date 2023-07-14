@@ -17,8 +17,14 @@ namespace MovieMatchMakerLibTests
         {
             var dataCache = JsonFileCache.Load(FilePath);
             var dataSource = new CachedDataSource(dataCache, new ApiDataSource());
-            var movie = await dataSource.GetMovieAsync("Dark City", 1998);
+
+            const string title = "Dark City";
+            const int releaseYear = 1998;
+
+            var movie = await dataSource.GetMovieAsync(title, releaseYear);
             Assert.NotNull(movie);
+            Assert.Equal(title, movie.Title);
+            Assert.Equal(releaseYear, movie.ReleaseYear);
         }
     }
 }

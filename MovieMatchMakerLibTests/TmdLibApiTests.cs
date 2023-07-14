@@ -2,6 +2,7 @@ using MovieMatchMakerLib;
 
 using Xunit;
 using FluentAssertions;
+using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLibTests
 {
