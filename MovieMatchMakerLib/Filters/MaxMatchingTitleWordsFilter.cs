@@ -29,13 +29,13 @@ namespace MovieMatchMakerLib.Filters
         }
 
         private static readonly string[] commonWords =
-            {
+        {
                 "and", "but", "or",
                 "a", "an",
                 "of",
                 "the",
                 "if",
-            };
+        };
 
         private static int CountMatchingWords(string str1, string str2)
         {
