@@ -9,6 +9,8 @@ namespace MovieMatchMakerLib
 
         Task FindMovieConnections();
         void LoadMovieConnections(string path);
+        void LoadMovieConnections();
         void SaveMovieConnections(string path);
+        void SaveMovieConnections();
     }
 }

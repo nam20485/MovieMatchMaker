@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using MovieMatchMakerLib.DataCache;
 
@@ -8,7 +9,7 @@ namespace MovieMatchMakerLib
     {
         public MovieConnectionBuilder(IDataCache dataCache)
             : base(dataCache)
-        {           
+        {
         }
 
         public override async Task FindMovieConnections()
@@ -25,6 +26,6 @@ namespace MovieMatchMakerLib
                     await FindMovieConnectionsFromRole(sourceMovie, sourceRole);
                 }
             }
-        }      
+        }
     }
 }

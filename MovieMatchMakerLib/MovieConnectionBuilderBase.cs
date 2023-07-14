@@ -31,10 +31,20 @@ namespace MovieMatchMakerLib
             MovieConnections.AddRange(loaded);
         }
 
+        public void LoadMovieConnections()
+        {
+            LoadMovieConnections(FilePath);
+        }
+
         public void SaveMovieConnections(string path)
         {
             MovieConnections.SaveToFile(path);
-        }       
+        }        
+
+        public void SaveMovieConnections()
+        {
+            SaveMovieConnections(FilePath);
+        }
 
         protected void AddMovieConnection(string name, Model.Movie sourceMovie, string sourceRole, Model.Movie targetMovie, string targetRole)
         {
@@ -121,6 +131,6 @@ namespace MovieMatchMakerLib
             }
 
             return movieConnection;
-        }        
+        }       
     }
 }
