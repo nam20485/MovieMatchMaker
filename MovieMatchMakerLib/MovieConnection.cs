@@ -39,12 +39,12 @@ namespace MovieMatchMakerLib
             
             public string ToJson()
             {
-                return JsonSerializer.Serialize(this);
+                return JsonSerializer.Serialize(this, MyJsonSerializerOptions.JsonSerializerOptions);
             }
 
             public static List FromJson(string json)
             {
-                return JsonSerializer.Deserialize<List>(json);
+                return JsonSerializer.Deserialize<List>(json, MyJsonSerializerOptions.JsonSerializerOptions);
             }
 
             public void SaveToFile(string path)

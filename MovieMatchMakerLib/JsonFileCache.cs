@@ -20,14 +20,7 @@ namespace MovieMatchMakerLib
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
 
         private object _lockObj = new object();
-
-        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            //ReferenceHandler = ReferenceHandler.Preserve,
-        };
-
+        
         public JsonFileCache()
         {
             Movies = new Movie.List();
@@ -174,7 +167,7 @@ namespace MovieMatchMakerLib
         {            
             lock (_lockObj)
             {
-                var json = JsonSerializer.Serialize(this, _jsonSerializerOptions);
+                var json = JsonSerializer.Serialize(this, MyJsonSerializerOptions.JsonSerializerOptions);
                 File.WriteAllText(FilePath, json);               
             }
         }
@@ -183,7 +176,7 @@ namespace MovieMatchMakerLib
         {
             using (var ms = new MemoryStream())
             {
-                await JsonSerializer.SerializeAsync(ms, this, _jsonSerializerOptions);
+                await JsonSerializer.SerializeAsync(ms, this, MyJsonSerializerOptions.JsonSerializerOptions);
 
                 lock (_lockObj)
                 {
