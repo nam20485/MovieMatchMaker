@@ -2,7 +2,6 @@ using MovieMatchMakerLib;
 
 using Xunit;
 using FluentAssertions;
-using MovieMatchMakerLib.Utils;
 using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLibTests
@@ -12,7 +11,7 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public void Test_GetTmdbApiKey()
         {
-            var apiKey = Auth.TmdbApiKey;
+            var apiKey = TmdbApiAuth.TmdbApiKey;
             Assert.NotNull(apiKey);
             Assert.NotEmpty(apiKey);            
         }
@@ -20,7 +19,7 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public async void Test_FetchMovieData_Exists()
         {
-            var apiKey = Auth.TmdbApiKey;
+            var apiKey = TmdbApiAuth.TmdbApiKey;
             Assert.NotNull(apiKey);
             Assert.NotEmpty(apiKey);
 
@@ -32,7 +31,7 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public async void Test_FetchMovieData_DoesNotExist()
         {
-            var apiKey = Auth.TmdbApiKey;
+            var apiKey = TmdbApiAuth.TmdbApiKey;
             Assert.NotNull(apiKey);
             Assert.NotEmpty(apiKey);
 

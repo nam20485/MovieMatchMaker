@@ -4,10 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using FluentAssertions;
+
+using MovieMatchMakerLib;
+using MovieMatchMakerLib.DataCache;
+using MovieMatchMakerLib.DataSource;
+
 namespace MovieMatchMakerLibTests
 {
     public class ConnectionBuilderTests
-    {
+    {      
+        [Fact]
+        public void Test_LoadMovieConnections()
+        {
+            var movieConnectionBuilder = Utils.CreateMovieConnectionBuilder();
+            movieConnectionBuilder.LoadMovieConnections(MovieConnectionBuilderBase.FilePath);
+            movieConnectionBuilder.MovieConnections.Should().HaveCount(17413);                       
+        }
+
     }
 
     //bool movieConnectionsLoaded = false;
