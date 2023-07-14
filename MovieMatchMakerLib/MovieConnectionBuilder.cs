@@ -110,19 +110,8 @@ namespace MovieMatchMakerLib
         {
             var movieConnection = MovieConnections.Find(mc =>
             {
-                if (mc.SourceMovie == sourceMovie && mc.TargetMovie == targetMovie)
-                {
-                    return true;
-                }
-                else if (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie)
-                {
-                    // reverse order is still the same movie connection
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return ((mc.SourceMovie == sourceMovie && mc.TargetMovie == targetMovie) ||
+                        (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie));
             });
 
             if (movieConnection is null)
