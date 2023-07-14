@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TMDbLib.Objects.People;
+
 namespace MovieMatchMakerLib
 {
     public class MovieConnectionBuilder
@@ -32,26 +34,7 @@ namespace MovieMatchMakerLib
                             if (targetRole.ReleaseDate.HasValue)
                             {
                                 var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                if (targetMovie != null)
-                                {
-                                    if (targetMovie != sourceMovie)
-                                    {
-                                        var movieConnection = GetMovieConnection(sourceMovie, targetMovie);
-                                        movieConnection.TargetMovie = targetMovie;
-                                        var connectedRole = new ConnectedRole
-                                        {
-                                            Name = new Name(sourceRole.Name),
-                                            SourceJob = sourceRole.Character,
-                                            TargetJob = targetRole.Character
-                                        };
-                                        movieConnection.ConnectedRoles.Add(connectedRole);
-                                        if (sourceMovie.Title == targetMovie.Title &&
-                                            sourceMovie.Title == "Dark City")
-                                        {
-                                            Console.WriteLine();
-                                        }
-                                    }
-                                }
+                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Character);
                             }
                         }
                         foreach (var targetRole in personCredits.MovieCredits.Crew)
@@ -59,26 +42,7 @@ namespace MovieMatchMakerLib
                             if (targetRole.ReleaseDate.HasValue)
                             {
                                 var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                if (targetMovie != null)
-                                {
-                                    if (targetMovie != sourceMovie)
-                                    {
-                                        var movieConnection = GetMovieConnection(sourceMovie, targetMovie);
-                                        movieConnection.TargetMovie = targetMovie;
-                                        var connectedRole = new ConnectedRole
-                                        {
-                                            Name = new Name(sourceRole.Name),
-                                            SourceJob = sourceRole.Character,
-                                            TargetJob = targetRole.Job
-                                        };
-                                        movieConnection.ConnectedRoles.Add(connectedRole);
-                                        if (sourceMovie.Title == targetMovie.Title &&
-                                            sourceMovie.Title == "Dark City")
-                                        {
-                                            Console.WriteLine();
-                                        }
-                                    }
-                                }
+                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Job);
                             }
                         }
                     }
@@ -93,26 +57,7 @@ namespace MovieMatchMakerLib
                             if (targetRole.ReleaseDate.HasValue)
                             {
                                 var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                if (targetMovie != null)
-                                {
-                                    if (targetMovie != sourceMovie)
-                                    {
-                                        var movieConnection = GetMovieConnection(sourceMovie, targetMovie);
-                                        movieConnection.TargetMovie = targetMovie;
-                                        var connectedRole = new ConnectedRole
-                                        {
-                                            Name = new Name(sourceRole.Name),
-                                            SourceJob = sourceRole.Job,
-                                            TargetJob = targetRole.Job
-                                        };
-                                        movieConnection.ConnectedRoles.Add(connectedRole);
-                                        if (sourceMovie.Title == targetMovie.Title &&
-                                            sourceMovie.Title == "Dark City")
-                                        {
-                                            Console.WriteLine();
-                                        }
-                                    }
-                                }
+                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Job);
                             }
                         }
                         foreach (var targetRole in personCredits.MovieCredits.Cast)
@@ -120,30 +65,35 @@ namespace MovieMatchMakerLib
                             if (targetRole.ReleaseDate.HasValue)
                             {
                                 var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                if (targetMovie != null)
-                                {
-                                    if (targetMovie != sourceMovie)
-                                    {
-                                        var movieConnection = GetMovieConnection(sourceMovie, targetMovie);
-                                        movieConnection.TargetMovie = targetMovie;
-                                        movieConnection.ConnectedRoles.Add(new ConnectedRole()
-                                        {
-                                            Name = new Name(sourceRole.Name),
-                                            SourceJob = sourceRole.Job,
-                                            TargetJob = targetRole.Character
-                                        });
-                                        if (sourceMovie.Title == targetMovie.Title &&
-                                            sourceMovie.Title == "Dark City")
-                                        {
-                                            Console.WriteLine();
-                                        }
-                                    }
-                                }
+                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Character);
                             }
                         }
                     }
                 }
             }
+        }
+
+        private void AddMovieConnection(string name, Movie sourceMovie, string sourceRole, Movie targetMovie, string targetRole)
+        {
+            if (targetMovie != null)
+            {
+                if (targetMovie != sourceMovie)
+                {
+                    var movieConnection = GetMovieConnection(sourceMovie, targetMovie);
+                    var connectedRole = new ConnectedRole
+                    {
+                        Name = new Name(name),
+                        SourceJob = sourceRole,
+                        TargetJob = targetRole
+                    };
+                    movieConnection.ConnectedRoles.Add(connectedRole);
+                }
+            }
+        }
+
+        private void AddMovieConnection(Movie sourceMovie, TMDbLib.Objects.Movies.Cast sourceRole, MovieRole targetRole, Movie targetMovie)
+        {
+           
         }
 
         private MovieConnection GetMovieConnection(Movie sourceMovie, Movie targetMovie)
@@ -154,10 +104,11 @@ namespace MovieMatchMakerLib
                 {
                     return true;
                 }
-                //else if (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie)
-                //{
-                //    return true;
-                //}
+                else if (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie)
+                {
+                    // reverse order is still the same movie connection
+                    return true;
+                }
                 else
                 {
                     return false;
