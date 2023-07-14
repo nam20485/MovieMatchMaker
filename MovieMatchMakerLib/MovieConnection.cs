@@ -26,7 +26,7 @@ namespace MovieMatchMakerLib
         }
 
         public class List : List<MovieConnection>
-        {
+        {            
             public List()
                 : base()
             {
@@ -49,7 +49,7 @@ namespace MovieMatchMakerLib
 
             public void SaveToFile(string path)
             {
-                File.WriteAllText(ToJson(), path);
+                File.WriteAllText(path, ToJson());
             }
 
             public static List LoadFromFile(string path)
