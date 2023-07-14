@@ -97,12 +97,7 @@ namespace MovieMatchMakerLib
                         Name = new Name(name),
                         SourceJob = sourceRole,
                         TargetJob = targetRole
-                    };
-                    //var found = movieConnection.ConnectedRoles.Find(cr =>
-                    //{
-                    //    return cr == connectedRole;
-                    //});
-                    //if (found is null)
+                    };                   
                     if (! movieConnection.ConnectedRoles.Contains(connectedRole))
                     {
                         movieConnection.ConnectedRoles.Add(connectedRole);
@@ -132,6 +127,7 @@ namespace MovieMatchMakerLib
 
             if (movieConnection is null)
             {
+                // not found, return an empty new one
                 movieConnection = new MovieConnection(sourceMovie, targetMovie);
                 MovieConnections.Add(movieConnection);
             }
