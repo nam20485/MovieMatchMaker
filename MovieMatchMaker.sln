@@ -5,11 +5,11 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerLib", "MovieMatchMakerLib\MovieMatchMakerLib.csproj", "{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerApp", "MovieMatchMakerApp\MovieMatchMakerApp.csproj", "{2D2361FF-C63B-4C79-9903-FC124A7EDB68}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerLibTests", "MovieMatchMakerLibTests\MovieMatchMakerLibTests.csproj", "{C53BADD1-BBBA-448E-A828-E68B76FAE424}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieMatchMakerApi", "MovieMatchMakerApi\MovieMatchMakerApi.csproj", "{8087B8ED-D436-475B-9C03-31A05B0A9260}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerApi", "MovieMatchMakerApi\MovieMatchMakerApi.csproj", "{8087B8ED-D436-475B-9C03-31A05B0A9260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieMatchMakerApp", "MovieMatchMakerApp\MovieMatchMakerApp.csproj", "{D495134F-2360-4B15-B675-FDC3906B4D71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,6 @@ Global
 		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D2361FF-C63B-4C79-9903-FC124A7EDB68}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C53BADD1-BBBA-448E-A828-E68B76FAE424}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{8087B8ED-D436-475B-9C03-31A05B0A9260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8087B8ED-D436-475B-9C03-31A05B0A9260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8087B8ED-D436-475B-9C03-31A05B0A9260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D495134F-2360-4B15-B675-FDC3906B4D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D495134F-2360-4B15-B675-FDC3906B4D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D495134F-2360-4B15-B675-FDC3906B4D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D495134F-2360-4B15-B675-FDC3906B4D71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
