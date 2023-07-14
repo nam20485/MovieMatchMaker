@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MovieMatchMakerLib.DataSource;
+using MovieMatchMakerLib.Model;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.DataCache
 {
     public interface IDataCache : IDataSource
     {
@@ -15,12 +16,12 @@ namespace MovieMatchMakerLib
 
         void AddCreditsForMovie(MoviesCredits moviesCredits);
         void AddMovie(Movie movie);
-        void AddPersonsMovieCredits(PersonsMovieCredits personsMovieCredits); 
-        
+        void AddPersonsMovieCredits(PersonsMovieCredits personsMovieCredits);
+
         Movie.List Movies { get; }
         MoviesCredits.IntDictionary MoviesCreditsById { get; }
         PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; }
-        
-        Movie GetMovie(int movieId);       
+
+        Movie GetMovie(int movieId);
     }
 }

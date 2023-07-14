@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-using TMDbLib.Objects.Movies;
+using MovieMatchMakerLib.DataSource;
 
 namespace MovieMatchMakerLib
 {
-    public class MovieNetworkDataBuilder : MovieNetworkDataBuilderBase
+    public class MovieNetworkDataBuilder : MovieDataBuilderBase
     {
         public MovieNetworkDataBuilder(IDataSource dataSource)
             : base(dataSource)

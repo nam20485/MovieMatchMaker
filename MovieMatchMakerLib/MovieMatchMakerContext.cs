@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
+using MovieMatchMakerLib.Model;
+
 namespace MovieMatchMakerLib
-{   
+{
     public class MovieMatchMakerContext : DbContext
     {
         private static string DbPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "moviematchmaker.sqlite");

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.Model
 {
     public class ConnectedRole : IEquatable<ConnectedRole>
     {
@@ -23,8 +21,8 @@ namespace MovieMatchMakerLib
                    EqualityComparer<Name>.Default.Equals(Name, other.Name) &&
                    PersonId == other.PersonId &&
                    // allow for reversed jobs
-                   ((TargetJob == other.TargetJob && SourceJob == other.SourceJob) ||
-                    (TargetJob == other.SourceJob && SourceJob == other.TargetJob));
+                   (TargetJob == other.TargetJob && SourceJob == other.SourceJob ||
+                    TargetJob == other.SourceJob && SourceJob == other.TargetJob);
         }
 
         public override int GetHashCode()
@@ -40,7 +38,7 @@ namespace MovieMatchMakerLib
         public static bool operator !=(ConnectedRole left, ConnectedRole right)
         {
             return !(left == right);
-        }  
+        }
 
         public class NameDictionary : Dictionary<Name, ConnectedRole>
         {
@@ -48,6 +46,6 @@ namespace MovieMatchMakerLib
 
         public class List : List<ConnectedRole>
         {
-        }      
+        }
     }
 }

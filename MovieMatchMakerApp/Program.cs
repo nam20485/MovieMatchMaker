@@ -1,8 +1,9 @@
 ﻿using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib;
-using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
 using MovieMatchMakerLib.Utils;
+using MovieMatchMakerLib.DataCache;
+using MovieMatchMakerLib.DataSource;
 
 namespace MovieMatchMakerApp
 {
@@ -18,7 +19,7 @@ namespace MovieMatchMakerApp
 
         static Program()
         {
-            _dataCache = JsonFileCache.Load(MovieNetworkDataBuilderBase.FilePath);
+            _dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);
             var apiDataSource = new ApiDataSource();
             var cachedDataSource = new CachedDataSource(_dataCache, apiDataSource);
             _movieNetworkDataBuilder = new MovieNetworkDataBuilder(cachedDataSource);

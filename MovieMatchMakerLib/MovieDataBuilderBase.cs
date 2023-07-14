@@ -1,17 +1,17 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-
+using MovieMatchMakerLib.DataSource;
 using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib
 {
-    public abstract class MovieNetworkDataBuilderBase : IMovieNetworkDataBuilder
+    public abstract class MovieDataBuilderBase : IMovieDataBuilder
     {
         public static string FilePath => Path.Combine(SystemFolders.AppDataPath, "moviematchmaker.json");
 
         protected readonly IDataSource _dataSource;        
 
-        protected MovieNetworkDataBuilderBase(IDataSource dataSource)
+        protected MovieDataBuilderBase(IDataSource dataSource)
         {
             _dataSource = dataSource;
         }

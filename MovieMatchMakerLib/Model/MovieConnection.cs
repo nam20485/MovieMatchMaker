@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
+
 using MovieMatchMakerLib.Utils;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.Model
 {
     public class MovieConnection : IEquatable<MovieConnection>
     {
         public Movie SourceMovie { get; set; }
-        public Movie TargetMovie { get; set; }  
-        
-        public ConnectedRole.List ConnectedRoles {  get; set; }
+        public Movie TargetMovie { get; set; }
+
+        public ConnectedRole.List ConnectedRoles { get; set; }
 
         public MovieConnection(Movie sourceMovie, Movie targetMovie)
         {
@@ -30,11 +29,11 @@ namespace MovieMatchMakerLib
         public bool Equals(MovieConnection other)
         {
             return !(other is null) &&
-                    // allow for reversed source and target movies (they are the "same" connection)
-                   (EqualityComparer<Movie>.Default.Equals(SourceMovie, other.SourceMovie) &&
-                    EqualityComparer<Movie>.Default.Equals(TargetMovie, other.TargetMovie)) ||
-                   (EqualityComparer<Movie>.Default.Equals(SourceMovie, other.TargetMovie) &&
-                    EqualityComparer<Movie>.Default.Equals(TargetMovie, other.SourceMovie));
+                   // allow for reversed source and target movies (they are the "same" connection)
+                   EqualityComparer<Movie>.Default.Equals(SourceMovie, other.SourceMovie) &&
+                    EqualityComparer<Movie>.Default.Equals(TargetMovie, other.TargetMovie) ||
+                   EqualityComparer<Movie>.Default.Equals(SourceMovie, other.TargetMovie) &&
+                    EqualityComparer<Movie>.Default.Equals(TargetMovie, other.SourceMovie);
         }
 
         public override int GetHashCode()
@@ -50,10 +49,10 @@ namespace MovieMatchMakerLib
         public static bool operator !=(MovieConnection left, MovieConnection right)
         {
             return !(left == right);
-        }    
+        }
 
         public class List : List<MovieConnection>
-        {            
+        {
             public List()
                 : base()
             {
@@ -62,8 +61,8 @@ namespace MovieMatchMakerLib
             public List(IEnumerable<MovieConnection> collection)
                 : base(collection)
             {
-            }    
-            
+            }
+
             public string ToJson()
             {
                 return JsonSerializer.Serialize(this, MyJsonSerializerOptions.JsonSerializerOptions);
@@ -83,6 +82,6 @@ namespace MovieMatchMakerLib
             {
                 return FromJson(File.ReadAllText(path));
             }
-        }       
+        }
     }
 }

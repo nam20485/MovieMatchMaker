@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MovieMatchMakerLib
+﻿namespace MovieMatchMakerLib.Model
 {
     public class ProductionMember
     {
@@ -26,6 +20,6 @@ namespace MovieMatchMakerLib
         //    Job = job;
         //    MemberType = memberType;
         //}
-        
+
     }
 }

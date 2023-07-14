@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.Model
 {
     public class Production : IEquatable<Production>
     {
@@ -13,7 +10,7 @@ namespace MovieMatchMakerLib
         public int MovieId { get; set; }
         public bool Fetched { get; set; }
 
-        public Production(string title, int releaseYear, int movieId)           
+        public Production(string title, int releaseYear, int movieId)
         {
             Title = title;
             ReleaseYear = releaseYear;

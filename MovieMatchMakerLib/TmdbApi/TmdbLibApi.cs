@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 
 using TMDbLib.Client;
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.People;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.TmdbApi
 {
     public class TmdbLibApi : ITmdbApi
     {
@@ -17,7 +14,7 @@ namespace MovieMatchMakerLib
         public TmdbLibApi(string apiKey)
         {
             _apiClient = new TMDbClient(apiKey);
-        }        
+        }
 
         public async Task<Credits> FetchMovieCreditsAsync(string title, int releaseYear)
         {
@@ -30,20 +27,20 @@ namespace MovieMatchMakerLib
                     return credits;
                 }
             }
-            
+
             return null;
         }
 
-        public async Task<Movie> FetchMovieAsync(string title, int releaseYear)
+        public async Task<Model.Movie> FetchMovieAsync(string title, int releaseYear)
         {
-            Movie movie = null;
+            Model.Movie movie = null;
 
             var searchResult = await _apiClient.SearchMovieAsync(title, primaryReleaseYear: releaseYear);
             if (searchResult.TotalResults == 1)
             {
                 var result = searchResult.Results.First();
                 var movieId = result.Id;
-                movie = new Movie(title, releaseYear, movieId);
+                movie = new Model.Movie(title, releaseYear, movieId);
             }
 
             return movie;
@@ -51,12 +48,12 @@ namespace MovieMatchMakerLib
 
         public async Task<MovieCredits> FetchMovieCreditsForPerson(int personApiId)
         {
-           return  await _apiClient.GetPersonMovieCreditsAsync(personApiId);
+            return await _apiClient.GetPersonMovieCreditsAsync(personApiId);
         }
 
         public async Task<Credits> FetchMovieCreditsAsync(int movieApiId)
         {
-            return await _apiClient.GetMovieCreditsAsync(movieApiId);                        
+            return await _apiClient.GetMovieCreditsAsync(movieApiId);
         }
     }
 }

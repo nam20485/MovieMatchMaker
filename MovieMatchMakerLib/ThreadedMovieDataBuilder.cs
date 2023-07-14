@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+
+using MovieMatchMakerLib.DataSource;
 
 namespace MovieMatchMakerLib
 {
-    public class ThreadedMovieNetworkDataBuilder : MovieNetworkDataBuilderBase
+    public class ThreadedMovieDataBuilder : MovieDataBuilderBase
     {
-        public ThreadedMovieNetworkDataBuilder(IDataSource dataSource)
+        public ThreadedMovieDataBuilder(IDataSource dataSource)
             : base(dataSource)
         {
         }

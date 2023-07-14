@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MovieMatchMakerLib.Utils;
-using TMDbLib.Objects.Movies;
-using TMDbLib.Objects.People;
 
-namespace MovieMatchMakerLib
+using MovieMatchMakerLib.Model;
+using MovieMatchMakerLib.Utils;
+
+
+namespace MovieMatchMakerLib.DataCache
 {
     public class JsonFileCache : IDataCache
     {
-        public string FilePath { get; set; }       
-        public Movie.List Movies { get; set; }
+        public string FilePath { get; set; }
+        public Model.Movie.List Movies { get; set; }
         public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
 
         private object _lockObj = new object();
-        
+
         public JsonFileCache()
         {
-            Movies = new Movie.List();
+            Movies = new Model.Movie.List();
             PersonsMovieCreditsById = new PersonsMovieCredits.IntDictionary();
             MoviesCreditsById = new MoviesCredits.IntDictionary();
         }
@@ -33,28 +29,28 @@ namespace MovieMatchMakerLib
             await Task.Run(() =>
             {
                 AddCreditsForMovie(moviesCredits);
-            });            
-            
+            });
+
             //await SaveAsync();
         }
 
-        public async Task AddMovieAsync(Movie movie)
+        public async Task AddMovieAsync(Model.Movie movie)
         {
             await Task.Run(() =>
             {
                 AddMovie(movie);
             });
-            
+
             //await SaveAsync();
         }
 
         public async Task AddPersonsMovieCreditsAsync(PersonsMovieCredits personsMovieCredits)
         {
             await Task.Run(() =>
-            {                
+            {
                 AddPersonsMovieCredits(personsMovieCredits);
             });
-            
+
             //await SaveAsync();
         }
 
@@ -68,7 +64,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        public void AddMovie(Movie movie)
+        public void AddMovie(Model.Movie movie)
         {
             if (!Movies.Contains(movie))
             {
@@ -80,7 +76,7 @@ namespace MovieMatchMakerLib
 
         public void AddPersonsMovieCredits(PersonsMovieCredits personsMovieCredits)
         {
-            if (! PersonsMovieCreditsById.ContainsKey(personsMovieCredits.PersonId))
+            if (!PersonsMovieCreditsById.ContainsKey(personsMovieCredits.PersonId))
             {
                 PersonsMovieCreditsById[personsMovieCredits.PersonId] = personsMovieCredits;
                 Save();
@@ -101,21 +97,21 @@ namespace MovieMatchMakerLib
             return instance;
         }
 
-        public async Task<Movie> GetMovieAsync(string title, int releaseYear)
+        public async Task<Model.Movie> GetMovieAsync(string title, int releaseYear)
         {
-            Movie instance = null;
+            Model.Movie instance = null;
             await Task.Run(() =>
             {
                 instance = Movies.Find(m =>
                 {
-                    return (m.Title == title &&
-                            m.ReleaseYear == releaseYear);
+                    return m.Title == title &&
+                            m.ReleaseYear == releaseYear;
                 });
             });
             return instance;
         }
 
-        public Movie GetMovie(int movieId)
+        public Model.Movie GetMovie(int movieId)
         {
             var movie = Movies.Find(m =>
             {
@@ -154,21 +150,21 @@ namespace MovieMatchMakerLib
             }
             instance.FilePath = filePath;
             return instance;
-        }      
+        }
 
         public void Clear()
         {
             Movies.Clear();
-            PersonsMovieCreditsById.Clear();            
+            PersonsMovieCreditsById.Clear();
             MoviesCreditsById.Clear();
         }
 
         public void Save()
-        {            
+        {
             lock (_lockObj)
             {
                 var json = JsonSerializer.Serialize(this, MyJsonSerializerOptions.JsonSerializerOptions);
-                File.WriteAllText(FilePath, json);               
+                File.WriteAllText(FilePath, json);
             }
         }
 
@@ -188,7 +184,7 @@ namespace MovieMatchMakerLib
                         fs.Close();
                     }
                 }
-            }        
-        }             
+            }
+        }
     }
 }

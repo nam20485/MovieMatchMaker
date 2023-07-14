@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.Utils;
-using TMDbLib.Objects.Movies;
+using MovieMatchMakerLib.TmdbApi;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.DataSource
 {
     public class ApiDataSource : IDataSource
     {
-        private readonly ITmdbApi _tmdbApi;        
+        private readonly ITmdbApi _tmdbApi;
 
         public ApiDataSource()
         {
@@ -31,9 +29,9 @@ namespace MovieMatchMakerLib
             return null;
         }
 
-        public async Task<Movie> GetMovieAsync(string title, int releaseYear)
+        public async Task<Model.Movie> GetMovieAsync(string title, int releaseYear)
         {
-            return await _tmdbApi.FetchMovieAsync(title, releaseYear);            
+            return await _tmdbApi.FetchMovieAsync(title, releaseYear);
         }
 
         public async Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId)
@@ -50,6 +48,6 @@ namespace MovieMatchMakerLib
             }
 
             return null;
-        }       
+        }
     }
 }

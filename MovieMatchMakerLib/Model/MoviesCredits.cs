@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 using TMDbLib.Objects.Movies;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.Model
 {
     public class MoviesCredits
     {

@@ -1,10 +1,11 @@
 ﻿using System.IO;
-using System;
 using System.Threading.Tasks;
 
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using MovieMatchMakerLib.Utils;
+using MovieMatchMakerLib.Model;
+using MovieMatchMakerLib.DataCache;
 
 namespace MovieMatchMakerLib
 {
@@ -35,7 +36,7 @@ namespace MovieMatchMakerLib
             MovieConnections.SaveToFile(path);
         }       
 
-        protected void AddMovieConnection(string name, Movie sourceMovie, string sourceRole, Movie targetMovie, string targetRole)
+        protected void AddMovieConnection(string name, Model.Movie sourceMovie, string sourceRole, Model.Movie targetMovie, string targetRole)
         {
             if (targetMovie != null)
             {
@@ -56,7 +57,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        protected async Task FindMovieConnectionsFromRole(Movie sourceMovie, Cast sourceRole)
+        protected async Task FindMovieConnectionsFromRole(Model.Movie sourceMovie, Cast sourceRole)
         {
             var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
             if (personCredits != null)
@@ -80,7 +81,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        protected async Task FindMovieConnectionsFromRole(Movie sourceMovie, Crew sourceRole)
+        protected async Task FindMovieConnectionsFromRole(Model.Movie sourceMovie, Crew sourceRole)
         {
             var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
             if (personCredits != null)
@@ -104,7 +105,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        protected MovieConnection GetMovieConnection(Movie sourceMovie, Movie targetMovie)
+        protected MovieConnection GetMovieConnection(Model.Movie sourceMovie, Model.Movie targetMovie)
         {
             var movieConnection = MovieConnections.Find(mc =>
             {

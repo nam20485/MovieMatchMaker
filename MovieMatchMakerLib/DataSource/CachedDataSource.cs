@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
+using MovieMatchMakerLib.DataCache;
+using MovieMatchMakerLib.Model;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.DataSource
 {
     public class CachedDataSource : IDataSource
-    {        
+    {
         private readonly IDataCache _dataCache;
-        private readonly IDataSource _dataSource;        
+        private readonly IDataSource _dataSource;
 
         public CachedDataSource(IDataCache dataCache, IDataSource dataSource)
         {
             _dataCache = dataCache;
-            _dataSource = dataSource;                      
+            _dataSource = dataSource;
         }
 
         public async Task<Movie> GetMovieAsync(string title, int releaseYear)
@@ -37,7 +35,7 @@ namespace MovieMatchMakerLib
             }
 
             return movie;
-        }       
+        }
 
         //public async Task UpdateMovieCreditsAsync(string title, int releaseYear)
         //{
@@ -90,10 +88,10 @@ namespace MovieMatchMakerLib
                 {
                     await _dataCache.AddPersonsMovieCreditsAsync(personsMovieCredits);
                 }
-            }         
+            }
 
             return personsMovieCredits;
-        }        
+        }
 
         public async Task<MoviesCredits> GetCreditsForMovieAsync(int movieId)
         {
@@ -108,6 +106,6 @@ namespace MovieMatchMakerLib
             }
 
             return moviesCredits;
-        }      
+        }
     }
 }

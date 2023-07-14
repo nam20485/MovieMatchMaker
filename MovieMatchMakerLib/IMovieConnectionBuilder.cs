@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerLib
 {

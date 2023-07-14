@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.People;
 
-namespace MovieMatchMakerLib
+namespace MovieMatchMakerLib.TmdbApi
 {
     public interface ITmdbApi
-    {       
-        Task<Movie> FetchMovieAsync(string title, int releaseYear);                
+    {
+        Task<Model.Movie> FetchMovieAsync(string title, int releaseYear);
         Task<Credits> FetchMovieCreditsAsync(string title, int releaseYear);
         Task<Credits> FetchMovieCreditsAsync(int movieApiId);
         Task<MovieCredits> FetchMovieCreditsForPerson(int personApiId);

@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 
-namespace MovieMatchMakerLib
-{    
+namespace MovieMatchMakerLib.Model
+{
     public class Name : IEquatable<Name>
     {
         [Key]
         public int Id { get; set; }
         public string FirstName { get; set; }
-        public string Surname { get ; set; }
+        public string Surname { get; set; }
 
         public string FullName
         {
             get
-            { 
+            {
                 var sb = new StringBuilder(FirstName);
                 if (!string.IsNullOrEmpty(Surname))
                 {
