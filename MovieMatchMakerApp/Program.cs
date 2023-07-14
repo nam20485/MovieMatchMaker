@@ -8,11 +8,7 @@ using MovieMatchMakerLib.DataSource;
 namespace MovieMatchMakerApp
 {
     internal class Program
-    {
-        private const string Title = "Movie Match Maker";
-        private const string Slogan = "Find movies you didn't know you liked";
-        private const string Header = $"{Title} - {Slogan}!";
-
+    {      
         private static readonly MovieNetworkDataBuilder _movieNetworkDataBuilder;
         private static readonly IDataCache _dataCache;
         private static readonly MovieConnectionBuilder _connectionBuilder;
@@ -28,7 +24,7 @@ namespace MovieMatchMakerApp
 
         static int Main(string[] args)
         {
-            Console.WriteLine(Header);
+            Console.WriteLine(Constants.Strings.Header);
             Console.WriteLine(/* blank line for separation */);
 
             var stopWatch = new PrintStopwatch();
