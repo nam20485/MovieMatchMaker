@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace MovieMatchMakerLib.Utils
+namespace MovieMatchMakerLib.TmdbApi
 {
-    public class Auth
+    public class TmdbApiAuth
     {
         private const string TMDB_API_KEY_ENV_NAME = "TMDB_API_KEY";
         private const string TMDB_ACCESS_TOKEN_ENV_NAME = "TMDB_ACCESS_TOKEN";

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using MovieMatchMakerLib.Model;
-using MovieMatchMakerLib.Utils;
 using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLib.DataSource
@@ -11,7 +10,7 @@ namespace MovieMatchMakerLib.DataSource
 
         public ApiDataSource()
         {
-            _tmdbApi = new TmdbLibApi(Auth.TmdbApiKey);
+            _tmdbApi = new TmdbLibApi(TmdbApiAuth.TmdbApiKey);
         }
 
         public async Task<MoviesCredits> GetCreditsForMovieAsync(int movieId)
