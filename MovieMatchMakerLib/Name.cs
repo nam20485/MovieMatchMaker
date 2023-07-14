@@ -26,7 +26,12 @@ namespace MovieMatchMakerLib
                 }
                 return sb.ToString();
             }
-        }          
+        }
+
+        public Name()
+        {
+            // required by JSON deserialization
+        }
 
         public Name(string firstName, string surname)
         {
