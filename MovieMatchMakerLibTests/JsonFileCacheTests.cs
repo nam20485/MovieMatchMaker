@@ -5,17 +5,11 @@ using MovieMatchMakerLib.Data;
 namespace MovieMatchMakerLibTests
 {
     public class JsonFileCacheTests
-    {
-        private static JsonFileCache LoadJsonFileCache()
-        {
-            var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);
-            return dataCache;
-        }
-
+    {      
         [Fact]
         public void Test_Load()
         {
-            var dataCache = LoadJsonFileCache();
+            var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
             dataCache.Movies.Count.Should().Be(533);
@@ -30,7 +24,7 @@ namespace MovieMatchMakerLibTests
             const string title = "Dark City";
             const int releaseYear = 1998;
 
-            var dataCache = LoadJsonFileCache();
+            var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
            
             var movie = await dataCache.GetMovieAsync(title, releaseYear);
@@ -46,7 +40,7 @@ namespace MovieMatchMakerLibTests
             const int releaseYear = 1998;
             const int darkCityMovieId = 2666;
 
-            var dataCache = LoadJsonFileCache();
+            var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
             var movieById = dataCache.GetMovie(darkCityMovieId);

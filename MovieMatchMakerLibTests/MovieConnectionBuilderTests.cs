@@ -4,16 +4,14 @@ using MovieMatchMakerLib;
 
 namespace MovieMatchMakerLibTests
 {
-    public class ConnectionBuilderTests
+    public class MovieConnectionBuilderTests
     {      
         [Fact]
         public void Test_LoadMovieConnections()
         {
-            var movieConnectionBuilder = Utils.CreateMovieConnectionBuilder();
-            movieConnectionBuilder.LoadMovieConnections(MovieConnectionBuilderBase.FilePath);
+            var movieConnectionBuilder = Utils.CreateMovieConnectionBuilder(true);
             movieConnectionBuilder.MovieConnections.Should().HaveCount(17413);                       
         }
-
     }
 
     //bool movieConnectionsLoaded = false;

@@ -5,22 +5,28 @@ namespace MovieMatchMakerLibTests
 {
     public class Utils
     {
-        public static MovieConnectionBuilder CreateMovieConnectionBuilder(bool loaded)
+        public static JsonFileCache LoadJsonFileCache()
         {
             var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);
+            return dataCache;
+        }
+
+        public static MovieConnectionBuilder CreateMovieConnectionBuilder(bool loaded)
+        {
+            var dataCache = LoadJsonFileCache();
             var connectionBuilder = new MovieConnectionBuilder(dataCache);
             if (loaded)
             {
                 connectionBuilder.LoadMovieConnections();
             }
             return connectionBuilder;
-        }
+        }        
 
-        public static MovieConnectionBuilder CreateMovieConnectionBuilder()
+        public static CachedDataSource CreateCachedDataSource()
         {
-            var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);
-            var connectionBuilder = new MovieConnectionBuilder(dataCache);
-            return connectionBuilder;
-        }
+            var dataCache = LoadJsonFileCache();
+            var dataSource = new CachedDataSource(dataCache, new ApiDataSource());
+            return dataSource;
+        }       
     }
 }

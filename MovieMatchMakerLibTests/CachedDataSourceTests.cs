@@ -2,15 +2,12 @@
 
 namespace MovieMatchMakerLibTests
 {
-    public class DataSourceTests
-    {
-        private static string FilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "moviematchmaker.json");
-
+    public class CachedDataSourceTests
+    {        
         [Fact]
         public async void Test_GetMovie_DarkCity_1998()
         {
-            var dataCache = JsonFileCache.Load(FilePath);
-            var dataSource = new CachedDataSource(dataCache, new ApiDataSource());
+            var dataSource = Utils.CreateCachedDataSource();
 
             const string title = "Dark City";
             const int releaseYear = 1998;
@@ -19,6 +16,6 @@ namespace MovieMatchMakerLibTests
             Assert.NotNull(movie);
             Assert.Equal(title, movie.Title);
             Assert.Equal(releaseYear, movie.ReleaseYear);
-        }
+        }       
     }
 }
