@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TMDbLib.Objects.General;
+using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.People;
 
 namespace MovieMatchMakerLib
@@ -26,48 +28,58 @@ namespace MovieMatchMakerLib
                 var sourceMoviesCredits = await _dataCache.GetCreditsForMovieAsync(sourceMovie.MovieId);
                 foreach (var sourceRole in sourceMoviesCredits.Credits.Cast)
                 {
-                    var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
-                    if (personCredits != null)
-                    {
-                        foreach (var targetRole in personCredits.MovieCredits.Cast)
-                        {
-                            if (targetRole.ReleaseDate.HasValue)
-                            {
-                                var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Character);
-                            }
-                        }
-                        foreach (var targetRole in personCredits.MovieCredits.Crew)
-                        {
-                            if (targetRole.ReleaseDate.HasValue)
-                            {
-                                var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Job);
-                            }
-                        }
-                    }
+                    await FindMovieConnectionsFromRole(sourceMovie, sourceRole);
                 }
                 foreach (var sourceRole in sourceMoviesCredits.Credits.Crew)
                 {
-                    var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
-                    if (personCredits != null)
+                    await FindMovieConnectionsFromRole(sourceMovie, sourceRole);
+                }
+            }
+        }
+
+        private async Task FindMovieConnectionsFromRole(Movie sourceMovie, Crew sourceRole)
+        {
+            var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
+            if (personCredits != null)
+            {
+                foreach (var targetRole in personCredits.MovieCredits.Crew)
+                {
+                    if (targetRole.ReleaseDate.HasValue)
                     {
-                        foreach (var targetRole in personCredits.MovieCredits.Crew)
-                        {
-                            if (targetRole.ReleaseDate.HasValue)
-                            {
-                                var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Job);
-                            }
-                        }
-                        foreach (var targetRole in personCredits.MovieCredits.Cast)
-                        {
-                            if (targetRole.ReleaseDate.HasValue)
-                            {
-                                var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                                AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Character);
-                            }
-                        }
+                        var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Job);
+                    }
+                }
+                foreach (var targetRole in personCredits.MovieCredits.Cast)
+                {
+                    if (targetRole.ReleaseDate.HasValue)
+                    {
+                        var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Character);
+                    }
+                }
+            }
+        }
+
+        private async Task FindMovieConnectionsFromRole(Movie sourceMovie, Cast sourceRole)
+        {
+            var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
+            if (personCredits != null)
+            {
+                foreach (var targetRole in personCredits.MovieCredits.Cast)
+                {
+                    if (targetRole.ReleaseDate.HasValue)
+                    {
+                        var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Character);
+                    }
+                }
+                foreach (var targetRole in personCredits.MovieCredits.Crew)
+                {
+                    if (targetRole.ReleaseDate.HasValue)
+                    {
+                        var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Job);
                     }
                 }
             }
@@ -86,15 +98,18 @@ namespace MovieMatchMakerLib
                         SourceJob = sourceRole,
                         TargetJob = targetRole
                     };
-                    movieConnection.ConnectedRoles.Add(connectedRole);
+                    //var found = movieConnection.ConnectedRoles.Find(cr =>
+                    //{
+                    //    return cr == connectedRole;
+                    //});
+                    //if (found is null)
+                    if (! movieConnection.ConnectedRoles.Contains(connectedRole))
+                    {
+                        movieConnection.ConnectedRoles.Add(connectedRole);
+                    }
                 }
             }
-        }
-
-        private void AddMovieConnection(Movie sourceMovie, TMDbLib.Objects.Movies.Cast sourceRole, MovieRole targetRole, Movie targetMovie)
-        {
-           
-        }
+        }     
 
         private MovieConnection GetMovieConnection(Movie sourceMovie, Movie targetMovie)
         {
