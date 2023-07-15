@@ -1,20 +1,21 @@
 ﻿using MovieMatchMakerLib;
 using MovieMatchMakerLib.Data;
+using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerApi.Services
 {
-    public class MovieConnectionBuilderService
+    public class MovieConnectionBuilderService : IMovieConnectionBuilderService
     {
-        private readonly MovieConnectionBuilder _connectionBuilder;
-        private readonly ILogger<MovieConnectionBuilderService> _logger;
+        public MovieConnectionBuilder MovieConnectionBuilder { get; }
+
+        private readonly ILogger<MovieConnectionBuilderService> _logger;        
 
         public MovieConnectionBuilderService(ILogger<MovieConnectionBuilderService> logger)
         {
             _logger = logger;
 
             var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);                        
-            _connectionBuilder = new MovieConnectionBuilder(dataCache);
+            MovieConnectionBuilder = new MovieConnectionBuilder(dataCache);            
         }
-
     }
 }
