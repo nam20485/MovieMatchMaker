@@ -11,7 +11,7 @@ namespace MovieMatchMakerLib
 {
     public abstract class MovieConnectionBuilderBase : IMovieConnectionBuilder
     {               
-        public static string FilePath => Path.Combine(SystemFolders.AppDataPath, "movieconnections.json");
+        public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "movieconnections.json");
 
         public MovieConnection.List MovieConnections { get; }
 

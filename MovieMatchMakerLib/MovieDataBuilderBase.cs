@@ -7,7 +7,7 @@ namespace MovieMatchMakerLib
 {
     public abstract class MovieDataBuilderBase : IMovieDataBuilder
     {
-        public static string FilePath => Path.Combine(SystemFolders.AppDataPath, "moviematchmaker.json");
+        public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "moviematchmaker.json");
 
         protected readonly IDataSource _dataSource;        
 
@@ -31,7 +31,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        protected async Task FindMoviesConnectedToMovie(string title, int releaseYear, int degree)
+        protected virtual async Task FindMoviesConnectedToMovie(string title, int releaseYear, int degree)
         {
             if (degree >= 0)
             {

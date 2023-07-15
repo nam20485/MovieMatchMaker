@@ -3,9 +3,9 @@ using MovieMatchMakerLib.Data;
 
 namespace MovieMatchMakerLib
 {
-    public class MovieNetworkDataBuilder : MovieDataBuilderBase
+    public class MovieDataBuilder : MovieDataBuilderBase
     {
-        public MovieNetworkDataBuilder(IDataSource dataSource)
+        public MovieDataBuilder(IDataSource dataSource)
             : base(dataSource)
         {         
         }

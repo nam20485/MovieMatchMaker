@@ -7,7 +7,7 @@ namespace MovieMatchMakerApp
 {
     internal class Program
     {
-        private static readonly MovieNetworkDataBuilder _movieNetworkDataBuilder;        
+        private static readonly MovieDataBuilder _movieNetworkDataBuilder;        
         private static readonly MovieConnectionBuilder _connectionBuilder;
 
         static Program()
@@ -16,7 +16,7 @@ namespace MovieMatchMakerApp
             var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);            
             var cachedDataSource = new CachedDataSource(dataCache, apiDataSource);
 
-            _movieNetworkDataBuilder = new MovieNetworkDataBuilder(cachedDataSource);
+            _movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
             _connectionBuilder = new MovieConnectionBuilder(dataCache);                        
         }     
 
