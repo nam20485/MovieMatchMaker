@@ -88,6 +88,15 @@ namespace MovieMatchMakerLibTests
         }
 
         [Fact]
+        public void Test_SpecificMovieFilter_DarkCity_1998()
+        {
+            var connectionBuilder = Utils.CreateMovieConnectionBuilder(true);
+            connectionBuilder.MovieConnections.Should().HaveCount(17413);
+            var filtered = new SpecificMovieFilter("Dark City", 1998).Apply(connectionBuilder.MovieConnections);
+            filtered.Should().HaveCount(532);
+        }
+
+        [Fact]
         public void Test_AllFilters_DefaultSettings()
         {
             var connectionBuilder = Utils.CreateMovieConnectionBuilder(true);
@@ -98,6 +107,20 @@ namespace MovieMatchMakerLibTests
                         new SortFilter().Apply(
                             connectionBuilder.MovieConnections)));
             filtered.Should().HaveCount(2462);
+        }
+
+        [Fact]
+        public void Test_AllFiltersWithSpecificMovie_DefaultSettings()
+        {
+            var connectionBuilder = Utils.CreateMovieConnectionBuilder(true);
+            connectionBuilder.MovieConnections.Should().HaveCount(17413);
+            var filtered =
+                new MaxMatchingTitleWordsFilter().Apply(
+                    new MinConnectedRolesCountFilter().Apply(
+                        new SpecificMovieFilter("Dark City", 1998).Apply(
+                            new SortFilter().Apply(                            
+                                connectionBuilder.MovieConnections))));
+            filtered.Should().HaveCount(81);
         }
     }
 }

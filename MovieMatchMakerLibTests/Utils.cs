@@ -1,4 +1,6 @@
-﻿using MovieMatchMakerLib;
+﻿using Microsoft.Extensions.Logging;
+
+using MovieMatchMakerLib;
 using MovieMatchMakerLib.Data;
 
 namespace MovieMatchMakerLibTests
@@ -25,8 +27,24 @@ namespace MovieMatchMakerLibTests
         public static CachedDataSource CreateCachedDataSource()
         {
             var dataCache = LoadJsonFileCache();
-            var dataSource = new CachedDataSource(dataCache, new ApiDataSource());
+            var apiDataSource = new ApiDataSource();
+            var dataSource = new CachedDataSource(dataCache, apiDataSource);
             return dataSource;
-        }       
+        }  
+        
+        public static MovieDataBuilder CreateMovieDataBuilder()
+        {            
+            var cachedDataSource = CreateCachedDataSource();
+            var movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
+            return movieNetworkDataBuilder;
+        }
+
+        public static ILogger<T> CreateLogger<T>()
+        {
+            return LoggerFactory.Create(configure =>
+            {
+                //
+            }).CreateLogger<T>();
+        }
     }
 }

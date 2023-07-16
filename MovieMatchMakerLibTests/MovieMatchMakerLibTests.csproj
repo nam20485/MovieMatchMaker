@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MovieMatchMakerApi\MovieMatchMakerApi.csproj" />
     <ProjectReference Include="..\MovieMatchMakerLib\MovieMatchMakerLib.csproj" />
   </ItemGroup>
 
