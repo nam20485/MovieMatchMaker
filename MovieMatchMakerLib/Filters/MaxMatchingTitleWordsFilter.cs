@@ -5,7 +5,7 @@ using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerLib.Filters
 {
-    public class MaxMatchingTitleWordsFilter : MovieConnectionListFilter
+    public class MaxMatchingTitleWordsFilter : MovieConnectionListFilterBase
     {
         public int MaxMatchingTitleWords { get; set; }
 

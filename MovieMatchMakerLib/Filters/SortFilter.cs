@@ -2,7 +2,7 @@
 
 namespace MovieMatchMakerLib.Filters
 {
-    public class SortFilter : MovieConnectionListFilter
+    public class SortFilter : MovieConnectionListFilterBase
     {
         public enum Order
         {

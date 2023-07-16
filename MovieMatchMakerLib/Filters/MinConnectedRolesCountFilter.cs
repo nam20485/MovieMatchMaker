@@ -2,7 +2,7 @@
 
 namespace MovieMatchMakerLib.Filters
 {
-    public class MinConnectedRolesCountFilter : MovieConnectionListFilter
+    public class MinConnectedRolesCountFilter : MovieConnectionListFilterBase
     {
         public int MinConnectedRolesCount { get; set; }
 
