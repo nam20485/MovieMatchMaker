@@ -15,6 +15,11 @@ namespace MovieMatchMakerLib.Model
 
         public ConnectedRole.List ConnectedRoles { get; set; }
 
+        public MovieConnection()
+        { 
+            // required for deserialization
+        }
+
         public MovieConnection(Movie sourceMovie, Movie targetMovie)
         {
             SourceMovie = sourceMovie;
@@ -31,10 +36,10 @@ namespace MovieMatchMakerLib.Model
         {
             return !(other is null) &&
                    // allow for reversed source and target movies (they are the "same" connection)
-                   EqualityComparer<Movie>.Default.Equals(SourceMovie, other.SourceMovie) &&
-                    EqualityComparer<Movie>.Default.Equals(TargetMovie, other.TargetMovie) ||
-                   EqualityComparer<Movie>.Default.Equals(SourceMovie, other.TargetMovie) &&
-                    EqualityComparer<Movie>.Default.Equals(TargetMovie, other.SourceMovie);
+                   ((EqualityComparer<Movie>.Default.Equals(SourceMovie, other.SourceMovie) &&
+                     EqualityComparer<Movie>.Default.Equals(TargetMovie, other.TargetMovie)) ||
+                    (EqualityComparer<Movie>.Default.Equals(SourceMovie, other.TargetMovie) &&
+                     EqualityComparer<Movie>.Default.Equals(TargetMovie, other.SourceMovie)));
         }
 
         public override int GetHashCode()
