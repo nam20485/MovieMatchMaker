@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using MovieMatchMakerApi.Services;
-
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
 
@@ -42,26 +41,31 @@ namespace MovieMatchMakerApi.Controllers
         [HttpGet("movieconnections/{title}/{releaseYear}")]
         public IEnumerable<MovieConnection> GetMovieConnectionsForMovie([FromRoute] string title, [FromRoute] int releaseYear)
         {
-            var movieConnections =  _connectionsService.MovieConnections.FindAll(mc =>
-            {
-                return (mc.SourceMovie.Title == title && mc.SourceMovie.ReleaseYear == releaseYear) ||
-                       (mc.TargetMovie.Title == title && mc.TargetMovie.ReleaseYear == releaseYear);
-            });  
-            
-            return movieConnections;             
-        }
-
+            return FindForMovie(title, releaseYear);
+        }        
 
         // get filtered movie connections
         [HttpPost("movieconnections/filter")]
-        public IEnumerable<MovieConnection> GetFiltereredMovieConnections([FromBody] List<IMovieConnectionListFilter> filters)
+        public IEnumerable<MovieConnection> GetAllMovieConnectionsFiltered([FromBody] List<IMovieConnectionListFilter> filters)
         {
-            var filtered = _connectionsService.MovieConnections;
-            foreach (var filter in filters)
-            {
-                filtered = filter.Apply(filtered);
-            }
-            return filtered;
+            return Filter(_connectionsService.MovieConnections, filters);            
+        }      
+
+        // get movie connections for a movie and then filter
+        [HttpPost("movieconnections/filter/{title}/{releaseYear}")]
+        public IEnumerable<MovieConnection> GetMovieConnectionsForMovieFiltered([FromRoute] string title, [FromRoute] int releaseYear, [FromBody] List<IMovieConnectionListFilter> filters)
+        {            
+            return Filter(FindForMovie(title, releaseYear), filters);
+        }
+
+        private MovieConnection.List FindForMovie(string title, int releaseYear)
+        {
+            return _connectionsService.MovieConnections.FindForMovie(title, releaseYear);
+        }
+
+        private MovieConnection.List Filter(MovieConnection.List list, List<IMovieConnectionListFilter> filters)
+        {
+            return list.Filter(filters);
         }
     }
 }
