@@ -14,19 +14,13 @@ namespace MovieMatchMakerApi.Controllers
     {
         private readonly ILogger<MovieConnectionsController> _logger;
 
-        private readonly IMovieDataBuilderService _dataBuilderService;
-        private readonly IMovieConnectionBuilderService _connectionBuilderService;
         private readonly IMovieConnectionsService _connectionsService;
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
-                                          IMovieDataBuilderService dataBuilderService,
-                                          IMovieConnectionBuilderService connectionBuilderService,
                                           IMovieConnectionsService connectionsService)
         {
             _logger = logger;
 
-            _dataBuilderService = dataBuilderService;
-            _connectionBuilderService = connectionBuilderService;
             _connectionsService = connectionsService;             
         }
 
