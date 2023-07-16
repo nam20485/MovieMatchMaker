@@ -2,7 +2,7 @@
 
 namespace MovieMatchMakerLibTests
 {
-    public class FilterTests
+    public class MovieConnectionFilterTests
     {
         [Fact]
         public void Test_MinConnectedRolesCountFilter_2()
