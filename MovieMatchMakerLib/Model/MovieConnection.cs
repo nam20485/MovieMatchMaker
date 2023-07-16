@@ -64,6 +64,18 @@ namespace MovieMatchMakerLib.Model
             {
             }
 
+            public List FindForMovie(string title, int releaseYear)
+            {
+                var genericList = FindAll(mc =>
+                {
+                    return (mc.SourceMovie.Title == title && mc.SourceMovie.ReleaseYear == releaseYear) ||
+                           (mc.TargetMovie.Title == title && mc.TargetMovie.ReleaseYear == releaseYear);
+                });
+
+                var mcList = new List(genericList);
+                return mcList;
+            }
+
             public List Filter(IMovieConnectionListFilter filter)
             {
                 return filter.Apply(this);
