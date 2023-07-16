@@ -2,7 +2,7 @@
 
 namespace MovieMatchMakerLib.Filters
 {
-    public abstract class MovieConnectionListFilter : IMovieConnectionListFilter
+    public abstract class MovieConnectionListFilterBase : IMovieConnectionListFilter
     {
         public MovieConnection.List Apply(MovieConnection.List input)
         {
