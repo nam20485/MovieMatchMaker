@@ -36,7 +36,7 @@ namespace MovieMatchMakerApi.Controllers
         }
 
         // get movie connections for a movie
-        [HttpGet("{title}/{releaseYear}", Name = "movieconnections")]
+        [HttpGet("{title}/{releaseYear}", Name = "movie")]
         public ActionResult GetMovieConnectionForMovie([FromRoute] string title, [FromRoute] int releaseYear)
         {
             var movieConnection =  _connectionsService.MovieConnections.Find(mc =>
@@ -55,7 +55,7 @@ namespace MovieMatchMakerApi.Controllers
 
 
         // get filtered movie connections
-        [HttpGet(Name = "movieconnections")]
+        [HttpPost(Name = "filter")]
         public IEnumerable<MovieConnection> FilterMovieConnections([FromBody] List<IMovieConnectionListFilter> filters)
         {
             var filtered = _connectionsService.MovieConnections;
