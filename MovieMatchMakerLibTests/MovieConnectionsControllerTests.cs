@@ -15,9 +15,8 @@ namespace MovieMatchMakerLibTests
     {
         [Fact]
         public void Test_GetMovieConnections()
-        {            
-            var service = new MovieConnectionsService(Utils.CreateLogger<MovieConnectionsService>());
-            var controller = new MovieConnectionsController(Utils.CreateLogger<MovieConnectionsController>(), service);
+        {
+            var controller = Utils.CreateMovieConnectionsController();
 
             var allConnections = controller.GetAllMovieConnections();
             allConnections.Should().NotBeNull();

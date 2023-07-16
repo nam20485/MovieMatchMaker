@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using MovieMatchMakerApi.Controllers;
+using MovieMatchMakerApi.Services;
+
 using MovieMatchMakerLib;
 using MovieMatchMakerLib.Data;
 
@@ -37,6 +40,16 @@ namespace MovieMatchMakerLibTests
             var cachedDataSource = CreateCachedDataSource();
             var movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
             return movieNetworkDataBuilder;
+        }
+
+        public static MovieConnectionsController CreateMovieConnectionsController()
+        {
+            return new MovieConnectionsController(CreateLogger<MovieConnectionsController>(), CreateMovieConnectionsService());
+        }
+
+        public static MovieConnectionsService CreateMovieConnectionsService()
+        {
+            return new MovieConnectionsService(CreateLogger<MovieConnectionsService>());
         }
 
         public static ILogger<T> CreateLogger<T>()
