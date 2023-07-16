@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MovieMatchMakerLib.Utils
 {
@@ -8,7 +9,8 @@ namespace MovieMatchMakerLib.Utils
         {
             WriteIndented = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
-            //ReferenceHandler = ReferenceHandler.Preserve,
+            AllowTrailingCommas = true,
+            ReferenceHandler = ReferenceHandler.Preserve,                       
         };
     }
 }
