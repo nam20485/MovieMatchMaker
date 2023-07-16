@@ -15,29 +15,32 @@ namespace MovieMatchMakerApi.Controllers
     {
         private readonly ILogger<MovieConnectionsController> _logger;
 
+        private readonly IMovieDataBuilderService _dataBuilderService;
         private readonly IMovieConnectionBuilderService _connectionBuilderService;
         private readonly IMovieConnectionsService _connectionsService;
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
+                                          IMovieDataBuilderService dataBuilderService,
                                           IMovieConnectionBuilderService connectionBuilderService,
                                           IMovieConnectionsService connectionsService)
         {
             _logger = logger;
 
+            _dataBuilderService = dataBuilderService;
             _connectionBuilderService = connectionBuilderService;
             _connectionsService = connectionsService;             
         }
 
         // get all movie connections
         [HttpGet("movieconnections")]
-        public IEnumerable<MovieConnection> GetMovieConnections()
+        public IEnumerable<MovieConnection> GetAllMovieConnections()
         {
             return _connectionsService.MovieConnections;
         }
 
         // get movie connections for a movie
-        [HttpGet("movie/{title}/{releaseYear}")]
-        public ActionResult GetMovieConnectionForMovie([FromRoute] string title, [FromRoute] int releaseYear)
+        [HttpGet("movieconnections/{title}/{releaseYear}")]
+        public IEnumerable<MovieConnection> GetMovieConnectionsForMovie([FromRoute] string title, [FromRoute] int releaseYear)
         {
             var movieConnections =  _connectionsService.MovieConnections.FindAll(mc =>
             {
@@ -45,13 +48,13 @@ namespace MovieMatchMakerApi.Controllers
                        (mc.TargetMovie.Title == title && mc.TargetMovie.ReleaseYear == releaseYear);
             });  
             
-            return Ok(movieConnections);             
+            return movieConnections;             
         }
 
 
         // get filtered movie connections
-        [HttpPost("filter")]
-        public IEnumerable<MovieConnection> FilterMovieConnections([FromBody] List<IMovieConnectionListFilter> filters)
+        [HttpPost("movieconnections/filter")]
+        public IEnumerable<MovieConnection> GetFiltereredMovieConnections([FromBody] List<IMovieConnectionListFilter> filters)
         {
             var filtered = _connectionsService.MovieConnections;
             foreach (var filter in filters)
