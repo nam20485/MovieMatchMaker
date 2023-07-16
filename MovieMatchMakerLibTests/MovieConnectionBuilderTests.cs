@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-
-using MovieMatchMakerLib;
-
-namespace MovieMatchMakerLibTests
+﻿namespace MovieMatchMakerLibTests
 {
     public class MovieConnectionBuilderTests
     {      

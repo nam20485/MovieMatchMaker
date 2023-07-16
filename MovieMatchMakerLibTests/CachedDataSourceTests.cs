@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-
-using MovieMatchMakerLib.Data;
-
-namespace MovieMatchMakerLibTests
+﻿namespace MovieMatchMakerLibTests
 {
     public class CachedDataSourceTests
     {

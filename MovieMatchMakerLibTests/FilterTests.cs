@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-
-using MovieMatchMakerLib.Filters;
+﻿using MovieMatchMakerLib.Filters;
 
 namespace MovieMatchMakerLibTests
 {

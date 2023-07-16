@@ -1,8 +1,4 @@
-﻿using MovieMatchMakerLib;
-using FluentAssertions;
-using MovieMatchMakerLib.Data;
-
-namespace MovieMatchMakerLibTests
+﻿namespace MovieMatchMakerLibTests
 {
     public class JsonFileCacheTests
     {
