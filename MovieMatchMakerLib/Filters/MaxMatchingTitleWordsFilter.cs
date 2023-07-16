@@ -7,7 +7,7 @@ namespace MovieMatchMakerLib.Filters
 {
     public class MaxMatchingTitleWordsFilter : MovieConnectionListFilter
     {
-        public int MaxMatchingTitleWords { get; private set; }
+        public int MaxMatchingTitleWords { get; set; }
 
         public MaxMatchingTitleWordsFilter() 
             : this(0)

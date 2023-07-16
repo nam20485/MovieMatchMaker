@@ -10,7 +10,7 @@ namespace MovieMatchMakerLib.Filters
             Descending
         }
 
-        public Order SortOrder {  get; private set; }
+        public Order SortOrder {  get; set; }
 
         public SortFilter()
             : this(Order.Descending)
