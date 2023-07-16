@@ -24,3 +24,7 @@
 /MovieMatchMakerApp/bin
 /MovieMatchMakerApp00000/bin
 /MovieMatchMakerApp00000/obj
+/.vs
+/MovieMatchMakerClient/bin/Debug/net7.0
+/MovieMatchMakerClient/Client/obj
+/MovieMatchMakerClient/obj
