@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
+using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib.Model
@@ -61,6 +62,21 @@ namespace MovieMatchMakerLib.Model
             public List(IEnumerable<MovieConnection> collection)
                 : base(collection)
             {
+            }
+
+            public List Filter(IMovieConnectionListFilter filter)
+            {
+                return filter.Apply(this);
+            }
+
+            public List Filter(List<IMovieConnectionListFilter> filters)
+            {
+                var filtered = this;
+                foreach (var filter in filters)
+                {
+                    filtered = filtered.Filter(filter);
+                }
+                return filtered;
             }
 
             public string ToJson()
