@@ -56,5 +56,55 @@ namespace MovieMatchMakerLibTests
             loadedAgain.Should().HaveCount(loaded.Count);
             loadedAgain.Should().BeEquivalentTo(loaded);
         }
+
+        [Fact]
+        public void Test_FindForMovie()
+        {
+            File.Exists(MovieConnectionBuilderBase.FilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            loaded.Should().NotBeNull();
+            loaded.Should().NotBeEmpty();
+            loaded.Should().HaveCount(17413);
+
+            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            movieConnectionsForDarkCity.Should().NotBeNull();
+            movieConnectionsForDarkCity.Should().NotBeEmpty();
+            movieConnectionsForDarkCity.Should().HaveCount(532);
+        }
+
+        [Fact]
+        public void Test_Movies_All()
+        {
+            File.Exists(MovieConnectionBuilderBase.FilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            loaded.Should().NotBeNull();
+            loaded.Should().NotBeEmpty();
+            loaded.Should().HaveCount(17413);
+
+            var movies = loaded.Movies;
+            movies.Should().NotBeNull();
+            movies.Should().NotBeEmpty();
+            movies.Should().HaveCount(533);
+        }
+
+        [Fact]
+        public void Test_Movies_DarkCity_1998()
+        {
+            File.Exists(MovieConnectionBuilderBase.FilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            loaded.Should().NotBeNull();
+            loaded.Should().NotBeEmpty();
+            loaded.Should().HaveCount(17413);
+
+            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            movieConnectionsForDarkCity.Should().NotBeNull();
+            movieConnectionsForDarkCity.Should().NotBeEmpty();
+            movieConnectionsForDarkCity.Should().HaveCount(532);
+
+            var movies = movieConnectionsForDarkCity.Movies;
+            movies.Should().NotBeNull();
+            movies.Should().NotBeEmpty();
+            movies.Should().HaveCount(533);
+        }
     }
 }

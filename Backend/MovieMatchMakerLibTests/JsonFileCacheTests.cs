@@ -1,11 +1,7 @@
 ﻿namespace MovieMatchMakerLibTests
 {
     public class JsonFileCacheTests
-    {
-        private const string title = "Dark City";
-        private const int releaseYear = 1998;
-        private const int darkCityMovieId = 2666;
-
+    {      
         [Fact]
         public void Test_Load()
         {
@@ -23,11 +19,11 @@
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
            
-            var movie = await dataCache.GetMovieAsync(title, releaseYear);
+            var movie = await dataCache.GetMovieAsync(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
             movie.Should().NotBeNull();
-            movie.MovieId.Should().Be(darkCityMovieId);
-            movie.Title.Should().Be(title);
-            movie.ReleaseYear.Should().Be(releaseYear);           
+            movie.MovieId.Should().Be(Constants.Ints.DarkCityMovieId);
+            movie.Title.Should().Be(Constants.Strings.DarkCityTitle);
+            movie.ReleaseYear.Should().Be(Constants.Ints.DarkCityReleaseYear);           
         }
 
         [Fact]
@@ -36,11 +32,11 @@
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
-            var movieById = dataCache.GetMovie(darkCityMovieId);
+            var movieById = dataCache.GetMovie(Constants.Ints.DarkCityMovieId);
             movieById.Should().NotBeNull();
-            movieById.MovieId.Should().Be(darkCityMovieId);
-            movieById.Title.Should().Be(title);
-            movieById.ReleaseYear.Should().Be(releaseYear);
+            movieById.MovieId.Should().Be(Constants.Ints.DarkCityMovieId);
+            movieById.Title.Should().Be(Constants.Strings.DarkCityTitle);
+            movieById.ReleaseYear.Should().Be(Constants.Ints.DarkCityReleaseYear);
         }
     }
 }
