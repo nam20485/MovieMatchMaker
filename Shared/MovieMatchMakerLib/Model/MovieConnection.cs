@@ -69,6 +69,26 @@ namespace MovieMatchMakerLib.Model
             {
             }
 
+            public Movie.HashSet Movies
+            {
+                get
+                {
+                    var movies = new Movie.HashSet();
+                    foreach (var connection in this)
+                    {
+                        if (! movies.Contains(connection.SourceMovie))
+                        { 
+                            movies.Add(connection.SourceMovie);
+                        }
+                        if (! movies.Contains(connection.TargetMovie))
+                        {
+                            movies.Add(connection.TargetMovie);
+                        }
+                    }
+                    return movies;
+                }
+            }
+
             public List FindForMovie(string title, int releaseYear)
             {
                 var genericList = FindAll(mc =>

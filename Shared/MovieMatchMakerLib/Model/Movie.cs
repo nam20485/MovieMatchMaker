@@ -10,7 +10,12 @@ namespace MovieMatchMakerLib.Model
         {
         }
 
-        public class List : List<Movie> { }
+        public class List : List<Movie>
+        {
+        }
 
+        public class HashSet : HashSet<Movie>
+        { 
+        }
     }
 }
