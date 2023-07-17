@@ -57,7 +57,7 @@ namespace MovieMatchMakerApi.Controllers
             return _connectionsService.MovieConnections.FindForMovie(title, releaseYear);
         }
 
-        private MovieConnection.List Filter(MovieConnection.List list, List<IMovieConnectionListFilter> filters)
+        private static MovieConnection.List Filter(MovieConnection.List list, List<IMovieConnectionListFilter> filters)
         {
             return list.Filter(filters);
         }
