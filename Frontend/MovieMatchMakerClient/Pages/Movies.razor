@@ -1,7 +1,26 @@
 ﻿@page "/movies"
+@using MovieMatchMakerLib.Model;
 
 <PageTitle>Movies</PageTitle>
 
 <h1>Movies!</h1>
 
-Display grid of movies here
+<MudGrid Spacing="@Spacing" Justify="Justify.Center">
+    
+    <MudItem>
+        <MudPaper Height="140px" Width="140px" />
+    </MudItem>
+    <MudItem>
+        <MudPaper Height="140px" Width="140px" />
+    </MudItem>
+    <MudItem>
+        <MudPaper Height="140px" Width="140px" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    public int Spacing { get; set; } = 2;
+
+    public MovieConnection.List? MovieConnections { get; set; }
+}
