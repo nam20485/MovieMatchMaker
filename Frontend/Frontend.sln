@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerLib", "MovieMatchMakerLib\MovieMatchMakerLib.csproj", "{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerApp", "MovieMatchMakerApp\MovieMatchMakerApp.csproj", "{47872A13-D190-427B-A971-5C29D1654A06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieMatchMakerClient", "MovieMatchMakerClient\MovieMatchMakerClient.csproj", "{7D5E1916-7101-494E-80C5-E89F350DF843}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerClient", "MovieMatchMakerClient\MovieMatchMakerClient.csproj", "{7D5E1916-7101-494E-80C5-E89F350DF843}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerLib", "..\Shared\MovieMatchMakerLib\MovieMatchMakerLib.csproj", "{00527131-4D6E-4E57-9AFE-C45F790963CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5F8008D-E38F-4F4D-AC4B-D55F1B756023}.Release|Any CPU.Build.0 = Release|Any CPU
 		{47872A13-D190-427B-A971-5C29D1654A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{47872A13-D190-427B-A971-5C29D1654A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47872A13-D190-427B-A971-5C29D1654A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{7D5E1916-7101-494E-80C5-E89F350DF843}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D5E1916-7101-494E-80C5-E89F350DF843}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D5E1916-7101-494E-80C5-E89F350DF843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

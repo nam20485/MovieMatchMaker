@@ -28,3 +28,15 @@
 /MovieMatchMakerClient/bin/Debug/net7.0
 /MovieMatchMakerClient/Client/obj
 /MovieMatchMakerClient/obj
+/Backend/.vs/Backend
+/Backend/MovieMatchMakerApi/bin
+/Backend/MovieMatchMakerApi/obj
+/Backend/MovieMatchMakerLibTests/bin
+/Backend/MovieMatchMakerLibTests/obj
+/Frontend/.vs/Frontend
+/Frontend/MovieMatchMakerApp/bin
+/Frontend/MovieMatchMakerApp/obj
+/Frontend/MovieMatchMakerClient/bin/Debug/net7.0
+/Frontend/MovieMatchMakerClient/obj
+/Shared/MovieMatchMakerLib/bin
+/Shared/MovieMatchMakerLib/obj

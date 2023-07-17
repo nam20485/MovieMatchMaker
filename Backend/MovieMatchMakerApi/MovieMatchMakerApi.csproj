@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MovieMatchMakerLib\MovieMatchMakerLib.csproj" />
+    <ProjectReference Include="..\..\Shared\MovieMatchMakerLib\MovieMatchMakerLib.csproj" />
   </ItemGroup>
 
 </Project>
