@@ -27,3 +27,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// make Program class public for access from test project
+public partial class Program { }
