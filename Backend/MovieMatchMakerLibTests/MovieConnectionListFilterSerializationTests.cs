@@ -14,6 +14,7 @@ namespace MovieMatchMakerLibTests
             new SortFilter(SortFilter.Order.Descending),
             new MaxMatchingTitleWordsFilter(10),
             new MinConnectedRolesCountFilter(10),
+            //new SpecificMovieFilter(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear),
         };
 
         private readonly MaxMatchingTitleWordsFilter[] DerivedTypeList = new []
