@@ -19,12 +19,6 @@ builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 builder.Services.AddMudServices();
 
 var apiUrl = builder.Configuration["ApiUrl"];
-//if (string.IsNullOrWhiteSpace(apiUrl))
-//{
-//    // hard-coded default
-//    apiUrl = "https://localhost:7288/api/";
-//}
-
 builder.Services.AddHttpClient<IMovieConnectionsClient, MovieConnectionsApiClient>(client =>
 {
     client.BaseAddress = new Uri(apiUrl);
