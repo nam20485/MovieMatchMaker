@@ -1,11 +1,11 @@
 ﻿@page "/movies"
+
 @using MovieMatchMakerLib.Model;
 @using MovieMatchMakerLib;
 @using MovieMatchMakerLib.Client;
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 
 @inject IMovieConnectionsClient MovieConnectionsClient;
-@inject IConfiguration Configuration;
 @inject IWebAssemblyHostEnvironment HostEnvironment;
 
 
@@ -30,11 +30,11 @@
     </ToolBarContent>
        
     <Columns>        
-        <PropertyColumn Property="x => x.Title" Title="Title"/>
-        <PropertyColumn Property="x => x.ReleaseYear" Title="Year Released"/>
+        <PropertyColumn Property="m => m.Title" Title="Title"/>
+        <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
         @if (HostEnvironment.IsDevelopment())
         {
-            <PropertyColumn Property="x => x.MovieId" Hideable="true" />
+            <PropertyColumn Property="m => m.MovieId" Hideable="true" />
         }
     </Columns>
 
@@ -45,11 +45,10 @@
 
 
 @code {
-    //private MovieConnection.List _movieConnections = new MovieConnection.List();
     private Movie.HashSet _movieConnectionsMovies = new Movie.HashSet();
 
     private string _searchString = "";
-    private readonly int[] _pageSizeOptions = new int[] { 10, 15, 20, 50, 100};
+    private readonly int[] _pageSizeOptions = new int[] { 10, 15, 25, 50, 100};
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,7 +77,12 @@
                 return true;
         }
 
-        if ($"{x.Title} {x.ReleaseYear} {(HostEnvironment.IsDevelopment()? x.MovieId.ToString() : "")}".Contains(_searchString))
+        var crossColumnValues = $"{x.Title} {x.ReleaseYear}";
+        if (HostEnvironment.IsDevelopment())
+        {
+            crossColumnValues += $" {x.MovieId.ToString()}";
+        }               
+        if (crossColumnValues.Contains(_searchString))
             return true;
 
         return false;
@@ -87,8 +91,9 @@
     // events
     void RowClicked(DataGridRowClickEventArgs<Movie> args)
     {
-        var movie = args.Item;
-        //args.MouseEventArgs.
-        //_events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+        if (args.Item is Movie movie)
+        {
+            
+        }              
     }
 }
