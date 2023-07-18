@@ -40,7 +40,7 @@ namespace MovieMatchMakerLibTests
         {
             var controller = Utils.CreateMovieConnectionsController();
 
-            var allConnections = controller.GetAllMovieConnectionsFiltered(_filters);
+            var allConnections = controller.FilterAllMovieConnections(_filters);
             allConnections.Should().NotBeNull();
             allConnections.Should().NotBeEmpty();
             allConnections.Should().HaveCount(2462);
@@ -51,7 +51,7 @@ namespace MovieMatchMakerLibTests
         {
             var controller = Utils.CreateMovieConnectionsController();
 
-            var allConnections = controller.GetMovieConnectionsForMovieFiltered("Dark City", 1998, _filters);
+            var allConnections = controller.FilterMovieConnectionsForMovie("Dark City", 1998, _filters);
             allConnections.Should().NotBeNull();
             allConnections.Should().NotBeEmpty();
             allConnections.Should().HaveCount(81);

@@ -40,14 +40,14 @@ namespace MovieMatchMakerApi.Controllers
 
         // get filtered movie connections
         [HttpPost("movieconnections/filter")]
-        public IEnumerable<MovieConnection> GetAllMovieConnectionsFiltered([FromBody] List<IMovieConnectionListFilter> filters)
+        public IEnumerable<MovieConnection> FilterAllMovieConnections([FromBody] List<IMovieConnectionListFilter> filters)
         {
             return Filter(_connectionsService.MovieConnections, filters);            
         }      
 
         // get movie connections for a movie and then filter
         [HttpPost("movieconnections/filter/{title}/{releaseYear}")]
-        public IEnumerable<MovieConnection> GetMovieConnectionsForMovieFiltered([FromRoute] string title, [FromRoute] int releaseYear, [FromBody] List<IMovieConnectionListFilter> filters)
+        public IEnumerable<MovieConnection> FilterMovieConnectionsForMovie([FromRoute] string title, [FromRoute] int releaseYear, [FromBody] List<IMovieConnectionListFilter> filters)
         {            
             return Filter(FindForMovie(title, releaseYear), filters);
         }
