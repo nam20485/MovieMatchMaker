@@ -11,30 +11,84 @@
 
 <PageTitle>Movies</PageTitle>
 
-<MudDataGrid Items="@MovieConnectionsMovies">
-             
-    <Columns>
-        <PropertyColumn Property="x => x.Title" />
-        <PropertyColumn Property="x => x.ReleaseYear" />
+<MudDataGrid T="Movie"
+             Items="@_movieConnectionsMovies"
+             Dense="true"
+             Striped="true"
+             Bordered="true"
+             SortMode="SortMode.Multiple"
+             Filterable="true"
+             RowsPerPage="15"
+             QuickFilter="@_quickFilter"
+             RowClick="@RowClicked">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Movies</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+       
+    <Columns>        
+        <PropertyColumn Property="x => x.Title" Title="Title"/>
+        <PropertyColumn Property="x => x.ReleaseYear" Title="Year Released"/>
         @if (HostEnvironment.IsDevelopment())
         {
-            <PropertyColumn Property="x => x.MovieId" />
+            <PropertyColumn Property="x => x.MovieId" Hideable="true" />
         }
     </Columns>
 
+    <PagerContent>
+        <MudDataGridPager T="Movie" PageSizeOptions="@_pageSizeOptions"/>
+    </PagerContent>
 </MudDataGrid>
 
 
 @code {
-    public MovieConnection.List MovieConnections { get; set; } = new MovieConnection.List();
-    public Movie.HashSet MovieConnectionsMovies { get; set; } = new Movie.HashSet();   
+    //private MovieConnection.List _movieConnections = new MovieConnection.List();
+    private Movie.HashSet _movieConnectionsMovies = new Movie.HashSet();
+
+    private string _searchString = "";
+    private readonly int[] _pageSizeOptions = new int[] { 10, 15, 20, 50, 100};
 
     protected override async Task OnInitializedAsync()
     {
-        MovieConnections = await MovieConnectionsClient.GetAllMovieConnections();
-        if (MovieConnections is not null)
+        var _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
+        if (_movieConnections is not null)
         {
-            MovieConnectionsMovies = MovieConnections.Movies;
+            _movieConnectionsMovies = _movieConnections.Movies;
         } 
-    }    
+    }
+
+    // quick filter - filter gobally across multiple columns with the same input
+    private Func<Movie, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Title.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.ReleaseYear.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (HostEnvironment.IsDevelopment())
+        {
+            if (x.MovieId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        if ($"{x.Title} {x.ReleaseYear} {(HostEnvironment.IsDevelopment()? x.MovieId.ToString() : "")}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    // events
+    void RowClicked(DataGridRowClickEventArgs<Movie> args)
+    {
+        var movie = args.Item;
+        //args.MouseEventArgs.
+        //_events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+    }
 }
