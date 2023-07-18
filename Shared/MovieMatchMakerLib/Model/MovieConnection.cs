@@ -76,14 +76,19 @@ namespace MovieMatchMakerLib.Model
                     var movies = new Movie.HashSet();
                     foreach (var connection in this)
                     {
-                        if (! movies.Contains(connection.SourceMovie))
-                        { 
+                        if (!movies.Contains(connection.SourceMovie))
+                        {
                             movies.Add(connection.SourceMovie);
                         }
                         if (! movies.Contains(connection.TargetMovie))
                         {
                             movies.Add(connection.TargetMovie);
                         }
+                        //if (!movies.Exists(m => m.Title == connection.SourceMovie.Title && m.ReleaseYear == connection.SourceMovie.ReleaseYear))                        
+                        //if (! movies.Contains(connection.TargetMovie))
+                        //{
+                        //    movies.Add(connection.TargetMovie);
+                        //}
                     }
                     return movies;
                 }

@@ -10,7 +10,8 @@ namespace MovieMatchMakerLib.Utils
             WriteIndented = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
-            ReferenceHandler = ReferenceHandler.Preserve,                       
+            ReferenceHandler = ReferenceHandler.Preserve, 
+            PropertyNameCaseInsensitive = true,
         };
     }
 }

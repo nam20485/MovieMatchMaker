@@ -1,26 +1,40 @@
 ﻿@page "/movies"
 @using MovieMatchMakerLib.Model;
+@using MovieMatchMakerLib;
+@using MovieMatchMakerLib.Client;
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+
+@inject IMovieConnectionsClient MovieConnectionsClient;
+@inject IConfiguration Configuration;
+@inject IWebAssemblyHostEnvironment HostEnvironment;
+
 
 <PageTitle>Movies</PageTitle>
 
-<h1>Movies!</h1>
+<MudDataGrid Items="@MovieConnectionsMovies">
+             
+    <Columns>
+        <PropertyColumn Property="x => x.Title" />
+        <PropertyColumn Property="x => x.ReleaseYear" />
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <PropertyColumn Property="x => x.MovieId" />
+        }
+    </Columns>
 
-<MudGrid Spacing="@Spacing" Justify="Justify.Center">
-    
-    <MudItem>
-        <MudPaper Height="140px" Width="140px" />
-    </MudItem>
-    <MudItem>
-        <MudPaper Height="140px" Width="140px" />
-    </MudItem>
-    <MudItem>
-        <MudPaper Height="140px" Width="140px" />
-    </MudItem>
-</MudGrid>
+</MudDataGrid>
 
 
 @code {
-    public int Spacing { get; set; } = 2;
+    public MovieConnection.List MovieConnections { get; set; } = new MovieConnection.List();
+    public Movie.HashSet MovieConnectionsMovies { get; set; } = new Movie.HashSet();   
 
-    public MovieConnection.List? MovieConnections { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        MovieConnections = await MovieConnectionsClient.GetAllMovieConnections();
+        if (MovieConnections is not null)
+        {
+            MovieConnectionsMovies = MovieConnections.Movies;
+        } 
+    }    
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Filters;
@@ -16,6 +17,8 @@ namespace MovieMatchMakerLib.Client
     {
         private readonly HttpClient _httpClient;
 
+        private const string AllMovieConnectionsEndpoint = "MovieConnections/movieconnections";
+
         public MovieConnectionsApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -25,7 +28,16 @@ namespace MovieMatchMakerLib.Client
         {
             //try
             {
-                return await _httpClient.GetFromJsonAsync<MovieConnection.List>("MovieConnections/movieconnections", MyJsonSerializerOptions.JsonSerializerOptions);
+                //var response = await _httpClient.GetAsync(AllMovieConnectionsEndpoint);
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    var content = await response.Content.ReadAsStringAsync();
+                //    var movieConnectionsList = JsonSerializer.Deserialize<MovieConnection.List>(content, MyJsonSerializerOptions.JsonSerializerOptions);
+                //    return movieConnectionsList;
+                //}
+                //return new MovieConnection.List();
+                return await _httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
+
             }
             //catch (Exception ex)
             {
