@@ -15,10 +15,10 @@ namespace MovieMatchMakerLib.Client
 {
     public class MovieConnectionsApiClient : IMovieConnectionsClient
     {
-        public const string AllMovieConnectionsEndpoint = "MovieConnections/movieconnections";
-        public const string MovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/{0}/{1}";        
-        public const string FilterAllMovieConnectionsEndpoint = "MovieConnections/movieconnections/filter";
-        public const string FilterMovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/filter/{0}/{1}";
+        private const string AllMovieConnectionsEndpoint = "MovieConnections/movieconnections";
+        private const string MovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/{0}/{1}";
+        private const string FilterAllMovieConnectionsEndpoint = "MovieConnections/movieconnections/filter";
+        private const string FilterMovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/filter/{0}/{1}";
 
         private readonly HttpClient _httpClient;          
 
@@ -27,18 +27,18 @@ namespace MovieMatchMakerLib.Client
             _httpClient = httpClient;
         }
 
-        public async Task<MovieConnection.List> GetAllMovieConnections()
+        public virtual async Task<MovieConnection.List> GetAllMovieConnections()
         {            
             return await _httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
         }
 
-        public async Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)
+        public virtual async Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)
         {
             var uri = string.Format(MovieConnectionsForMovieEndpointFormat, title, releaseYear);
             return await _httpClient.GetFromJsonAsync<MovieConnection.List>(uri, MyJsonSerializerOptions.JsonSerializerOptions);
         }
 
-        public async Task<MovieConnection.List> FilterAllMovieConnections(IEnumerable<IMovieConnectionListFilter> filters)
+        public virtual async Task<MovieConnection.List> FilterAllMovieConnections(IEnumerable<IMovieConnectionListFilter> filters)
         {
             MovieConnection.List movieConnections = null;
 
@@ -50,7 +50,7 @@ namespace MovieMatchMakerLib.Client
             return movieConnections;
         }
 
-        public async Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters)
+        public virtual async Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters)
         {
             MovieConnection.List movieConnections = null;
 
