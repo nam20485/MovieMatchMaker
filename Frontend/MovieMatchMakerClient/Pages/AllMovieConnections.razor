@@ -50,7 +50,8 @@
     protected override async Task OnInitializedAsync()
     {
         _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
-        await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
+        //await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
+        await _dataGrid.SetSortAsync(nameof(MovieConnection.SourceMovie.DisplayId), SortDirection.Ascending, mc => mc.SourceMovie.DisplayId);
     }
 
     private Func<MovieConnection, bool> _quickFilter => mc =>
