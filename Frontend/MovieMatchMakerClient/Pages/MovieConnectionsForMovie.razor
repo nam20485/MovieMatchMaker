@@ -41,6 +41,13 @@
 </MudDataGrid>
 
 @code {
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public int ReleaseYear { get; set; }
+
     private MudDataGrid<MovieConnection>? _dataGrid;
 
     private MovieConnection.List _movieConnections = new MovieConnection.List();
@@ -80,14 +87,4 @@
 
         }
     }
-}
-
-
-@code {
-
-    [Parameter]
-    public string? Title { get; set; }
-
-    [Parameter]
-    public int ReleaseYear { get; set; }
 }
