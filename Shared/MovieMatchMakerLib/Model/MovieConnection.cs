@@ -15,6 +15,8 @@ namespace MovieMatchMakerLib.Model
 
         public ConnectedRole.List ConnectedRoles { get; set; }
 
+        //public int Id { get; set; }
+
         public MovieConnection()
         { 
             // required for deserialization
