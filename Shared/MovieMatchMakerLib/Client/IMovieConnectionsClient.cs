@@ -18,5 +18,7 @@ namespace MovieMatchMakerLib.Client
 
         Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters);
 
+        Task<MovieConnection> GetMovieConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear);
+        Task<MovieConnection> GetMovieConnection(int movieConnectionId);
     }
 }

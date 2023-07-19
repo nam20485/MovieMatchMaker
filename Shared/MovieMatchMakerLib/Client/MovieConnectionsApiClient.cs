@@ -19,6 +19,8 @@ namespace MovieMatchMakerLib.Client
         private const string MovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/{0}/{1}";
         private const string FilterAllMovieConnectionsEndpoint = "MovieConnections/movieconnections/filter";
         private const string FilterMovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/filter/{0}/{1}";
+        private const string GetMovieConnectionByMoviesEndpointFormat = "MovieConnections/movieconnection/{0}/{1}/{2}/{3}";
+        private const string GetMovieConnectionByIdEndpointFormat = "MovieConnections/movieconnection/{0}";
 
         private readonly HttpClient _httpClient;          
 
@@ -62,6 +64,23 @@ namespace MovieMatchMakerLib.Client
             }
 
             return movieConnections;
+        }
+
+        public async Task<MovieConnection> GetMovieConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle,
+            int targetMovieReleaseYear)
+        {
+            var uri = string.Format(GetMovieConnectionByMoviesEndpointFormat,
+                                         sourceMovieTitle,
+                                         sourceMovieReleaseYear,
+                                         targetMovieTitle,
+                                         targetMovieReleaseYear);
+            return await _httpClient.GetFromJsonAsync<MovieConnection>(uri);
+        }
+
+        public async Task<MovieConnection> GetMovieConnection(int movieConnectionId)
+        {
+            var uri = string.Format(GetMovieConnectionByIdEndpointFormat, movieConnectionId);
+            return await _httpClient.GetFromJsonAsync<MovieConnection>(uri);
         }
     }
 }
