@@ -10,7 +10,7 @@
 
 <MudDataGrid @ref="_dataGrid"
              T="ConnectedRole"
-             Items="@_connectedRoles"
+             Items="@_movieConnection?.ConnectedRoles"
              Dense="true"
              Striped="true"
              Bordered="true"
@@ -54,22 +54,25 @@
     [Parameter]
     public int TargetMovieReleaseYear { get; set; }
 
-    private MudDataGrid<ConnectedRole> _dataGrid;
+    private MudDataGrid<ConnectedRole>? _dataGrid;
 
     private MovieConnection _movieConnection;
-    private ConnectedRole.List _connectedRoles;
+    //private ConnectedRole.List _connectedRoles;
 
     private string _searchString = "";
     private readonly int[] _pageSizeOptions = new[] { 10, 15, 25, 50, 100 };
 
     protected override async Task OnInitializedAsync()
     {
-        _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, TargetMovieTitle, TargetMovieReleaseYear);
-        if (_movieConnection is not null)
+        if (!string.IsNullOrWhiteSpace(SourceMovieTitle) && !string.IsNullOrWhiteSpace(TargetMovieTitle))
         {
-            _connectedRoles = _movieConnection.ConnectedRoles;
+            _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, TargetMovieTitle, TargetMovieReleaseYear);
         }
-        //await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
+        else
+        {
+            _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
+        }
+        await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name), SortDirection.Ascending, cr => cr.Name);
     }
 
     private Func<ConnectedRole, bool> _quickFilter => cr =>
