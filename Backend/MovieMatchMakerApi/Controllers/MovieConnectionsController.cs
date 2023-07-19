@@ -52,6 +52,20 @@ namespace MovieMatchMakerApi.Controllers
             return Filter(FindForMovie(title, releaseYear), filters);
         }
 
+        // get movie connection by source and target movie        
+        [HttpGet("movieconnection/{sourceMovieTitle}/{sourceMovieReleaseYear}/{targetMovieTitle}/{targetMovieReleaseYear}")]
+        public MovieConnection GetMovieConnection([FromRoute] string sourceMovieTitle, [FromRoute] int sourceMovieReleaseYear, [FromRoute] string targetMovieTitle, [FromRoute] int targetMovieReleaseYear)
+        {
+            return _connectionsService.MovieConnections.FindConnection(sourceMovieTitle, sourceMovieReleaseYear, targetMovieTitle, targetMovieReleaseYear);
+        }
+
+        // get movie connection by id
+        [HttpGet("movieconnection/{id}")]
+        public MovieConnection GetMovieConnection([FromRoute] int id)
+        {
+            return _connectionsService.MovieConnections.FindConnection(id);
+        }
+
         private MovieConnection.List FindForMovie(string title, int releaseYear)
         {
             return _connectionsService.MovieConnections.FindForMovie(title, releaseYear);
