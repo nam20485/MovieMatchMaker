@@ -126,7 +126,11 @@ namespace MovieMatchMakerLib
             if (movieConnection is null)
             {
                 // not found, return an empty new one
-                movieConnection = new MovieConnection(sourceMovie, targetMovie);
+                movieConnection = new MovieConnection(sourceMovie, targetMovie)
+                {
+                    // set a unique id
+                    Id = MovieConnections.Count
+                };
                 MovieConnections.Add(movieConnection);
             }
 

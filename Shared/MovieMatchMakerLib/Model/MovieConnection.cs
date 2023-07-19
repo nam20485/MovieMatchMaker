@@ -15,7 +15,7 @@ namespace MovieMatchMakerLib.Model
 
         public ConnectedRole.List ConnectedRoles { get; set; }
 
-        //public int Id { get; set; }
+        public int Id { get; set; }
 
         public MovieConnection()
         { 
@@ -101,6 +101,22 @@ namespace MovieMatchMakerLib.Model
 
                 var mcList = new List(genericList);
                 return mcList;
+            }
+
+            public MovieConnection FindConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
+            {
+                return Find(mc =>
+                {
+                    return mc.SourceMovie.Title == sourceMovieTitle &&
+                           mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
+                           mc.TargetMovie.Title == targetMovieTitle &&
+                           mc.TargetMovie.ReleaseYear == targetMovieReleaseYear;
+                });
+            }
+
+            public MovieConnection FindConnection(int id)
+            {
+                return Find(mc => mc.Id == id);
             }
 
             public List Filter(IMovieConnectionListFilter filter)
