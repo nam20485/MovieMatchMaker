@@ -61,6 +61,8 @@ namespace MovieMatchMakerLib.Model
 
         public class List : List<MovieConnection>
         {
+            public static readonly List Empty = new();
+
             public List()
                 : base()
             {
@@ -114,9 +116,20 @@ namespace MovieMatchMakerLib.Model
                 });
             }
 
+            private MovieConnection GetAt(int index)
+            {
+                if (index < Count)
+                {
+                    return this[index];
+                }
+                return null;
+            }
+
             public MovieConnection FindConnection(int id)
             {
-                return Find(mc => mc.Id == id);
+                // TODO: use find by id once MovieConnection's have their Id set
+                return GetAt(id);
+                //return Find(mc => mc.Id == id);
             }
 
             public List Filter(IMovieConnectionListFilter filter)
@@ -124,7 +137,7 @@ namespace MovieMatchMakerLib.Model
                 return filter.Apply(this);
             }
 
-            public List Filter(List<IMovieConnectionListFilter> filters)
+            public List Filter(IEnumerable<IMovieConnectionListFilter> filters)
             {
                 var filtered = this;
                 foreach (var filter in filters)
