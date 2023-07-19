@@ -1,15 +1,43 @@
 ﻿@page "/movieconnectiondetails/{MovieConnectionId:int}"
 @page "/movieconnectiondetails/{SourceMovieTitle}/{SourceMovieReleaseYear:int}/{TargetMovieTitle}/{TargetMovieReleaseYear:int}"
 
-<h3>MovieConnectionDetails</h3>
+@using MovieMatchMakerLib.Client;
+@using MovieMatchMakerLib.Model;
 
-<p>
-    Movie Connection Id: : @MovieConnectionId
-</p>
-<p>
-    Source Movie: @SourceMovieTitle @SourceMovieReleaseYear
-    Target Movie: @TargetMovieTitle @TargetMovieReleaseYear
-</p>
+@inject IMovieConnectionsClient MovieConnectionsClient
+
+<PageTitle>Movie Connection</PageTitle>
+
+<MudDataGrid @ref="_dataGrid"
+             T="ConnectedRole"
+             Items="@_connectedRoles"
+             Dense="true"
+             Striped="true"
+             Bordered="true"
+             SortMode="SortMode.Multiple"
+             Filterable="true"
+             RowsPerPage="15"
+             QuickFilter="@_quickFilter"
+             RowClick="@RowClicked">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Connection: @_movieConnection.SourceMovie.DisplayId - @_movieConnection.TargetMovie.DisplayId</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+
+    <Columns>
+        <PropertyColumn Property="cr => cr.Name.FullName" Title="Name" />
+        <PropertyColumn Property="cr => cr.SourceJob" Title="Job" />
+        <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Job" />
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="ConnectedRole" PageSizeOptions="@_pageSizeOptions" />
+    </PagerContent>
+
+</MudDataGrid>
 
 @code {
 
@@ -18,13 +46,59 @@
 
     [Parameter]
     public string? SourceMovieTitle { get; set; }
-
     [Parameter]
     public int SourceMovieReleaseYear { get; set; }
 
     [Parameter]
     public string? TargetMovieTitle { get; set; }
-
     [Parameter]
     public int TargetMovieReleaseYear { get; set; }
+
+    private MudDataGrid<ConnectedRole> _dataGrid;
+
+    private MovieConnection _movieConnection;
+    private ConnectedRole.List _connectedRoles;
+
+    private string _searchString = "";
+    private readonly int[] _pageSizeOptions = new[] { 10, 15, 25, 50, 100 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, TargetMovieTitle, TargetMovieReleaseYear);
+        if (_movieConnection is not null)
+        {
+            _connectedRoles = _movieConnection.ConnectedRoles;
+        }
+        //await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
+    }
+
+    private Func<ConnectedRole, bool> _quickFilter => cr =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (cr.Name.FullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (cr.SourceJob.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (cr.TargetJob.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        var crossColumnValues = $"{cr.Name.FullName} {cr.SourceJob} {cr.TargetJob}";
+        if (crossColumnValues.Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    // events
+    void RowClicked(DataGridRowClickEventArgs<ConnectedRole> args)
+    {
+        if (args.Item is ConnectedRole connectedRole)
+        {
+
+        }
+    }
 }
