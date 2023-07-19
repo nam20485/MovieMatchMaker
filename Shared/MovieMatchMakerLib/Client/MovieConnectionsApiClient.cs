@@ -15,9 +15,12 @@ namespace MovieMatchMakerLib.Client
 {
     public class MovieConnectionsApiClient : IMovieConnectionsClient
     {
-        private readonly HttpClient _httpClient;
+        public const string AllMovieConnectionsEndpoint = "MovieConnections/movieconnections";
+        public const string MovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/{0}/{1}";        
+        public const string FilterAllMovieConnectionsEndpoint = "MovieConnections/movieconnections/filter";
+        public const string FilterMovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/filter/{0}/{1}";
 
-        private const string AllMovieConnectionsEndpoint = "MovieConnections/movieconnections";
+        private readonly HttpClient _httpClient;          
 
         public MovieConnectionsApiClient(HttpClient httpClient)
         {
@@ -25,39 +28,40 @@ namespace MovieMatchMakerLib.Client
         }
 
         public async Task<MovieConnection.List> GetAllMovieConnections()
+        {            
+            return await _httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
+        }
+
+        public async Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)
         {
-            //try
+            var uri = string.Format(MovieConnectionsForMovieEndpointFormat, title, releaseYear);
+            return await _httpClient.GetFromJsonAsync<MovieConnection.List>(uri, MyJsonSerializerOptions.JsonSerializerOptions);
+        }
+
+        public async Task<MovieConnection.List> FilterAllMovieConnections(IEnumerable<IMovieConnectionListFilter> filters)
+        {
+            MovieConnection.List movieConnections = null;
+
+            var response = await _httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(FilterAllMovieConnectionsEndpoint, filters, MyJsonSerializerOptions.JsonSerializerOptions);
+            if (response.IsSuccessStatusCode)
             {
-                //var response = await _httpClient.GetAsync(AllMovieConnectionsEndpoint);
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    var content = await response.Content.ReadAsStringAsync();
-                //    var movieConnectionsList = JsonSerializer.Deserialize<MovieConnection.List>(content, MyJsonSerializerOptions.JsonSerializerOptions);
-                //    return movieConnectionsList;
-                //}
-                //return new MovieConnection.List();
-                return await _httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
-
+                movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();               
             }
-            //catch (Exception ex)
+            return movieConnections;
+        }
+
+        public async Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters)
+        {
+            MovieConnection.List movieConnections = null;
+
+            var uri = string.Format(FilterMovieConnectionsForMovieEndpointFormat, title, releaseYear);
+            var response = await _httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(uri, filters, MyJsonSerializerOptions.JsonSerializerOptions);
+            if (response.IsSuccessStatusCode)
             {
-                //    Console.WriteLine(ex);
+                movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();                
             }
-        }
 
-        public Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MovieConnection.List> FilterAllMovieConnections(IEnumerable<IMovieConnectionListFilter> filters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters)
-        {
-            throw new NotImplementedException();
+            return movieConnections;
         }
     }
 }
