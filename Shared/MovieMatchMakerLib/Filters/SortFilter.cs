@@ -15,7 +15,7 @@ namespace MovieMatchMakerLib.Filters
         public SortFilter()
             : this(Order.Descending)
         {
-            // default to descending sort order
+            // default to SortOrder = Descending
         }
 
         public SortFilter(Order sortOrder)
