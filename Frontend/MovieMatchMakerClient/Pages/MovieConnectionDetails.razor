@@ -1,7 +1,30 @@
-﻿@page "/movieconnectiondetails"
+﻿@page "/movieconnectiondetails/{MovieConnectionId:int}"
+@page "/movieconnectiondetails/{SourceMovieTitle}/{SourceMovieReleaseYear:int}/{TargetMovieTitle}/{TargetMovieReleaseYear:int}"
 
 <h3>MovieConnectionDetails</h3>
 
+<p>
+    Movie Connection Id: : @MovieConnectionId
+</p>
+<p>
+    Source Movie: @SourceMovieTitle @SourceMovieReleaseYear
+    Target Movie: @TargetMovieTitle @TargetMovieReleaseYear
+</p>
+
 @code {
 
+    [Parameter]
+    public int MovieConnectionId { get; set; }
+
+    [Parameter]
+    public string? SourceMovieTitle { get; set; }
+
+    [Parameter]
+    public int SourceMovieReleaseYear { get; set; }
+
+    [Parameter]
+    public string? TargetMovieTitle { get; set; }
+
+    [Parameter]
+    public int TargetMovieReleaseYear { get; set; }
 }

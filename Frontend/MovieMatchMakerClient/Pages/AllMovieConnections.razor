@@ -8,7 +8,8 @@
 
 <PageTitle>All Movie Connections</PageTitle>
 
-<MudDataGrid T="MovieConnection"
+<MudDataGrid @ref="_dataGrid"
+             T="MovieConnection"
              Items="@_movieConnections"
              Dense="true"
              Striped="true"
@@ -39,6 +40,7 @@
 </MudDataGrid>
 
 @code {
+    private MudDataGrid<MovieConnection>? _dataGrid;
 
     private MovieConnection.List _movieConnections = new MovieConnection.List();
 
@@ -47,7 +49,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();        
+        _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
+        await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
     }
 
     private Func<MovieConnection, bool> _quickFilter => mc =>

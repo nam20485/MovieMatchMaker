@@ -11,7 +11,8 @@
 
 <PageTitle>Movies</PageTitle>
 
-<MudDataGrid T="Movie"
+<MudDataGrid @ref="_dataGrid"
+             T="Movie"
              Items="@_movieConnectionsMovies"
              Dense="true"
              Striped="true"
@@ -45,6 +46,8 @@
 
 
 @code {
+    private MudDataGrid<Movie> _dataGrid;
+
     private Movie.HashSet _movieConnectionsMovies = new Movie.HashSet();
 
     private string _searchString = "";
@@ -56,6 +59,7 @@
         if (_movieConnections is not null)
         {
             _movieConnectionsMovies = _movieConnections.Movies;
+            await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
         } 
     }
 
