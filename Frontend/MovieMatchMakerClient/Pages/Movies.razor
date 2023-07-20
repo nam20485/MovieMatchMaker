@@ -1,12 +1,12 @@
 ﻿@page "/movies"
 
-@using MovieMatchMakerLib.Model;
-@using MovieMatchMakerLib;
-@using MovieMatchMakerLib.Client;
+@using MovieMatchMakerLib.Model
+@using MovieMatchMakerLib.Client
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 
-@inject IMovieConnectionsClient MovieConnectionsClient;
-@inject IWebAssemblyHostEnvironment HostEnvironment;
+@inject IMovieConnectionsClient MovieConnectionsClient
+@inject IWebAssemblyHostEnvironment HostEnvironment
+@inject NavigationManager NavigationManager
 
 
 <PageTitle>Movies</PageTitle>
@@ -93,11 +93,12 @@
     };
 
     // events
-    void RowClicked(DataGridRowClickEventArgs<Movie> args)
+    private void RowClicked(DataGridRowClickEventArgs<Movie> args)
     {
         if (args.Item is Movie movie)
         {
-            
+            var uri = $"movieconnectionsformovie/{movie.Title}/{movie.ReleaseYear}";
+            NavigationManager.NavigateTo(uri);
         }              
     }
 }

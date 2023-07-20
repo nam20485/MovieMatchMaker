@@ -72,7 +72,7 @@
         {
             _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
         }
-        await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name), SortDirection.Ascending, cr => cr.Name);
+        await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
     }
 
     private Func<ConnectedRole, bool> _quickFilter => cr =>

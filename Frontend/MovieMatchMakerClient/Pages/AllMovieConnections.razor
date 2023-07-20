@@ -5,6 +5,7 @@
 
 
 @inject IMovieConnectionsClient MovieConnectionsClient
+@inject NavigationManager NavigationManager
 
 <PageTitle>All Movie Connections</PageTitle>
 
@@ -77,7 +78,8 @@
     {
         if (args.Item is MovieConnection movieConnection)
         {
-
+            var uri = $"movieconnectiondetails/{movieConnection.SourceMovie.Title}/{movieConnection.SourceMovie.ReleaseYear}/{movieConnection.TargetMovie.Title}/{movieConnection.TargetMovie.ReleaseYear}";
+            NavigationManager.NavigateTo(uri);
         }
     }
 }

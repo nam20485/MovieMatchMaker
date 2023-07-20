@@ -4,6 +4,7 @@
 @using MovieMatchMakerLib.Model;
 
 @inject IMovieConnectionsClient MovieConnectionsClient
+@inject NavigationManager NavigationManager
 
 @*<p>Movie: @Title @ReleaseYear</p>*@
 
@@ -30,7 +31,19 @@
 
     <Columns>
         @*<PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />*@
-        <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" />
+        <TemplateColumn Context="item" Title="Connected Movie">
+            <CellTemplate>
+                @if (item.Item.SourceMovie.Title == Title)
+                {
+                    @item.Item.TargetMovie.DisplayId
+                }
+                else
+                {
+                    @item.Item.SourceMovie.DisplayId
+                }
+            </CellTemplate>
+        </TemplateColumn>
+        @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
         <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
     </Columns>
 
@@ -84,7 +97,9 @@
     {
         if (args.Item is MovieConnection movieConnection)
         {
-
+            // show movie connection details
+            var uri = $"movieconnectiondetails/{movieConnection.SourceMovie.Title}/{movieConnection.SourceMovie.ReleaseYear}/{movieConnection.TargetMovie.Title}/{movieConnection.TargetMovie.ReleaseYear}";
+            NavigationManager.NavigateTo(uri);
         }
     }
 }
