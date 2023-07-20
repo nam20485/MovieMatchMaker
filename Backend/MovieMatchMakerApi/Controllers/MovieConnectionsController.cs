@@ -16,6 +16,11 @@ namespace MovieMatchMakerApi.Controllers
 
         private readonly IMovieConnectionsService _connectionsService;
 
+        private static readonly IMovieConnectionListFilter[] _defaultFilters = new IMovieConnectionListFilter[]
+        {
+            new MinConnectedRolesCountFilter(3)
+        };
+
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
                                           IMovieConnectionsService connectionsService)
         {
@@ -28,7 +33,7 @@ namespace MovieMatchMakerApi.Controllers
         [HttpGet("movieconnections")]
         public IEnumerable<MovieConnection> GetAllMovieConnections()
         {
-            return _connectionsService.MovieConnections;
+            return GetMovieConnections();
         }
 
         // get movie connections for a movie
@@ -42,7 +47,7 @@ namespace MovieMatchMakerApi.Controllers
         [HttpPost("movieconnections/filter")]
         public IEnumerable<MovieConnection> FilterAllMovieConnections([FromBody] List<IMovieConnectionListFilter> filters)
         {
-            return Filter(_connectionsService.MovieConnections, filters);            
+            return Filter(GetMovieConnections(), filters);            
         }      
 
         // get movie connections for a movie and then filter
@@ -56,19 +61,24 @@ namespace MovieMatchMakerApi.Controllers
         [HttpGet("movieconnection/{sourceMovieTitle}/{sourceMovieReleaseYear}/{targetMovieTitle}/{targetMovieReleaseYear}")]
         public MovieConnection GetMovieConnection([FromRoute] string sourceMovieTitle, [FromRoute] int sourceMovieReleaseYear, [FromRoute] string targetMovieTitle, [FromRoute] int targetMovieReleaseYear)
         {
-            return _connectionsService.MovieConnections.FindConnection(sourceMovieTitle, sourceMovieReleaseYear, targetMovieTitle, targetMovieReleaseYear);
+            return GetMovieConnections().FindConnection(sourceMovieTitle, sourceMovieReleaseYear, targetMovieTitle, targetMovieReleaseYear);
         }
 
         // get movie connection by id
         [HttpGet("movieconnection/{id}")]
         public MovieConnection GetMovieConnection([FromRoute] int id)
         {
-            return _connectionsService.MovieConnections.FindConnection(id);
+            return GetMovieConnections().FindConnection(id);
+        }
+
+        private MovieConnection.List GetMovieConnections()
+        {
+            return _connectionsService.MovieConnections.Filter(_defaultFilters);
         }
 
         private MovieConnection.List FindForMovie(string title, int releaseYear)
         {
-            return _connectionsService.MovieConnections.FindForMovie(title, releaseYear);
+            return GetMovieConnections().FindForMovie(title, releaseYear);
         }
 
         private static MovieConnection.List Filter(MovieConnection.List list, List<IMovieConnectionListFilter> filters)
