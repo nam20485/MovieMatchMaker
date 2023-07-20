@@ -11,15 +11,16 @@
 
 <MudDataGrid @ref="_dataGrid"
              T="MovieConnection"
-             Items="@_movieConnections"
+             Items="_movieConnections"
              Dense="true"
              Striped="true"
              Bordered="true"
              SortMode="SortMode.Multiple"
              Filterable="true"
              RowsPerPage="15"
-             QuickFilter="@_quickFilter"
-             RowClick="@RowClicked">
+             QuickFilter="_quickFilter"
+             RowClick="RowClicked"
+             Groupable="_enableGrouping">
 
     <ToolBarContent>
         <MudText Typo="Typo.h6">All Movie Connections</MudText>
@@ -29,7 +30,11 @@
     </ToolBarContent>
 
     <Columns>
-        <PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />
+        <PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" Grouping GroupBy="_groupBy">
+            <GroupTemplate>
+                <span style="font-weight:bold">Movie: @context.Grouping.Key</span>
+            </GroupTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" />
         <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />       
     </Columns>
@@ -47,6 +52,8 @@
 
     private string _searchString = "";
     private readonly int[] _pageSizeOptions = new[] { 10, 15, 25, 50, 100 };
+
+    private const bool _enableGrouping = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +78,11 @@
             return true;
 
         return false;
+    };
+    
+    Func<MovieConnection, object> _groupBy = mc =>
+    {
+        return mc.SourceMovie.DisplayId;
     };
 
     // events
