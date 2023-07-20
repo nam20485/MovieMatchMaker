@@ -7,7 +7,7 @@ namespace MovieMatchMakerLib.Utils
     {
         public static JsonSerializerOptions JsonSerializerOptions => new JsonSerializerOptions()
         {
-            WriteIndented = true,
+            WriteIndented = Macros.IsDebug(),
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
             ReferenceHandler = ReferenceHandler.Preserve, 
