@@ -84,7 +84,7 @@ namespace MovieMatchMakerLib.Model
                         {
                             movies.Add(connection.SourceMovie);
                         }
-                        if (! movies.Contains(connection.TargetMovie))
+                        if (!movies.Contains(connection.TargetMovie))
                         {
                             movies.Add(connection.TargetMovie);
                         }
@@ -109,10 +109,25 @@ namespace MovieMatchMakerLib.Model
             {
                 return Find(mc =>
                 {
-                    return mc.SourceMovie.Title == sourceMovieTitle &&
-                           mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
-                           mc.TargetMovie.Title == targetMovieTitle &&
-                           mc.TargetMovie.ReleaseYear == targetMovieReleaseYear;
+                    return ((mc.SourceMovie.Title == sourceMovieTitle &&
+                             mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
+                             mc.TargetMovie.Title == targetMovieTitle &&
+                             mc.TargetMovie.ReleaseYear == targetMovieReleaseYear) ||
+                            (mc.SourceMovie.Title == targetMovieTitle &&
+                             mc.SourceMovie.ReleaseYear == targetMovieReleaseYear &&
+                             mc.TargetMovie.Title == sourceMovieTitle &&
+                             mc.TargetMovie.ReleaseYear == sourceMovieReleaseYear));
+                });
+            }
+
+            public MovieConnection FindConnectionExact(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
+            {
+                return Find(mc =>
+                {
+                    return (mc.SourceMovie.Title == sourceMovieTitle &&
+                             mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
+                             mc.TargetMovie.Title == targetMovieTitle &&
+                             mc.TargetMovie.ReleaseYear == targetMovieReleaseYear);
                 });
             }
 
@@ -166,6 +181,29 @@ namespace MovieMatchMakerLib.Model
             {
                 return FromJson(File.ReadAllText(path));
             }
+
+            public MovieConnection GetOrCreateMovieConnection(Movie sourceMovie, Movie targetMovie)
+            {
+                var movieConnection = Find(mc =>
+                    {
+                        return ((mc.SourceMovie == sourceMovie && mc.TargetMovie == targetMovie) ||
+                                (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie));
+                    });
+
+                if (movieConnection is null)
+                {
+                    // not found, return an empty new one
+                    movieConnection = new MovieConnection(sourceMovie, targetMovie)
+                    {
+                        // set a unique id
+                        Id = Count
+                    };
+                    Add(movieConnection);
+                }
+
+                return movieConnection;
+            }
+
         }
     }
 }

@@ -52,7 +52,7 @@ namespace MovieMatchMakerLib
             {
                 if (targetMovie != sourceMovie)
                 {
-                    var movieConnection = GetMovieConnection(sourceMovie, targetMovie);
+                    var movieConnection = MovieConnections.GetOrCreateMovieConnection(sourceMovie, targetMovie);
                     var connectedRole = new ConnectedRole
                     {
                         Name = new Name(name),
@@ -113,28 +113,6 @@ namespace MovieMatchMakerLib
                     }
                 }
             }
-        }
-
-        protected MovieConnection GetMovieConnection(Model.Movie sourceMovie, Model.Movie targetMovie)
-        {
-            var movieConnection = MovieConnections.Find(mc =>
-            {
-                return ((mc.SourceMovie == sourceMovie && mc.TargetMovie == targetMovie) ||
-                        (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie));
-            });
-
-            if (movieConnection is null)
-            {
-                // not found, return an empty new one
-                movieConnection = new MovieConnection(sourceMovie, targetMovie)
-                {
-                    // set a unique id
-                    Id = MovieConnections.Count
-                };
-                MovieConnections.Add(movieConnection);
-            }
-
-            return movieConnection;
-        }       
+        }             
     }
 }
