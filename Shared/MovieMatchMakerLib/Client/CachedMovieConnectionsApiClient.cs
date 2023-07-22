@@ -46,7 +46,7 @@ public class CachedMovieConnectionsApiClient : MovieConnectionsApiClient
         return MovieConnection.List.Empty;
     }
 
-    public virtual async Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters)
+    public override async Task<MovieConnection.List> FilterMovieConnectionsForMovie(string title, int releaseYear, IEnumerable<IMovieConnectionListFilter> filters)
     {
         var connections = await GetAllMovieConnections();
         if (connections is not null)

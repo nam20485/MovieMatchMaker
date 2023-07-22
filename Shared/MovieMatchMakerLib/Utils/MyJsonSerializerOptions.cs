@@ -7,7 +7,8 @@ namespace MovieMatchMakerLib.Utils
     {
         public static JsonSerializerOptions JsonSerializerOptions => new JsonSerializerOptions()
         {
-            WriteIndented = Macros.IsDebug(),
+            // disable pretty-printing in release builds to save file size and xfer speed
+            WriteIndented = Macros.IsDebugBuild(),
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
             ReferenceHandler = ReferenceHandler.Preserve, 
