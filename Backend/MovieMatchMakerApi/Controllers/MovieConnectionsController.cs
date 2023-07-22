@@ -3,6 +3,7 @@
 using MovieMatchMakerApi.Services;
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
+using MovieMatchMakerLib.Graph;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,17 +17,21 @@ namespace MovieMatchMakerApi.Controllers
 
         private readonly IMovieConnectionsService _connectionsService;
 
+        private readonly bool _applyDefaultFilters = true;
+
         private static readonly IMovieConnectionListFilter[] _defaultFilters = new IMovieConnectionListFilter[]
         {
             new MinConnectedRolesCountFilter(3)
-        };
+        };       
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
-                                          IMovieConnectionsService connectionsService)
+                                          IMovieConnectionsService connectionsService,
+                                          bool applyDefaultFilters = true)
         {
             _logger = logger;
 
-            _connectionsService = connectionsService;             
+            _applyDefaultFilters = applyDefaultFilters;
+            _connectionsService = connectionsService;
         }
 
         // get all movie connections
@@ -71,9 +76,26 @@ namespace MovieMatchMakerApi.Controllers
             return GetMovieConnections().FindConnection(id);
         }
 
+        // get movie connections for a movie
+        [HttpGet("movieconnections/graph/{title}/{releaseYear}")]
+        public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] string title, [FromRoute] int releaseYear)
+        {
+            var connections = FindForMovie(title, releaseYear);
+            var graph = new MovieConnectionsGraph(connections);
+            var exportPath = $"{title}_{releaseYear}_connections.png";
+            graph.ExportToSvgFile(exportPath);
+            var bytes = System.IO.File.ReadAllBytes(exportPath);
+            return File(bytes, "image/svg");
+        }
+
         private MovieConnection.List GetMovieConnections()
         {
-            return _connectionsService.MovieConnections.Filter(_defaultFilters);
+            var movieConnections = _connectionsService.MovieConnections;
+            if (_applyDefaultFilters)
+            {
+                movieConnections = movieConnections.Filter(_defaultFilters);
+            }
+            return movieConnections;
         }
 
         private MovieConnection.List FindForMovie(string title, int releaseYear)

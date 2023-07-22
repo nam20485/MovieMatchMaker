@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -21,6 +22,7 @@ namespace MovieMatchMakerLib.Client
         private const string FilterMovieConnectionsForMovieEndpointFormat = "MovieConnections/movieconnections/filter/{0}/{1}";
         private const string GetMovieConnectionByMoviesEndpointFormat = "MovieConnections/movieconnection/{0}/{1}/{2}/{3}";
         private const string GetMovieConnectionByIdEndpointFormat = "MovieConnections/movieconnection/{0}";
+        private const string MovieConnectionsGraphForMovieEndpointFormat = "MovieConnections/movieconnections/graph/{0}/{1}";
 
         private readonly HttpClient _httpClient;          
 
@@ -81,6 +83,13 @@ namespace MovieMatchMakerLib.Client
         {
             var uri = string.Format(GetMovieConnectionByIdEndpointFormat, movieConnectionId);
             return await _httpClient.GetFromJsonAsync<MovieConnection>(uri);
+        }
+
+        public async Task<Stream> GetMovieConnectionsGraphForMovie(string title, int releaseYear)
+        {
+            var uri = string.Format(MovieConnectionsGraphForMovieEndpointFormat, title, releaseYear);
+            var stream = await _httpClient.GetStreamAsync(uri);
+            return stream;
         }
     }
 }

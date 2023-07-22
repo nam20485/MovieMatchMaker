@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,7 @@ namespace MovieMatchMakerLib.Client
 
         Task<MovieConnection> GetMovieConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear);
         Task<MovieConnection> GetMovieConnection(int movieConnectionId);
+        
+        Task<Stream> GetMovieConnectionsGraphForMovie(string title, int releaseYear);
     }
 }
