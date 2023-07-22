@@ -106,5 +106,70 @@ namespace MovieMatchMakerLibTests
             movies.Should().NotBeEmpty();
             movies.Should().HaveCount(533);
         }
+
+        [Fact]
+        public void Test_GetOrCreateMovieConnection()
+        {
+            File.Exists(MovieConnectionBuilderBase.FilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            loaded.Should().NotBeNull();
+            loaded.Should().NotBeEmpty();
+            loaded.Should().HaveCount(17413);
+
+            var created = new MovieConnection.List();
+            foreach (var mc in loaded)
+            {
+                var doesntExist = created.FindConnection(mc.SourceMovie.Title, mc.SourceMovie.ReleaseYear, mc.TargetMovie.Title, mc.TargetMovie.ReleaseYear);
+                doesntExist.Should().BeNull();
+                var newMc = created.GetOrCreateMovieConnection(mc.SourceMovie, mc.TargetMovie);
+                newMc.Should().NotBeNull();
+                var existsNow = created.FindConnection(mc.SourceMovie.Title, mc.SourceMovie.ReleaseYear, mc.TargetMovie.Title, mc.TargetMovie.ReleaseYear);
+                existsNow.Should().NotBeNull();
+                newMc.ConnectedRoles.Should().BeEmpty();
+            }
+
+            created.Should().HaveCount(loaded.Count);
+            loaded.Should().BeEquivalentTo(created);
+        }
+
+        [Fact]
+        public void Test_FindMovieConnectionExact()
+        {
+            File.Exists(MovieConnectionBuilderBase.FilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            loaded.Should().NotBeNull();
+            loaded.Should().NotBeEmpty();
+            loaded.Should().HaveCount(17413);
+
+            foreach (var mc in loaded)
+            {
+                var found = loaded.FindConnectionExact(mc.TargetMovie.Title, mc.TargetMovie.ReleaseYear, mc.SourceMovie.Title, mc.SourceMovie.ReleaseYear);
+                found.Should().BeNull();                
+            }            
+        }
+
+        [Fact]
+        public void Test_FindMovieConnection()
+        {
+            File.Exists(MovieConnectionBuilderBase.FilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            loaded.Should().NotBeNull();
+            loaded.Should().NotBeEmpty();
+            loaded.Should().HaveCount(17413);
+
+            foreach (var mc in loaded)
+            {
+                var found = loaded.FindConnection(mc.SourceMovie.Title, mc.SourceMovie.ReleaseYear, mc.TargetMovie.Title, mc.TargetMovie.ReleaseYear);
+                found.Should().NotBeNull();
+                
+                var foundReversed = loaded.FindConnection(mc.TargetMovie.Title, mc.TargetMovie.ReleaseYear, mc.SourceMovie.Title, mc.SourceMovie.ReleaseYear);
+                foundReversed.Should().NotBeNull();
+                
+                found.Should().BeEquivalentTo(foundReversed);
+
+                var foundById = loaded.FindConnection(found.Id);
+                foundById.Should().NotBeNull();
+            }
+        }
     }
 }
