@@ -184,12 +184,7 @@ namespace MovieMatchMakerLib.Model
 
             public MovieConnection GetOrCreateMovieConnection(Movie sourceMovie, Movie targetMovie)
             {
-                var movieConnection = Find(mc =>
-                    {
-                        return ((mc.SourceMovie == sourceMovie && mc.TargetMovie == targetMovie) ||
-                                (mc.SourceMovie == targetMovie && mc.TargetMovie == sourceMovie));
-                    });
-
+                var movieConnection = FindConnection(sourceMovie.Title, sourceMovie.ReleaseYear, targetMovie.Title, targetMovie.ReleaseYear);
                 if (movieConnection is null)
                 {
                     // not found, return an empty new one
@@ -204,6 +199,10 @@ namespace MovieMatchMakerLib.Model
                 return movieConnection;
             }
 
+            public bool Contains(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
+            {
+                return FindConnection(sourceMovieTitle, sourceMovieReleaseYear, targetMovieTitle, targetMovieReleaseYear) != null;
+            }               
         }
     }
 }
