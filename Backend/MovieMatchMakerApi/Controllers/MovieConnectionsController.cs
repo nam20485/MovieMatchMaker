@@ -21,7 +21,8 @@ namespace MovieMatchMakerApi.Controllers
 
         private static readonly IMovieConnectionListFilter[] _defaultFilters = new IMovieConnectionListFilter[]
         {
-            new MinConnectedRolesCountFilter(3)
+            new MinConnectedRolesCountFilter(5),
+            //new MaxMatchingTitleWordsFilter(3)
         };       
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
@@ -83,9 +84,10 @@ namespace MovieMatchMakerApi.Controllers
             var connections = FindForMovie(title, releaseYear);
             var graph = new MovieConnectionsGraph(connections);
             var exportPath = $"{title}_{releaseYear}_connections.png";
-            graph.ExportToSvgFile(exportPath);
+            graph.ExportToPngFile(exportPath);
             var bytes = System.IO.File.ReadAllBytes(exportPath);
-            return File(bytes, "image/svg");
+            //return File(bytes, "image/svg+xml");
+            return File(bytes, "image/png");
         }
 
         private MovieConnection.List GetMovieConnections()
