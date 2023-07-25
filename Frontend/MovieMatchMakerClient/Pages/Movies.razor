@@ -30,13 +30,24 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
     </ToolBarContent>
        
-    <Columns>        
-        <PropertyColumn Property="m => m.Title" Title="Title"/>
+    <Columns>                
+        <TemplateColumn Title="Title">
+            <CellTemplate>
+                <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Title</MudLink>
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
         @if (HostEnvironment.IsDevelopment())
         {
             <PropertyColumn Property="m => m.MovieId" Hideable="true" />
         }
+        <TemplateColumn Filterable="false" Sortable="false">
+            <CellTemplate>
+                <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
+                    Connections
+                </DetailsButton>               
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 
     <PagerContent>
@@ -92,13 +103,15 @@
         return false;
     };
 
+    //public const int ConnectionsRowIndex = 
+
     // events
     private void RowClicked(DataGridRowClickEventArgs<Movie> args)
-    {
-        if (args.Item is Movie movie)
-        {
-            var uri = $"movieconnectionsformovie/{movie.Title}/{movie.ReleaseYear}";
-            NavigationManager.NavigateTo(uri);
-        }              
+    {        
+        //if (args.Item is Movie movie)
+        //{
+        //    var uri = $"movieconnectionsformovie/{movie.Title}/{movie.ReleaseYear}";
+        //    NavigationManager.NavigateTo(uri);
+        //}              
     }
 }

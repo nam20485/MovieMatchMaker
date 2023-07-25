@@ -28,7 +28,11 @@
     </ToolBarContent>
 
     <Columns>
-        <PropertyColumn Property="cr => cr.Name.FullName" Title="Name" />
+        <TemplateColumn Title="Name">
+           <CellTemplate>
+               <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Name.FullName</MudLink>
+           </CellTemplate>
+       </TemplateColumn>        
         <PropertyColumn Property="cr => cr.SourceJob" Title="Job" />
         <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Job" />
     </Columns>

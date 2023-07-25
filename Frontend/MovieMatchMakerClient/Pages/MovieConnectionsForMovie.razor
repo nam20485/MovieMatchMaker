@@ -31,20 +31,27 @@
 
     <Columns>
         @*<PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />*@
-        <TemplateColumn Context="item" Title="Connected Movie">
+        <TemplateColumn Title="Connected Movie">
             <CellTemplate>
-                @if (item.Item.SourceMovie.Title == Title)
+                @if (@context.Item.SourceMovie.Title == Title)
                 {
-                    @item.Item.TargetMovie.DisplayId
+                    <MudLink Href="@context.Item.TargetMovie.TmdbLink" Target="_blank">@context.Item.TargetMovie.DisplayId</MudLink>                   
                 }
                 else
                 {
-                    @item.Item.SourceMovie.DisplayId
+                    <MudLink Href="@context.Item.SourceMovie.TmdbLink" Target="_blank">@context.Item.SourceMovie.DisplayId</MudLink>                    
                 }
             </CellTemplate>
         </TemplateColumn>
         @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
         <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
+        <TemplateColumn>
+            <CellTemplate>
+                <DetailsButton Href="@($"/movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
+                    Connection
+                </DetailsButton>               
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 
     <PagerContent>
@@ -95,11 +102,11 @@
     // events
     void RowClicked(DataGridRowClickEventArgs<MovieConnection> args)
     {
-        if (args.Item is MovieConnection movieConnection)
-        {
-            // show movie connection details
-            var uri = $"movieconnectiondetails/{movieConnection.SourceMovie.Title}/{movieConnection.SourceMovie.ReleaseYear}/{movieConnection.TargetMovie.Title}/{movieConnection.TargetMovie.ReleaseYear}";
-            NavigationManager.NavigateTo(uri);
-        }
+        //if (args.Item is MovieConnection movieConnection)
+        //{
+        //    // show movie connection details
+        //    var uri = $"movieconnectiondetails/{movieConnection.SourceMovie.Title}/{movieConnection.SourceMovie.ReleaseYear}/{movieConnection.TargetMovie.Title}/{movieConnection.TargetMovie.ReleaseYear}";
+        //    NavigationManager.NavigateTo(uri);
+        //}
     }
 }
