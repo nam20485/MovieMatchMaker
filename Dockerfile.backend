@@ -1,0 +1,34 @@
+# escape=`
+FROM mcr.microsoft.com/dotnet/aspnet:7.0.9 AS base
+#FROM mcr.microsoft.com/dotnet/sdk:7.0.306 AS base
+#FROM mcr.microsoft.com/windows/server:ltsc2022 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0.306 AS build
+WORKDIR /src
+COPY ["Backend", "Backend/"]
+COPY ["Shared", "Shared/"]
+RUN dotnet restore "Backend/MovieMatchMakerApi/MovieMatchMakerApi.csproj"
+WORKDIR "/src/Backend/MovieMatchMakerApi"
+RUN dotnet build "MovieMatchMakerApi.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "MovieMatchMakerApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+#ADD https://aka.ms/vs/16/release/vc_redist.x64.exe vcredist_x64.exe
+#RUN C:\Downloads\vcredist_x64.exe /install /passive /quiet /norestart /log out.txt
+# install the Visual C++ Redistributable VS 2015 x64
+#COPY --from=build /src/Backend/prereqs/vs2015/vc_redist.x64.exe prereqs/
+#COPY --from=build /src/Backend/prereqs/vs2015/vc_redist.x86.exe prereqs/vc_redist.x86.exe
+#RUN /app/prereqs/vc_redist.x64.exe /quiet /install
+#RUN del prereqs/vc_redist.x64.exe
+# SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+# RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+# 	Invoke-WebRequest "https://aka.ms/vs/15/release/vc_redist.x64.exe" -OutFile "vc_redist.x64.exe";	
+#RUN winget install -e --id Microsoft.VCRedist.2015+.x64
+ENTRYPOINT ["dotnet", "MovieMatchMakerApi.dll"]

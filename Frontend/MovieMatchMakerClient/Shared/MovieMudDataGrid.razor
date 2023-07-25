@@ -1,0 +1,29 @@
+﻿@using MudBlazor
+
+@typeparam TItem
+@inherits MudDataGrid<TItem>
+
+@{
+    // Display the base RadzenDataGrid that we are inheriting from.
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        SetDefaultMudDataGridParameters();
+    }
+
+    private void SetDefaultMudDataGridParameters()
+    {        
+        Dense = true;
+        Striped = true;
+        Bordered = true;
+        SortMode = SortMode.Multiple;
+        Filterable = true;
+        RowsPerPage = 15;
+        //QuickFilter = "@_quickFilter"
+    }
+}

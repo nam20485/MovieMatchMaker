@@ -1,0 +1,68 @@
+﻿@using MovieMatchMakerLib.Model
+@using MovieMatchMakerLib.Client
+
+@inject IMovieConnectionsClient MovieConnectionsClient
+@inject IJSRuntime JsRuntime
+@inject HttpClient HttpClient
+
+<div>
+    @* <img id="svg" alt="svg image graph for @Title @ReleaseYear.ToString()" src="" /> *@
+    <img id="image" />
+    @* <object id="image_object" type="image/svg+xml" data="darkcity_1998_connections.svg" width="400" height="600"> *@
+    @*     Your browser does not support SVG *@
+    @* </object> *@
+</div>
+
+@code {
+    [Parameter]
+    public Stream ImageStream { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public int ReleaseYear { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var componentModule = await GetJsComponentModule();
+        //await module.InvokeVoidAsync("showPrompt");
+
+        //var s = await MovieConnectionsClient.GetMovieConnectionsGraphForMovie(Title, ReleaseYear);
+        //await using var fs = new FileStream("C:\\svg.svg", FileMode.Create, FileAccess.Write);
+        //s.Seek(0, SeekOrigin.Begin);
+        //await s.CopyToAsync(fs);
+        //fs.Close();
+        //var fs = await HttpClient.GetStreamAsync("/darkcity_1998_connections.svg");
+        //await using var fs = new FileStream("darkcity_1998_connections.svg", FileMode.Open, FileAccess.Read);
+        //await SetImageAsync(fs, "svg");
+        await SetImageAsync();
+    }
+
+    private async Task<Stream> GetImageStreamAsync()
+    {
+        //return await HttpClient.GetStreamAsync("https://avatars.githubusercontent.com/u/9141961");
+        //return await HttpClient.GetStreamAsync("/darkcity_1998_connections.png");
+        return await MovieConnectionsClient.GetMovieConnectionsGraphForMovie(Title, ReleaseYear);
+    }
+
+    private async Task SetImageAsync()
+    {
+        var imageStream = await GetImageStreamAsync();
+        var dotnetImageStream = new DotNetStreamReference(imageStream);
+        await JsRuntime.InvokeVoidAsync("setImage", "image", dotnetImageStream);
+    }
+
+    // private async Task<IJSObjectReference?> GetJsComponentModule()
+    // {
+    //     var module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MovieConnectionsGraph.razor.js");
+    //     return module;
+    // }
+    //
+    // private async Task SetImageAsync(Stream imageStream, string imgId)
+    // { 
+    //     var componentModule = await GetJsComponentModule();
+    //     var dotnetImageStream = new DotNetStreamReference(imageStream);
+    //     await componentModule.InvokeVoidAsync("setImage", imgId, dotnetImageStream);
+    // }
+}

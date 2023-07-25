@@ -1,0 +1,117 @@
+﻿@page "/movies"
+
+@using MovieMatchMakerLib.Model
+@using MovieMatchMakerLib.Client
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+
+@inject IMovieConnectionsClient MovieConnectionsClient
+@inject IWebAssemblyHostEnvironment HostEnvironment
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Movies</PageTitle>
+
+<MudDataGrid @ref="_dataGrid"
+             T="Movie"
+             Items="@_movieConnectionsMovies"
+             Dense="true"
+             Striped="true"
+             Bordered="true"
+             SortMode="SortMode.Multiple"
+             Filterable="true"
+             RowsPerPage="15"
+             QuickFilter="@_quickFilter"
+             RowClick="@RowClicked">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Movies</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+       
+    <Columns>                
+        <TemplateColumn Title="Title">
+            <CellTemplate>
+                <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Title</MudLink>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <PropertyColumn Property="m => m.MovieId" Hideable="true" />
+        }
+        <TemplateColumn Filterable="false" Sortable="false">
+            <CellTemplate>
+                <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
+                    Connections
+                </DetailsButton>               
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="Movie" PageSizeOptions="@_pageSizeOptions"/>
+    </PagerContent>
+</MudDataGrid>
+
+
+@code {
+    private MudDataGrid<Movie> _dataGrid;
+
+    private Movie.HashSet _movieConnectionsMovies = new Movie.HashSet();
+
+    private string _searchString = "";
+    private readonly int[] _pageSizeOptions = new int[] { 10, 15, 25, 50, 100 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
+        if (_movieConnections is not null)
+        {
+            _movieConnectionsMovies = _movieConnections.Movies;
+            await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
+        } 
+    }
+
+    // quick filter - filter gobally across multiple columns with the same input
+    private Func<Movie, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Title.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.ReleaseYear.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (HostEnvironment.IsDevelopment())
+        {
+            if (x.MovieId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        var crossColumnValues = $"{x.Title} {x.ReleaseYear}";
+        if (HostEnvironment.IsDevelopment())
+        {
+            crossColumnValues += $" {x.MovieId.ToString()}";
+        }               
+        if (crossColumnValues.Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    //public const int ConnectionsRowIndex = 
+
+    // events
+    private void RowClicked(DataGridRowClickEventArgs<Movie> args)
+    {        
+        //if (args.Item is Movie movie)
+        //{
+        //    var uri = $"movieconnectionsformovie/{movie.Title}/{movie.ReleaseYear}";
+        //    NavigationManager.NavigateTo(uri);
+        //}              
+    }
+}

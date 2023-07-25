@@ -1,0 +1,112 @@
+﻿@page "/movieconnectionsformovie/{Title}/{ReleaseYear:int}"
+
+@using MovieMatchMakerLib.Client;
+@using MovieMatchMakerLib.Model;
+
+@inject IMovieConnectionsClient MovieConnectionsClient
+@inject NavigationManager NavigationManager
+
+@*<p>Movie: @Title @ReleaseYear</p>*@
+
+<PageTitle>Connected Movies: @Title (@ReleaseYear)</PageTitle>
+
+<MudDataGrid @ref="_dataGrid"
+             T="MovieConnection"
+             Items="@_movieConnections"
+             Dense="true"
+             Striped="true"
+             Bordered="true"
+             SortMode="SortMode.Multiple"
+             Filterable="true"
+             RowsPerPage="15"
+             QuickFilter="@_quickFilter"
+             RowClick="@RowClicked">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Connected Movies: @Title (@ReleaseYear)</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+
+    <Columns>
+        @*<PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />*@
+        <TemplateColumn Title="Connected Movie">
+            <CellTemplate>
+                @if (@context.Item.SourceMovie.Title == Title)
+                {
+                    <MudLink Href="@context.Item.TargetMovie.TmdbLink" Target="_blank">@context.Item.TargetMovie.DisplayId</MudLink>                   
+                }
+                else
+                {
+                    <MudLink Href="@context.Item.SourceMovie.TmdbLink" Target="_blank">@context.Item.SourceMovie.DisplayId</MudLink>                    
+                }
+            </CellTemplate>
+        </TemplateColumn>
+        @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
+        <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
+        <TemplateColumn>
+            <CellTemplate>
+                <DetailsButton Href="@($"/movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
+                    Connection
+                </DetailsButton>               
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="MovieConnection" PageSizeOptions="@_pageSizeOptions" />
+    </PagerContent>
+
+</MudDataGrid>
+
+@code {
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public int ReleaseYear { get; set; }
+
+    private MudDataGrid<MovieConnection>? _dataGrid;
+
+    private MovieConnection.List _movieConnections = new MovieConnection.List();
+
+    private string _searchString = "";
+    private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _movieConnections = await MovieConnectionsClient.GetMovieConnectionsForMovie(Title, ReleaseYear);
+        await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
+    }
+
+    private Func<MovieConnection, bool> _quickFilter => mc =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (mc.SourceMovie.DisplayId.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (mc.TargetMovie.DisplayId.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        var crossColumnValues = $"{mc.SourceMovie.DisplayId} {mc.TargetMovie.DisplayId} {mc.ConnectedRoles.Count.ToString()}";
+        if (crossColumnValues.Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    // events
+    void RowClicked(DataGridRowClickEventArgs<MovieConnection> args)
+    {
+        //if (args.Item is MovieConnection movieConnection)
+        //{
+        //    // show movie connection details
+        //    var uri = $"movieconnectiondetails/{movieConnection.SourceMovie.Title}/{movieConnection.SourceMovie.ReleaseYear}/{movieConnection.TargetMovie.Title}/{movieConnection.TargetMovie.ReleaseYear}";
+        //    NavigationManager.NavigateTo(uri);
+        //}
+    }
+}
