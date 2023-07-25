@@ -46,7 +46,7 @@ namespace MovieMatchMakerLib
             SaveMovieConnections(FilePath);
         }
 
-        protected void AddMovieConnection(string name, Model.Movie sourceMovie, string sourceRole, Model.Movie targetMovie, string targetRole)
+        protected void AddMovieConnection(string name, Model.Movie sourceMovie, string sourceRole, Model.Movie targetMovie, string targetRole, int personId)
         {
             if (targetMovie != null)
             {
@@ -57,7 +57,8 @@ namespace MovieMatchMakerLib
                     {
                         Name = new Name(name),
                         SourceJob = sourceRole,
-                        TargetJob = targetRole
+                        TargetJob = targetRole,
+                        PersonId = personId,
                     };
                     if (!movieConnection.ConnectedRoles.Contains(connectedRole))
                     {
@@ -77,7 +78,7 @@ namespace MovieMatchMakerLib
                     if (targetRole.ReleaseDate.HasValue)
                     {
                         var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Character);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Character, personCredits.PersonId);
                     }
                 }
                 foreach (var targetRole in personCredits.MovieCredits.Crew)
@@ -85,7 +86,7 @@ namespace MovieMatchMakerLib
                     if (targetRole.ReleaseDate.HasValue)
                     {
                         var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Job);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Character, targetMovie, targetRole.Job, personCredits.PersonId);
                     }
                 }
             }
@@ -101,7 +102,7 @@ namespace MovieMatchMakerLib
                     if (targetRole.ReleaseDate.HasValue)
                     {
                         var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Job);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Job, personCredits.PersonId);
                     }
                 }
                 foreach (var targetRole in personCredits.MovieCredits.Cast)
@@ -109,7 +110,7 @@ namespace MovieMatchMakerLib
                     if (targetRole.ReleaseDate.HasValue)
                     {
                         var targetMovie = await _dataCache.GetMovieAsync(targetRole.Title, targetRole.ReleaseDate.Value.Year);
-                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Character);
+                        AddMovieConnection(sourceRole.Name, sourceMovie, sourceRole.Job, targetMovie, targetRole.Character, personCredits.PersonId);
                     }
                 }
             }
