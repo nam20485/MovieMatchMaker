@@ -3,12 +3,14 @@ using System.Collections.Generic;
 
 namespace MovieMatchMakerLib.Model
 {
-    public class ConnectedRole : IEquatable<ConnectedRole>
+    public class ConnectedRole : IEquatable<ConnectedRole>, ITmdbLinkable
     {
         public Name Name { get; set; }
         public int PersonId { get; set; }
         public string TargetJob { get; set; }
         public string SourceJob { get; set; }
+
+        public string TmdbLink => TmdbApi.TmdbApi.MakeTmdbUrl("person", PersonId);
 
         public override bool Equals(object obj)
         {
