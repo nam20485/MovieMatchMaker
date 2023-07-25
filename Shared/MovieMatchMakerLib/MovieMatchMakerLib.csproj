@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>    
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DbCache.cs" />
+    <Compile Remove="MovieMatchMakerContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nam20485.Rubjerg.Graphviz" Version="1.3.0" />
+	<!-- force latest version of Newtonsoft.Json to fix https://scout.docker.com/vulnerabilities/id/GHSA-5crp-9r3c-p9vr -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="TMDbLib" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

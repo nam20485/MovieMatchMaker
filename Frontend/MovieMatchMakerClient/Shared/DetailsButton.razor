@@ -1,0 +1,19 @@
+﻿
+<MudButton Variant="Variant.Filled"
+           Size="Size.Medium"
+           Color="Color.Primary"
+           Href="@Href"> 
+           @ChildContent
+</MudButton>
+
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Href { get; set; }
+
+}
