@@ -20,8 +20,7 @@
              SortMode="SortMode.Multiple"
              Filterable="true"
              RowsPerPage="15"
-             QuickFilter="@_quickFilter"
-             RowClick="@RowClicked">
+             QuickFilter="@_quickFilter">
 
     <ToolBarContent>
         <MudText Typo="Typo.h6">Movies</MudText>
@@ -41,11 +40,11 @@
         {
             <PropertyColumn Property="m => m.MovieId" Hideable="true" />
         }
-        <TemplateColumn Filterable="false" Sortable="false">
+        <TemplateColumn Filterable="false" Sortable="false" CellStyle="width: 50px">
             <CellTemplate>
-                <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
-                    Connections
-                </DetailsButton>               
+                    <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
+                        Connections
+                    </DetailsButton>               
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -101,17 +100,5 @@
             return true;
 
         return false;
-    };
-
-    //public const int ConnectionsRowIndex = 
-
-    // events
-    private void RowClicked(DataGridRowClickEventArgs<Movie> args)
-    {        
-        //if (args.Item is Movie movie)
-        //{
-        //    var uri = $"movieconnectionsformovie/{movie.Title}/{movie.ReleaseYear}";
-        //    NavigationManager.NavigateTo(uri);
-        //}              
-    }
+    };    
 }

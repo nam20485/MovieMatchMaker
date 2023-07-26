@@ -45,7 +45,7 @@
         </TemplateColumn>
         @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
         <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
-        <TemplateColumn>
+        <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
             <CellTemplate>
                 <DetailsButton Href="@($"/movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
                     Connection
@@ -70,7 +70,7 @@
 
     private MudDataGrid<MovieConnection>? _dataGrid;
 
-    private MovieConnection.List _movieConnections = new MovieConnection.List();
+    private MovieConnection.List _movieConnections = new MovieConnection.List();    
 
     private string _searchString = "";
     private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
