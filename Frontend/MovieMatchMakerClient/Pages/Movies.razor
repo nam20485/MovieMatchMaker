@@ -30,9 +30,11 @@
     </ToolBarContent>
        
     <Columns>                
-        <TemplateColumn Title="Title">
+        <TemplateColumn Title="Title" SortBy="_sortBy">
             <CellTemplate>
-                <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Title</MudLink>
+                <MudLink Href="@context.Item.TmdbLink" Target="_blank">
+                    @context.Item.Title
+                </MudLink>
             </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
@@ -42,7 +44,7 @@
         }
         <TemplateColumn Filterable="false" Sortable="false" CellStyle="width: 50px">
             <CellTemplate>
-                    <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
+                    <DetailsButton Href="@($"movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
                         Connections
                     </DetailsButton>               
             </CellTemplate>
@@ -69,16 +71,9 @@
         var _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
         if (_movieConnections is not null)
         {
-            _movieConnectionsMovies = _movieConnections.Movies;
-            try
-            {
-                await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
-            }
-            catch (NullReferenceException nre)
-            {
-                Console.WriteLine();
-            }
+            _movieConnectionsMovies = _movieConnections.Movies;                  
         } 
+        await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, _sortBy);
     }
 
     // quick filter - filter gobally across multiple columns with the same input
@@ -108,5 +103,10 @@
             return true;
 
         return false;
-    };    
+    };   
+
+    private Func<Movie, object> _sortBy => m =>
+    {
+        return m.Title;
+    };
 }
