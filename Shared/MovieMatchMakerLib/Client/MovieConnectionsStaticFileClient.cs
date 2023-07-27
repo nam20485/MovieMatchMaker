@@ -21,6 +21,8 @@ namespace MovieMatchMakerLib.Client
 
         private MovieConnection.List _movieConnections;
 
+        private bool _applyDefaultFilters = true;
+
         public MovieConnectionsStaticFileClient(IHttpClientFactory httpClientFactory)
         {
             _movieConnections = null;
@@ -68,6 +70,10 @@ namespace MovieMatchMakerLib.Client
             {
                 using var httpClient = _httpClientFactory.CreateClient("Static");
                 _movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, MyJsonSerializerOptions.JsonSerializerOptions);
+                if (_applyDefaultFilters)
+                {
+                    _movieConnections = _movieConnections.Filter(DefaultMovieConnectionListFilters.Filters);
+                }
             }
             return _movieConnections;
         }

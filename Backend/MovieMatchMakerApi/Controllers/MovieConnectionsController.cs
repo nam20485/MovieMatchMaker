@@ -17,13 +17,7 @@ namespace MovieMatchMakerApi.Controllers
 
         private readonly IMovieConnectionsService _connectionsService;
 
-        private readonly bool _applyDefaultFilters = true;
-
-        private static readonly IMovieConnectionListFilter[] _defaultFilters = new IMovieConnectionListFilter[]
-        {
-            new MinConnectedRolesCountFilter(5),
-            //new MaxMatchingTitleWordsFilter(3)
-        };       
+        private readonly bool _applyDefaultFilters = true;     
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
                                           IMovieConnectionsService connectionsService,
@@ -95,7 +89,7 @@ namespace MovieMatchMakerApi.Controllers
             var movieConnections = _connectionsService.MovieConnections;
             if (_applyDefaultFilters)
             {
-                movieConnections = movieConnections.Filter(_defaultFilters);
+                movieConnections = movieConnections.Filter(DefaultMovieConnectionListFilters.Filters);
             }
             return movieConnections;
         }
