@@ -120,16 +120,16 @@ namespace MovieMatchMakerLib.Model
                 });
             }
 
-            //public MovieConnection FindConnectionExact(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
-            //{
-            //    return Find(mc =>
-            //    {
-            //        return (mc.SourceMovie.Title == sourceMovieTitle &&
-            //                 mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
-            //                 mc.TargetMovie.Title == targetMovieTitle &&
-            //                 mc.TargetMovie.ReleaseYear == targetMovieReleaseYear);
-            //    });
-            //}
+            public MovieConnection FindConnectionExact(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
+            {
+                return Find(mc =>
+                {
+                    return (mc.SourceMovie.Title == sourceMovieTitle &&
+                             mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
+                             mc.TargetMovie.Title == targetMovieTitle &&
+                             mc.TargetMovie.ReleaseYear == targetMovieReleaseYear);
+                });
+            }
 
             private MovieConnection GetAt(int index)
             {
