@@ -4,7 +4,6 @@
 @using MovieMatchMakerLib.Model;
 
 @inject IMovieConnectionsClient MovieConnectionsClient
-@inject NavigationManager NavigationManager
 @inject ILogger<MovieConnectionsForMovie> Logger
 
 @*<p>Movie: @Title @ReleaseYear</p>*@
@@ -47,7 +46,7 @@
         <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
         <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
             <CellTemplate>
-                <DetailsButton Href="@($"/movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
+                <DetailsButton Href="@($"movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
                     Connection
                 </DetailsButton>               
             </CellTemplate>
