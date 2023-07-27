@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -25,10 +25,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\appsettings.json">
+    <Content Update="wwwroot\appsettings*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>       
+    <Content Update="wwwroot\js\scripts.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>   
-    <Content Update="wwwroot\js\scripts.js">
+    <Content Update="wwwroot\movieconnections.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>    
   </ItemGroup>

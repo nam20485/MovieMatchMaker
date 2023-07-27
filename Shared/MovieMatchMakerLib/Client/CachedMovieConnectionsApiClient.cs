@@ -10,7 +10,7 @@ public class CachedMovieConnectionsApiClient : MovieConnectionsApiClient
 {
     private MovieConnection.List _movieConnections;
     
-    public CachedMovieConnectionsApiClient(HttpClient httpClient)
+    public CachedMovieConnectionsApiClient(IHttpClientFactory httpClient)
         : base(httpClient)
     {
         _movieConnections = null;

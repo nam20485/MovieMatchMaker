@@ -20,8 +20,7 @@
              SortMode="SortMode.Multiple"
              Filterable="true"
              RowsPerPage="15"
-             QuickFilter="@_quickFilter"
-             RowClick="@RowClicked">
+             QuickFilter="@_quickFilter">
 
     <ToolBarContent>
         <MudText Typo="Typo.h6">Movies</MudText>
@@ -37,15 +36,15 @@
             </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
-        @if (HostEnvironment.IsDevelopment())
+        @if (HostEnvironment.IsDevelopment() && _showMovieIdColumn)
         {
             <PropertyColumn Property="m => m.MovieId" Hideable="true" />
         }
-        <TemplateColumn Filterable="false" Sortable="false">
+        <TemplateColumn Filterable="false" Sortable="false" CellStyle="width: 50px">
             <CellTemplate>
-                <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
-                    Connections
-                </DetailsButton>               
+                    <DetailsButton Href="@($"/movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
+                        Connections
+                    </DetailsButton>               
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -62,7 +61,8 @@
     private Movie.HashSet _movieConnectionsMovies = new Movie.HashSet();
 
     private string _searchString = "";
-    private readonly int[] _pageSizeOptions = new int[] { 10, 15, 25, 50, 100 };
+    private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
+    private bool _showMovieIdColumn = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,7 +70,14 @@
         if (_movieConnections is not null)
         {
             _movieConnectionsMovies = _movieConnections.Movies;
-            await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
+            try
+            {
+                await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
+            }
+            catch (NullReferenceException nre)
+            {
+                Console.WriteLine();
+            }
         } 
     }
 
@@ -101,17 +108,5 @@
             return true;
 
         return false;
-    };
-
-    //public const int ConnectionsRowIndex = 
-
-    // events
-    private void RowClicked(DataGridRowClickEventArgs<Movie> args)
-    {        
-        //if (args.Item is Movie movie)
-        //{
-        //    var uri = $"movieconnectionsformovie/{movie.Title}/{movie.ReleaseYear}";
-        //    NavigationManager.NavigateTo(uri);
-        //}              
-    }
+    };    
 }

@@ -17,8 +17,7 @@
              SortMode="SortMode.Multiple"
              Filterable="true"
              RowsPerPage="15"
-             QuickFilter="@_quickFilter"
-             RowClick="@RowClicked">
+             QuickFilter="@_quickFilter">
 
     <ToolBarContent>
         <MudText Typo="Typo.h6">Connection: @_movieConnection.SourceMovie.DisplayId - @_movieConnection.TargetMovie.DisplayId</MudText>
@@ -30,8 +29,11 @@
     <Columns>
         <TemplateColumn Title="Name">
            <CellTemplate>
-               <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Name.FullName</MudLink>
+                <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Name.FullName</MudLink>
            </CellTemplate>
+           <GroupTemplate>
+                <span style="font-weight:bold">Name: @context.Grouping.Key</span>
+           </GroupTemplate>
        </TemplateColumn>        
         <PropertyColumn Property="cr => cr.SourceJob" Title="Job" />
         <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Job" />
@@ -64,19 +66,30 @@
     //private ConnectedRole.List _connectedRoles;
 
     private string _searchString = "";
-    private readonly int[] _pageSizeOptions = new[] { 10, 15, 25, 50, 100 };
+    private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
+
+    private bool _enableGrouping = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(SourceMovieTitle) && !string.IsNullOrWhiteSpace(TargetMovieTitle))
+        if (!string.IsNullOrWhiteSpace(SourceMovieTitle) && 
+            !string.IsNullOrWhiteSpace(TargetMovieTitle))
         {
-            _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, TargetMovieTitle, TargetMovieReleaseYear);
+            _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, 
+                                                                               TargetMovieTitle, TargetMovieReleaseYear);
         }
         else
         {
             _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
         }
-        await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+        try
+        {
+            await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+        }
+        catch (NullReferenceException nre)
+        {
+            Console.WriteLine();
+        }
     }
 
     private Func<ConnectedRole, bool> _quickFilter => cr =>
@@ -99,13 +112,4 @@
 
         return false;
     };
-
-    // events
-    void RowClicked(DataGridRowClickEventArgs<ConnectedRole> args)
-    {
-        if (args.Item is ConnectedRole connectedRole)
-        {
-            // navigate to person bio on TMDB
-        }
-    }
 }
