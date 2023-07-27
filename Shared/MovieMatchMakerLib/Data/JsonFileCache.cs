@@ -164,7 +164,7 @@ namespace MovieMatchMakerLib.Data
         {
             lock (_lockObj)
             {
-                var json = JsonSerializer.Serialize(this, GlobalSerializerOptions.JsonSerializerOptions);
+                var json = JsonSerializer.Serialize(this, GlobalSerializerOptions.Options);
                 File.WriteAllText(FilePath, json);
             }
         }
@@ -173,7 +173,7 @@ namespace MovieMatchMakerLib.Data
         {
             using (var ms = new MemoryStream())
             {
-                await JsonSerializer.SerializeAsync(ms, this, GlobalSerializerOptions.JsonSerializerOptions);
+                await JsonSerializer.SerializeAsync(ms, this, GlobalSerializerOptions.Options);
 
                 lock (_lockObj)
                 {

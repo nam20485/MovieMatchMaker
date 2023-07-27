@@ -164,12 +164,12 @@ namespace MovieMatchMakerLib.Model
 
             public string ToJson()
             {
-                return JsonSerializer.Serialize(this, GlobalSerializerOptions.JsonSerializerOptions);
+                return JsonSerializer.Serialize(this, GlobalSerializerOptions.Options);
             }
 
             public static List FromJson(string json)
             {
-                return JsonSerializer.Deserialize<List>(json, GlobalSerializerOptions.JsonSerializerOptions);
+                return JsonSerializer.Deserialize<List>(json, GlobalSerializerOptions.Options);
             }
 
             public void SaveToFile(string path)

@@ -69,7 +69,7 @@ namespace MovieMatchMakerLib.Client
             if (_movieConnections is null)
             {
                 using var httpClient = _httpClientFactory.CreateClient("Static");
-                _movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.JsonSerializerOptions);
+                _movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.Options);
                 if (_applyDefaultFilters)
                 {
                     _movieConnections = _movieConnections.Filter(DefaultMovieConnectionListFilters.Filters);

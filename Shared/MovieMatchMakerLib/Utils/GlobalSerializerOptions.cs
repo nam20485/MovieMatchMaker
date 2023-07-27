@@ -5,7 +5,7 @@ namespace MovieMatchMakerLib.Utils
 {
     internal class GlobalSerializerOptions
     {
-        public static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        public static readonly JsonSerializerOptions Options = new()
         {
             // disable pretty-printing in release builds to save file size and xfer speed
             WriteIndented = Macros.IsDebugBuild(),
