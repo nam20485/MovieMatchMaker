@@ -12,6 +12,14 @@ namespace MovieMatchMakerLib.Client
 {
     public interface IMovieConnectionsClient
     {
+        public enum DataSource
+        {
+            LocalFile,
+            LocalFileCached,
+            RemoteApi,
+            RemoteApiCached
+        }
+
         Task<MovieConnection.List> GetAllMovieConnections();
         Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear);
 

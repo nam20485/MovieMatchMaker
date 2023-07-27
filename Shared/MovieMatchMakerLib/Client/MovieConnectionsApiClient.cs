@@ -24,33 +24,37 @@ namespace MovieMatchMakerLib.Client
         private const string GetMovieConnectionByIdEndpointFormat = "MovieConnections/movieconnection/{0}";
         private const string MovieConnectionsGraphForMovieEndpointFormat = "MovieConnections/movieconnections/graph/{0}/{1}";
 
-        private readonly HttpClient _httpClient;          
+        private readonly IHttpClientFactory _httpClientFactory;          
 
-        public MovieConnectionsApiClient(HttpClient httpClient)
+        public MovieConnectionsApiClient(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
         }
 
         public virtual async Task<MovieConnection.List> GetAllMovieConnections()
-        {            
-            return await _httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
+        {
+            using var httpClient = _httpClientFactory.CreateClient("Api");
+            return await httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
         }
 
         public virtual async Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)
-        {
+        {            
+            using var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(MovieConnectionsForMovieEndpointFormat, title, releaseYear);
-            return await _httpClient.GetFromJsonAsync<MovieConnection.List>(uri, MyJsonSerializerOptions.JsonSerializerOptions);
+            return await httpClient.GetFromJsonAsync<MovieConnection.List>(uri, MyJsonSerializerOptions.JsonSerializerOptions);
         }
 
         public virtual async Task<MovieConnection.List> FilterAllMovieConnections(IEnumerable<IMovieConnectionListFilter> filters)
         {
             MovieConnection.List movieConnections = null;
 
-            var response = await _httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(FilterAllMovieConnectionsEndpoint, filters, MyJsonSerializerOptions.JsonSerializerOptions);
+            using var httpClient = _httpClientFactory.CreateClient("Api");
+            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(FilterAllMovieConnectionsEndpoint, filters, MyJsonSerializerOptions.JsonSerializerOptions);
             if (response.IsSuccessStatusCode)
             {
                 movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();               
             }
+
             return movieConnections;
         }
 
@@ -58,8 +62,9 @@ namespace MovieMatchMakerLib.Client
         {
             MovieConnection.List movieConnections = null;
 
+            var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(FilterMovieConnectionsForMovieEndpointFormat, title, releaseYear);
-            var response = await _httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(uri, filters, MyJsonSerializerOptions.JsonSerializerOptions);
+            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(uri, filters, MyJsonSerializerOptions.JsonSerializerOptions);
             if (response.IsSuccessStatusCode)
             {
                 movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();                
@@ -71,24 +76,27 @@ namespace MovieMatchMakerLib.Client
         public async Task<MovieConnection> GetMovieConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle,
             int targetMovieReleaseYear)
         {
+            var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(GetMovieConnectionByMoviesEndpointFormat,
                                          sourceMovieTitle,
                                          sourceMovieReleaseYear,
                                          targetMovieTitle,
                                          targetMovieReleaseYear);
-            return await _httpClient.GetFromJsonAsync<MovieConnection>(uri);
+            return await httpClient.GetFromJsonAsync<MovieConnection>(uri);
         }
 
         public async Task<MovieConnection> GetMovieConnection(int movieConnectionId)
         {
+            var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(GetMovieConnectionByIdEndpointFormat, movieConnectionId);
-            return await _httpClient.GetFromJsonAsync<MovieConnection>(uri);
+            return await httpClient.GetFromJsonAsync<MovieConnection>(uri);
         }
 
         public async Task<Stream> GetMovieConnectionsGraphForMovie(string title, int releaseYear)
         {
+            var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(MovieConnectionsGraphForMovieEndpointFormat, title, releaseYear);
-            var stream = await _httpClient.GetStreamAsync(uri);
+            var stream = await httpClient.GetStreamAsync(uri);
             return stream;
         }
     }
