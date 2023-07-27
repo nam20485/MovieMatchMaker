@@ -26,10 +26,13 @@ if (app.Environment.IsDevelopment())
         configure.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseHttpLogging();
 
-//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
