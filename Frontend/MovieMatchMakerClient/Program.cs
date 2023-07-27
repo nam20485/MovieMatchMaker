@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 using MovieMatchMakerClient;
 using MovieMatchMakerLib.Client;
+
 using MudBlazor.Services;
 
 
@@ -13,15 +14,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // configure logging from appsettings.json
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 // MudBlazor
 builder.Services.AddMudServices();
 
-var apiUrl = builder.Configuration["ApiUrl"];
-builder.Services.AddHttpClient<IMovieConnectionsClient, MovieConnectionsApiClient>(client =>
-{
-    client.BaseAddress = new Uri(apiUrl);
-});
+// add client
+builder.AddMovieConnectionsClient();
 
 await builder.Build().RunAsync();
