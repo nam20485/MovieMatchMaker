@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace MovieMatchMakerLib.Utils
 {
-    internal class MyJsonSerializerOptions
+    internal class GlobalSerializerOptions
     {
-        public static JsonSerializerOptions JsonSerializerOptions => new JsonSerializerOptions()
+        public static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             // disable pretty-printing in release builds to save file size and xfer speed
             WriteIndented = Macros.IsDebugBuild(),

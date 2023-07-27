@@ -34,14 +34,14 @@ namespace MovieMatchMakerLib.Client
         public virtual async Task<MovieConnection.List> GetAllMovieConnections()
         {
             using var httpClient = _httpClientFactory.CreateClient("Api");
-            return await httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, MyJsonSerializerOptions.JsonSerializerOptions);
+            return await httpClient.GetFromJsonAsync<MovieConnection.List>(AllMovieConnectionsEndpoint, GlobalSerializerOptions.JsonSerializerOptions);
         }
 
         public virtual async Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)
         {            
             using var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(MovieConnectionsForMovieEndpointFormat, title, releaseYear);
-            return await httpClient.GetFromJsonAsync<MovieConnection.List>(uri, MyJsonSerializerOptions.JsonSerializerOptions);
+            return await httpClient.GetFromJsonAsync<MovieConnection.List>(uri, GlobalSerializerOptions.JsonSerializerOptions);
         }
 
         public virtual async Task<MovieConnection.List> FilterAllMovieConnections(IEnumerable<IMovieConnectionListFilter> filters)
@@ -49,7 +49,7 @@ namespace MovieMatchMakerLib.Client
             MovieConnection.List movieConnections = null;
 
             using var httpClient = _httpClientFactory.CreateClient("Api");
-            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(FilterAllMovieConnectionsEndpoint, filters, MyJsonSerializerOptions.JsonSerializerOptions);
+            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(FilterAllMovieConnectionsEndpoint, filters, GlobalSerializerOptions.JsonSerializerOptions);
             if (response.IsSuccessStatusCode)
             {
                 movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();               
@@ -64,7 +64,7 @@ namespace MovieMatchMakerLib.Client
 
             var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(FilterMovieConnectionsForMovieEndpointFormat, title, releaseYear);
-            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(uri, filters, MyJsonSerializerOptions.JsonSerializerOptions);
+            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(uri, filters, GlobalSerializerOptions.JsonSerializerOptions);
             if (response.IsSuccessStatusCode)
             {
                 movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();                
