@@ -77,6 +77,10 @@
       "url": "manifest.json"
     },
     {
+      "hash": "sha256-l36e61bqnqMV\/UBGaN5nNZdfdo0xRBbWlGKZ\/9ini\/k=",
+      "url": "movieconnections.json"
+    },
+    {
       "hash": "sha256-lOCs45frNf+D7me6lKLgUhRCdt4VwHCp9H6Ct+YWzfs=",
       "url": "_framework\/blazor.webassembly.js"
     },
@@ -109,7 +113,7 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-HrvE1zLfFUbQFZn5nCoJTmZgsXpBUKYVmT2hT7kNTT8=",
+      "hash": "sha256-jDhmkpJ4JOjc+xfkjt\/rXm7XZeRrn8g6SHRbx9fP0+s=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -149,7 +153,7 @@
       "url": "_framework\/Microsoft.Extensions.Configuration.Json.dll"
     },
     {
-      "hash": "sha256-SjkpcaVLv0h2is\/8QMYK6H5bJ5CEA7EeyqpvyYE+PpA=",
+      "hash": "sha256-g8kN0LQLWa3hPwwNxrrLHccHF+GFTpf55R1TKt2LwEs=",
       "url": "_framework\/Microsoft.Extensions.DependencyInjection.Abstractions.dll"
     },
     {
@@ -157,7 +161,7 @@
       "url": "_framework\/Microsoft.Extensions.DependencyInjection.dll"
     },
     {
-      "hash": "sha256-fmRIDQIWw9f\/nbbM8aFpbpZ\/1aM03maxhSmM5qMYKyk=",
+      "hash": "sha256-ryL1DxmkHCk\/y4Ta4djI0L2Xp\/3iABw7XbySdJOB5Y0=",
       "url": "_framework\/Microsoft.Extensions.Http.dll"
     },
     {
@@ -169,7 +173,7 @@
       "url": "_framework\/Microsoft.Extensions.Localization.dll"
     },
     {
-      "hash": "sha256-+5dUbJ9ffsgK5RahPCQeMw5x76+LlE6F9dqvF2FoBHg=",
+      "hash": "sha256-j8sVGyhSBOch+8UVycWpXh9ucrTeg38cwmtJErw5GLA=",
       "url": "_framework\/Microsoft.Extensions.Logging.Abstractions.dll"
     },
     {
@@ -201,11 +205,11 @@
       "url": "_framework\/Microsoft.JSInterop.WebAssembly.dll"
     },
     {
-      "hash": "sha256-YNyPAg+Z1rW2MQqy6dyTYBt53LI3d+zXcsG5Qmv0uvE=",
+      "hash": "sha256-NalxQE7zL1LQvhOo\/U2PBfDJQxo2qLMIsxeLCRef44E=",
       "url": "_framework\/MovieMatchMakerClient.dll"
     },
     {
-      "hash": "sha256-w5rpX9Uw239VqKQ0vk3orHPhWvSPs\/bZnXtrhJD4AZI=",
+      "hash": "sha256-HKsBOo12mRPMg9VRmycbCLqY5MLn3NLrQ2pofao0blI=",
       "url": "_framework\/MovieMatchMakerLib.dll"
     },
     {
@@ -257,7 +261,7 @@
       "url": "_framework\/System.ComponentModel.TypeConverter.dll"
     },
     {
-      "hash": "sha256-50DpGZP0vm2ooUlMcCEidyCHZ92gLfsDhUCEM2WiuhQ=",
+      "hash": "sha256-NailMqqokHtQ38yxaZW0b\/dIrE3GnJArg\/F8aPZY2Lg=",
       "url": "_framework\/System.Console.dll"
     },
     {
@@ -285,7 +289,7 @@
       "url": "_framework\/System.Linq.dll"
     },
     {
-      "hash": "sha256-rSdnWbq0Pz7\/Ke0qjIG1Rc3xTOn\/KU2E6ggF\/Bpnghw=",
+      "hash": "sha256-EKytBd8wL3UeB8bYNaFcOZLSZq2pTLhd2636HyAlaw8=",
       "url": "_framework\/System.Linq.Expressions.dll"
     },
     {
@@ -293,7 +297,7 @@
       "url": "_framework\/System.Memory.dll"
     },
     {
-      "hash": "sha256-Nm2GiezPH1t6Z\/sP+aLvUvaahmVL2eLwYvsOqDVuX\/Y=",
+      "hash": "sha256-PDo8G3KaIWMCY8JkptAFxxV4sVyQ9kt695duc7yhArE=",
       "url": "_framework\/System.Net.Http.dll"
     },
     {
@@ -309,11 +313,11 @@
       "url": "_framework\/System.ObjectModel.dll"
     },
     {
-      "hash": "sha256-IDjgVYJVxYfkaW8bzlxvMfickqk+z6fIRN8\/q8hHgyM=",
+      "hash": "sha256-4oXnZclbDjVzRh26z+kKre6Ym\/2dw2BEHlp43PA9mJA=",
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
-      "hash": "sha256-tpM99PNWAgGls1rCcGAEWHoONy91OV42aDRFwV5Mw\/U=",
+      "hash": "sha256-LYvcV38qwPnqZ3LWaxC\/NNEhV7qPTgUFhS3UGyw6MuA=",
       "url": "_framework\/System.Private.Uri.dll"
     },
     {
@@ -337,7 +341,7 @@
       "url": "_framework\/System.Reflection.Primitives.dll"
     },
     {
-      "hash": "sha256-fRsrC0D3Z5jCV6v8X4ZH3GV5ZG\/PwRoomgk2lEyJvOY=",
+      "hash": "sha256-Ms96A+enScIWeOT4au+3ROfh4bQ+tMxQBabKYdg1htM=",
       "url": "_framework\/System.Runtime.dll"
     },
     {
@@ -401,11 +405,15 @@
       "url": "_framework\/TMDbLib.dll"
     },
     {
-      "hash": "sha256-6yMgIFrKsNPjbhAVqu7lj6JlRrxeGkyo5ycWzIJj6T0=",
+      "hash": "sha256-ApwjpPSLkm7te0I37og1Ud\/A37ndcJruyOnBVJZmm4k=",
+      "url": "appsettings.Development.json"
+    },
+    {
+      "hash": "sha256-HMpz7r3gO7qHkEGHPG70UtqsetS1uXO2kshywQki1Fc=",
       "url": "appsettings.json"
     },
     {
-      "hash": "sha256-cz0CVi2iD79BUb\/Dfz4H9ZZ6EEW3H+QQtgSi3TVrBqA=",
+      "hash": "sha256-iNmnd\/exuNIIFrM8ggl68wLJe17HSNT6opu4mk+z58A=",
       "url": "MovieMatchMakerClient.styles.css"
     },
     {
@@ -417,5 +425,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "PpEFxzyo"
+  "version": "7lVhoxgA"
 };
