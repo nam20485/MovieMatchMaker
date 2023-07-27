@@ -36,7 +36,7 @@
             </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
-        @if (HostEnvironment.IsDevelopment())
+        @if (HostEnvironment.IsDevelopment() && _showMovieIdColumn)
         {
             <PropertyColumn Property="m => m.MovieId" Hideable="true" />
         }
@@ -61,7 +61,8 @@
     private Movie.HashSet _movieConnectionsMovies = new Movie.HashSet();
 
     private string _searchString = "";
-    private readonly int[] _pageSizeOptions = new int[] { 10, 15, 25, 50, 100 };
+    private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
+    private bool _showMovieIdColumn = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +70,14 @@
         if (_movieConnections is not null)
         {
             _movieConnectionsMovies = _movieConnections.Movies;
-            await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
+            try
+            {
+                await _dataGrid.SetSortAsync(nameof(Movie.DisplayId), SortDirection.Ascending, m => m.DisplayId);
+            }
+            catch (NullReferenceException nre)
+            {
+                Console.WriteLine();
+            }
         } 
     }
 

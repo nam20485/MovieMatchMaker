@@ -17,9 +17,7 @@
              SortMode="SortMode.Multiple"
              Filterable="true"
              RowsPerPage="15"
-             QuickFilter="@_quickFilter"
-             RowClick="@RowClicked"
-             Groupable="_enableGrouping">
+             QuickFilter="@_quickFilter">
 
     <ToolBarContent>
         <MudText Typo="Typo.h6">Connection: @_movieConnection.SourceMovie.DisplayId - @_movieConnection.TargetMovie.DisplayId</MudText>
@@ -29,7 +27,7 @@
     </ToolBarContent>
 
     <Columns>
-        <TemplateColumn Title="Name" Grouping GroupBy="_groupBy">
+        <TemplateColumn Title="Name">
            <CellTemplate>
                 <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Name.FullName</MudLink>
            </CellTemplate>
@@ -74,15 +72,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(SourceMovieTitle) && !string.IsNullOrWhiteSpace(TargetMovieTitle))
+        if (!string.IsNullOrWhiteSpace(SourceMovieTitle) && 
+            !string.IsNullOrWhiteSpace(TargetMovieTitle))
         {
-            _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, TargetMovieTitle, TargetMovieReleaseYear);
+            _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear, 
+                                                                               TargetMovieTitle, TargetMovieReleaseYear);
         }
         else
         {
             _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
         }
-        await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+        try
+        {
+            await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+        }
+        catch (NullReferenceException nre)
+        {
+            Console.WriteLine();
+        }
     }
 
     private Func<ConnectedRole, bool> _quickFilter => cr =>
@@ -105,18 +112,4 @@
 
         return false;
     };
-
-    Func<ConnectedRole, object> _groupBy = cr =>
-    {
-        return cr.Name.FullName;
-    };
-
-    // events
-    void RowClicked(DataGridRowClickEventArgs<ConnectedRole> args)
-    {
-        if (args.Item is ConnectedRole connectedRole)
-        {
-            // navigate to person bio on TMDB
-        }
-    }
 }
