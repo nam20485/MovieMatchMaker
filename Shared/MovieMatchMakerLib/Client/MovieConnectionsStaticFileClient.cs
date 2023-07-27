@@ -5,11 +5,15 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
 
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.Utils;
+using MovieMatchMakerLib.Model.Context;
 
 namespace MovieMatchMakerLib.Client
 {
@@ -23,8 +27,11 @@ namespace MovieMatchMakerLib.Client
 
         private bool _applyDefaultFilters = true;
 
-        public MovieConnectionsStaticFileClient(IHttpClientFactory httpClientFactory)
+        private readonly ILogger<MovieConnectionsStaticFileClient> _logger;
+
+        public MovieConnectionsStaticFileClient(IHttpClientFactory httpClientFactory, ILogger<MovieConnectionsStaticFileClient> logger)
         {
+            _logger = logger;
             _movieConnections = null;
             _httpClientFactory = httpClientFactory;            
         }
@@ -68,14 +75,36 @@ namespace MovieMatchMakerLib.Client
         {
             if (_movieConnections is null)
             {
-                using var httpClient = _httpClientFactory.CreateClient("Static");
-                _movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.Options);
+                _movieConnections = await DeserializeMovieConnections();
+                //_movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.Options);
                 if (_applyDefaultFilters)
                 {
                     _movieConnections = _movieConnections.Filter(DefaultMovieConnectionListFilters.Filters);
                 }
             }
             return _movieConnections;
+        }
+
+        private async Task<MovieConnection.List> DeserializeMovieConnections()
+        {
+            var stopWatch = new PrintStopwatch();
+            var httpClient = _httpClientFactory.CreateClient("Static");
+
+            stopWatch.Start();
+            var json = await httpClient.GetStringAsync(MovieConnectionsFilename);
+            stopWatch.Stop();
+            _logger.LogInformation($"MovieConnections' json fectched in {stopWatch.ElapsedMilliseconds / 1000.0} s");
+
+            stopWatch.Restart();            
+            var options = GlobalSerializerOptions.Options;
+            MovieConnection.List movieConnections = null;
+            //options.TypeInfoResolver = MovieConnectionListJsonSerializerContext.Default;
+            //movieConnections = JsonSerializer.Deserialize(json, typeof(MovieConnection.List), options) as MovieConnection.List;
+            movieConnections = MovieConnection.List.FromJson(json);
+            stopWatch.Stop();
+            _logger.LogInformation($"MovieConnections deserialized in {stopWatch.ElapsedMilliseconds / 1000.0} s");
+
+            return movieConnections;
         }
     }
 }
