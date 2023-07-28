@@ -8,42 +8,49 @@
 
 <PageTitle>Movie Connection</PageTitle>
 
-<MudDataGrid @ref="_dataGrid"
-             T="ConnectedRole"
-             Items="@_movieConnection?.ConnectedRoles"
-             Dense="true"
-             Striped="true"
-             Bordered="true"
-             SortMode="SortMode.Multiple"
-             Filterable="true"
-             RowsPerPage="15"
-             QuickFilter="@_quickFilter">
+@if (_movieConnection is null)
+{
+    <div>Loading details for connection...</div>
+}
+else
+{
+    <MudDataGrid @ref="_dataGrid"
+                 T="ConnectedRole"
+                 Items="@_movieConnection?.ConnectedRoles"
+                 Dense="true"
+                 Striped="true"
+                 Bordered="true"
+                 SortMode="SortMode.Multiple"
+                 Filterable="true"
+                 RowsPerPage="15"
+                 QuickFilter="@_quickFilter">
 
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Connection: @_movieConnection.SourceMovie.DisplayId - @_movieConnection.TargetMovie.DisplayId</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
-    </ToolBarContent>
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Connection: @_movieConnection.SourceMovie.DisplayId - @_movieConnection.TargetMovie.DisplayId</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
 
-    <Columns>
-        <TemplateColumn Title="Name">
-           <CellTemplate>
-                <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Name.FullName</MudLink>
-           </CellTemplate>
-           <GroupTemplate>
-                <span style="font-weight:bold">Name: @context.Grouping.Key</span>
-           </GroupTemplate>
-       </TemplateColumn>        
-        <PropertyColumn Property="cr => cr.SourceJob" Title="Job" />
-        <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Job" />
-    </Columns>
+        <Columns>
+            <TemplateColumn Title="Name">
+               <CellTemplate>
+                    <MudLink Href="@context.Item.TmdbLink" Target="_blank">@context.Item.Name.FullName</MudLink>
+               </CellTemplate>
+               <GroupTemplate>
+                    <span style="font-weight:bold">Name: @context.Grouping.Key</span>
+               </GroupTemplate>
+           </TemplateColumn>        
+            <PropertyColumn Property="cr => cr.SourceJob" Title="Job" />
+            <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Job" />
+        </Columns>
 
-    <PagerContent>
-        <MudDataGridPager T="ConnectedRole" PageSizeOptions="@_pageSizeOptions" />
-    </PagerContent>
+        <PagerContent>
+            <MudDataGridPager T="ConnectedRole" PageSizeOptions="@_pageSizeOptions" />
+        </PagerContent>
 
-</MudDataGrid>
+    </MudDataGrid>
+}
 
 @code {
 
@@ -63,12 +70,17 @@
     private MudDataGrid<ConnectedRole>? _dataGrid;
 
     private MovieConnection _movieConnection;
-    //private ConnectedRole.List _connectedRoles;
 
     private string _searchString = "";
     private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
 
-    private bool _enableGrouping = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_dataGrid is not null)
+        {
+            await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,15 +93,7 @@
         else
         {
             _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
-        }
-        try
-        {
-            await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
-        }
-        catch (NullReferenceException nre)
-        {
-            Console.WriteLine();
-        }
+        }       
     }
 
     private Func<ConnectedRole, bool> _quickFilter => cr =>

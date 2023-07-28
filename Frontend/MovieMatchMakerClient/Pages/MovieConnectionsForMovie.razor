@@ -4,61 +4,67 @@
 @using MovieMatchMakerLib.Model;
 
 @inject IMovieConnectionsClient MovieConnectionsClient
-@inject NavigationManager NavigationManager
 @inject ILogger<MovieConnectionsForMovie> Logger
 
 @*<p>Movie: @Title @ReleaseYear</p>*@
 
 <PageTitle>Connected Movies: @Title (@ReleaseYear)</PageTitle>
 
-<MudDataGrid @ref="_dataGrid"
-             T="MovieConnection"
-             Items="@_movieConnections"
-             Dense="true"
-             Striped="true"
-             Bordered="true"
-             SortMode="SortMode.Multiple"
-             Filterable="true"
-             RowsPerPage="15"
-             QuickFilter="@_quickFilter">
+@if (_movieConnections is null)
+{
+    <div>Loading movie connections for @Title (@ReleaseYear)...</div>
+}
+else
+{
+    <MudDataGrid @ref="_dataGrid"
+                 T="MovieConnection"
+                 Items="@_movieConnections"
+                 Dense="true"
+                 Striped="true"
+                 Bordered="true"
+                 SortMode="SortMode.Multiple"
+                 Filterable="true"
+                 RowsPerPage="15"
+                 QuickFilter="@_quickFilter">
 
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Connected Movies: @Title (@ReleaseYear)</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
-    </ToolBarContent>
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Connected Movies: @Title (@ReleaseYear)</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
 
-    <Columns>
-        @*<PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />*@
-        <TemplateColumn Title="Connected Movie">
-            <CellTemplate>
-                @if (@context.Item.SourceMovie.Title == Title)
-                {
-                    <MudLink Href="@context.Item.TargetMovie.TmdbLink" Target="_blank">@context.Item.TargetMovie.DisplayId</MudLink>                   
-                }
-                else
-                {
-                    <MudLink Href="@context.Item.SourceMovie.TmdbLink" Target="_blank">@context.Item.SourceMovie.DisplayId</MudLink>                    
-                }
-            </CellTemplate>
-        </TemplateColumn>
-        @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
-        <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
-        <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
-            <CellTemplate>
-                <DetailsButton Href="@($"/movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
-                    Connection
-                </DetailsButton>               
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
+        <Columns>
+            @*<PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />*@
+            <TemplateColumn Title="Connected Movie">
+                <CellTemplate>
+                    @if (@context.Item.SourceMovie.Title == Title)
+                    {
+                        <MudLink Href="@context.Item.TargetMovie.TmdbLink" Target="_blank">@context.Item.TargetMovie.DisplayId</MudLink>                   
+                    }
+                    else
+                    {
+                        <MudLink Href="@context.Item.SourceMovie.TmdbLink" Target="_blank">@context.Item.SourceMovie.DisplayId</MudLink>                    
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
+            <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
+            <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
+                <CellTemplate>
+                    <DetailsButton Href="@($"movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
+                        Connection
+                    </DetailsButton>               
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
 
-    <PagerContent>
-        <MudDataGridPager T="MovieConnection" PageSizeOptions="@_pageSizeOptions" />
-    </PagerContent>
+        <PagerContent>
+            <MudDataGridPager T="MovieConnection" PageSizeOptions="@_pageSizeOptions" />
+        </PagerContent>
 
-</MudDataGrid>
+    </MudDataGrid>
+}
 
 @code {
 
@@ -70,26 +76,22 @@
 
     private MudDataGrid<MovieConnection>? _dataGrid;
 
-    private MovieConnection.List _movieConnections = new MovieConnection.List();    
+    private MovieConnection.List _movieConnections;    
 
     private string _searchString = "";
     private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Logger.LogInformation("MovieConnectionsForMovie.OnInitializedAsync() - enter");
-
-        _movieConnections = await MovieConnectionsClient.GetMovieConnectionsForMovie(Title, ReleaseYear);
-        try
+        if (_dataGrid is not null)
         {
             await _dataGrid.SetSortAsync(nameof(MovieConnection.ConnectedRoles.Count), SortDirection.Descending, mc => mc.ConnectedRoles.Count);
         }
-        catch (NullReferenceException nre)
-        {
-            Console.WriteLine();
-        }
+    }
 
-        Logger.LogInformation("MovieConnectionsForMovie.OnInitializedAsync() - exit");
+    protected override async Task OnInitializedAsync()
+    {
+        _movieConnections = await MovieConnectionsClient.GetMovieConnectionsForMovie(Title, ReleaseYear);
     }
 
     private Func<MovieConnection, bool> _quickFilter => mc =>

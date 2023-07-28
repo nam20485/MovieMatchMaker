@@ -4,6 +4,10 @@
     <TargetFramework>net7.0</TargetFramework>    
   </PropertyGroup>
 
+	<PropertyGroup>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+	</PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
@@ -16,6 +20,7 @@
 
   <ItemGroup>
     <Compile Remove="DbCache.cs" />
+    <Compile Remove="Model\Context\MovieConnectionListSerializerContext.cs" />
     <Compile Remove="MovieMatchMakerContext.cs" />
   </ItemGroup>
 

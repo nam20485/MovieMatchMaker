@@ -14,25 +14,14 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-@*
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-*@
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="movies">
                 <span class="oi oi-grid-three-up" aria-hidden="true"></span> Movies
             </NavLink>
         </div>
 
-        @if (showAllMovieConnections)
+        @if (_showAllMovieConnections)
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="allmovieconnections">
@@ -70,7 +59,7 @@
 
 @code {
     private bool collapseNavMenu = true;
-    private const bool showAllMovieConnections = false;
+    private readonly bool _showAllMovieConnections = false;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

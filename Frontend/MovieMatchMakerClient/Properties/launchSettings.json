@@ -18,7 +18,9 @@
       },
       "dotnetRunMessages": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:7118;http://localhost:5242"
+      "applicationUrl": "https://localhost:7118;http://localhost:5242",
+      "commandLineArgs": "--pathbase=/MovieMatchMaker",
+      "launchUrl": "MovieMatchMaker"
     },
     "IIS Express": {
       "commandName": "IISExpress",
