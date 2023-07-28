@@ -6,35 +6,51 @@
 
 @inject IMovieConnectionsClient MovieConnectionsClient
 
-<PageTitle>Movie Connection</PageTitle>
+<PageTitle>Roles</PageTitle>
 
-<MudDataGrid @ref="_dataGrid"
-                T="ConnectedRole"
-                @*Items="@_movieConnection?.ConnectedRoles"*@
-                Dense="true"
-                Striped="true"
-                Bordered="true"
-                SortMode="SortMode.Multiple"
-                Filterable="true"
-                RowsPerPage="15"
-                QuickFilter="@_quickFilter">
+@if (_roles is null)
+{
+    <div>Loading roles...</div>
+}
+else
+{
+    <MudDataGrid @ref="_dataGrid"
+                    T="Role"
+                    Items="@_roles"
+                    Dense="true"
+                    Striped="true"
+                    Bordered="true"
+                    SortMode="SortMode.Multiple"
+                    Filterable="true"
+                    RowsPerPage="15"
+                    QuickFilter="@_quickFilter">
 
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Name: </MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
-    </ToolBarContent>
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">@GetName().FullName</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
 
-    <Columns>
+        <Columns>
+            <PropertyColumn Title="Movie" Property="r => r.Movie.Title" />
+            <PropertyColumn Title="Released" Property="r => r.Movie.ReleaseYear" />
+            <PropertyColumn Title="Role" Property="r => r.Job" />
+            <TemplateColumn Filterable="false" Sortable="false" CellStyle="width: 50px">
+                <CellTemplate>
+                    <DetailsButton Href="@($"movieconnectionsformovie/{context.Item.Movie.Title}/{context.Item.Movie.ReleaseYear}")">
+                        Connections
+                    </DetailsButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
 
-    </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Role" PageSizeOptions="@_pageSizeOptions" />
+        </PagerContent>
 
-    <PagerContent>
-        <MudDataGridPager T="ConnectedRole" PageSizeOptions="@_pageSizeOptions" />
-    </PagerContent>
-
-</MudDataGrid>
+    </MudDataGrid>
+}
 
 
 @code {
@@ -42,7 +58,26 @@
     [Parameter]
     public int PersonId { get; set; }
 
-    private MudDataGrid<ConnectedRole>? _dataGrid;  
+    [Parameter]
+    public string FullName { get; set; }
+
+    private Name GetName()
+    {
+        if (!string.IsNullOrWhiteSpace(FullName))
+        {
+            return new Name(FullName);
+        }
+        else
+        {
+            return _movieConnections.FindPersonName(PersonId);
+        }
+    }
+
+    private Role.HashSet _roles;
+
+    private MudDataGrid<Role>? _dataGrid;
+
+    private MovieConnection.List _movieConnections;
 
     private string _searchString = "";
     private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
@@ -51,39 +86,41 @@
     {
         if (_dataGrid is not null)
         {
-            //await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+            await _dataGrid.SetSortAsync(nameof(Role.Movie.Title), SortDirection.Ascending, r => r.Movie.Title);
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        //if (!string.IsNullOrWhiteSpace(SourceMovieTitle) &&
-        //    !string.IsNullOrWhiteSpace(TargetMovieTitle))
-        //{
-        //    _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear,
-        //                                                                       TargetMovieTitle, TargetMovieReleaseYear);
-        //}
-        //else
-        //{
-        //    _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
-        //}
+        _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
+        if (_movieConnections is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(FullName))
+            {
+                _roles = _movieConnections.GetRolesForPerson(new Name(FullName));
+            }
+            else
+            {
+                _roles = _movieConnections.GetRolesForPerson(PersonId);
+            }
+        }      
     }
 
-    private Func<ConnectedRole, bool> _quickFilter => cr =>
+    private Func<Role, bool> _quickFilter => r =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;
 
-        if (cr.Name.FullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (r.Movie.Title.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (cr.SourceJob.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (r.Movie.ReleaseYear.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (cr.TargetJob.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (r.Job.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        var crossColumnValues = $"{cr.Name.FullName} {cr.SourceJob} {cr.TargetJob}";
+        var crossColumnValues = $"{r.Movie.Title} {r.Movie.ReleaseYear} {r.Job}";       
         if (crossColumnValues.Contains(_searchString))
             return true;
 

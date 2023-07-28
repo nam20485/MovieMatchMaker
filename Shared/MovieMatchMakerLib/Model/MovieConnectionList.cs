@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Utils;
@@ -31,20 +33,78 @@ namespace MovieMatchMakerLib.Model
             {
                 get
                 {
-                    var movies = new Movie.HashSet();
+                    var movies = new Movie.HashSet();                    
                     foreach (var connection in this)
                     {
-                        if (!movies.Contains(connection.SourceMovie))
-                        {
-                            movies.Add(connection.SourceMovie);
-                        }
-                        if (!movies.Contains(connection.TargetMovie))
-                        {
-                            movies.Add(connection.TargetMovie);
-                        }
+                        movies.Add(connection.SourceMovie);
+                        movies.Add(connection.TargetMovie);                        
                     }
                     return movies;
                 }
+            }
+
+            public Role.HashSet GetRolesForPerson(Name name)
+            {
+                var roles = new Role.HashSet();
+                foreach (var movieConnection in this)
+                {
+                    foreach (var connectedRole in movieConnection.ConnectedRoles)
+                    {
+                        if (connectedRole.Name == name)
+                        {
+                            roles.Add(new Role()
+                            {
+                                Movie = movieConnection.SourceMovie,
+                                Job = connectedRole.SourceJob
+                            });
+                            roles.Add(new Role()
+                            {
+                                Movie = movieConnection.TargetMovie,
+                                Job = connectedRole.TargetJob
+                            });                            
+                        }
+                    }
+                }
+                return roles;
+            }
+
+            public Role.HashSet GetRolesForPerson(int personId)
+            {
+                if (FindPersonName(personId) is Name name)
+                {
+                    return GetRolesForPerson(name);
+                }
+                return null;
+            }
+
+            public int FindPersonId(Name name)
+            {
+                foreach (var movieConnection in this)
+                {
+                    foreach (var connectedRole in movieConnection.ConnectedRoles)
+                    {
+                        if (connectedRole.Name == name)
+                        {
+                            return connectedRole.PersonId;
+                        }
+                    }
+                }
+                return -1;
+            }
+
+            public Name FindPersonName(int personId)
+            {
+                foreach (var movieConnection in this)
+                {
+                    foreach (var connectedRole in movieConnection.ConnectedRoles)
+                    {
+                        if (connectedRole.PersonId == personId)
+                        {
+                            return connectedRole.Name;
+                        }
+                    }
+                }
+                return null;
             }
 
             public List FindForMovie(string title, int releaseYear)
