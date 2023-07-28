@@ -75,8 +75,9 @@ namespace MovieMatchMakerLib.Client
         {
             if (_movieConnections is null)
             {
-                _movieConnections = await DeserializeMovieConnections();
-                //_movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.Options);
+                var httpClient = _httpClientFactory.CreateClient("Static");                
+                _movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.Options);
+                //_movieConnections = await DeserializeMovieConnections();
                 if (_applyDefaultFilters)
                 {
                     _movieConnections = _movieConnections.Filter(DefaultMovieConnectionListFilters.Filters);
@@ -93,16 +94,14 @@ namespace MovieMatchMakerLib.Client
             stopWatch.Start();
             var json = await httpClient.GetStringAsync(MovieConnectionsFilename);
             stopWatch.Stop();
-            _logger.LogInformation($"MovieConnections' json fectched in {stopWatch.ElapsedMilliseconds / 1000.0} s");
+            _logger.LogInformation("MovieConnections' json fectched in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
 
-            stopWatch.Restart();            
-            var options = GlobalSerializerOptions.Options;
+            stopWatch.Restart();                        
             MovieConnection.List movieConnections = null;
-            //options.TypeInfoResolver = MovieConnectionListJsonSerializerContext.Default;
-            //movieConnections = JsonSerializer.Deserialize(json, typeof(MovieConnection.List), options) as MovieConnection.List;
-            movieConnections = MovieConnection.List.FromJson(json);
+            movieConnections = JsonSerializer.Deserialize(json, typeof(MovieConnection.List), new MovieConnectionListJsonSerializerContext(GlobalSerializerOptions.Options)) as MovieConnection.List;
+            //movieConnections = MovieConnection.List.FromJson(json);
             stopWatch.Stop();
-            _logger.LogInformation($"MovieConnections deserialized in {stopWatch.ElapsedMilliseconds / 1000.0} s");
+            _logger.LogInformation("MovieConnections deserialized in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
 
             return movieConnections;
         }
