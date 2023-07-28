@@ -1,0 +1,92 @@
+﻿@page "/rolesforperson/{FullName}"
+@page "/rolesforperson/{PersonId:int}"
+
+@using MovieMatchMakerLib.Client;
+@using MovieMatchMakerLib.Model;
+
+@inject IMovieConnectionsClient MovieConnectionsClient
+
+<PageTitle>Movie Connection</PageTitle>
+
+<MudDataGrid @ref="_dataGrid"
+                T="ConnectedRole"
+                @*Items="@_movieConnection?.ConnectedRoles"*@
+                Dense="true"
+                Striped="true"
+                Bordered="true"
+                SortMode="SortMode.Multiple"
+                Filterable="true"
+                RowsPerPage="15"
+                QuickFilter="@_quickFilter">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Name: </MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+    </ToolBarContent>
+
+    <Columns>
+
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="ConnectedRole" PageSizeOptions="@_pageSizeOptions" />
+    </PagerContent>
+
+</MudDataGrid>
+
+
+@code {
+
+    [Parameter]
+    public int PersonId { get; set; }
+
+    private MudDataGrid<ConnectedRole>? _dataGrid;  
+
+    private string _searchString = "";
+    private readonly int[] _pageSizeOptions = { 10, 15, 25, 50, 100 };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_dataGrid is not null)
+        {
+            //await _dataGrid.SetSortAsync(nameof(ConnectedRole.Name.FullName), SortDirection.Ascending, cr => cr.Name.FullName);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //if (!string.IsNullOrWhiteSpace(SourceMovieTitle) &&
+        //    !string.IsNullOrWhiteSpace(TargetMovieTitle))
+        //{
+        //    _movieConnection = await MovieConnectionsClient.GetMovieConnection(SourceMovieTitle, SourceMovieReleaseYear,
+        //                                                                       TargetMovieTitle, TargetMovieReleaseYear);
+        //}
+        //else
+        //{
+        //    _movieConnection = await MovieConnectionsClient.GetMovieConnection(MovieConnectionId);
+        //}
+    }
+
+    private Func<ConnectedRole, bool> _quickFilter => cr =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (cr.Name.FullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (cr.SourceJob.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (cr.TargetJob.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        var crossColumnValues = $"{cr.Name.FullName} {cr.SourceJob} {cr.TargetJob}";
+        if (crossColumnValues.Contains(_searchString))
+            return true;
+
+        return false;
+    };
+}
