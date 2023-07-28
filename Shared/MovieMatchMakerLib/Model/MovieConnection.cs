@@ -120,16 +120,16 @@ namespace MovieMatchMakerLib.Model
                 });
             }
 
-            //public MovieConnection FindConnectionExact(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
-            //{
-            //    return Find(mc =>
-            //    {
-            //        return (mc.SourceMovie.Title == sourceMovieTitle &&
-            //                 mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
-            //                 mc.TargetMovie.Title == targetMovieTitle &&
-            //                 mc.TargetMovie.ReleaseYear == targetMovieReleaseYear);
-            //    });
-            //}
+            public MovieConnection FindConnectionExact(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
+            {
+                return Find(mc =>
+                {
+                    return (mc.SourceMovie.Title == sourceMovieTitle &&
+                             mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
+                             mc.TargetMovie.Title == targetMovieTitle &&
+                             mc.TargetMovie.ReleaseYear == targetMovieReleaseYear);
+                });
+            }
 
             private MovieConnection GetAt(int index)
             {
@@ -164,12 +164,12 @@ namespace MovieMatchMakerLib.Model
 
             public string ToJson()
             {
-                return JsonSerializer.Serialize(this, MyJsonSerializerOptions.JsonSerializerOptions);
+                return JsonSerializer.Serialize(this, GlobalSerializerOptions.Options);
             }
 
             public static List FromJson(string json)
             {
-                return JsonSerializer.Deserialize<List>(json, MyJsonSerializerOptions.JsonSerializerOptions);
+                return JsonSerializer.Deserialize<List>(json, GlobalSerializerOptions.Options);
             }
 
             public void SaveToFile(string path)
