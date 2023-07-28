@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Model.Context
 {    
-    [JsonSerializable(typeof(MovieConnection))]
-    public partial class MovieConnectionJsonSerializerContext : JsonSerializerContext
-    {        
-    }
+    //[JsonSerializable(typeof(MovieConnection))]
+    //public partial class MovieConnectionJsonSerializerContext : JsonSerializerContext
+    //{        
+    //}
 }
