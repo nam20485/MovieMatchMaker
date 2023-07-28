@@ -5,11 +5,16 @@ namespace MovieMatchMakerLib.Model
 {
     public class Movie : Production, ITmdbLinkable
     {
-        public string TmdbLink => TmdbApi.TmdbApi.MakeTmdbUrl("movie", MovieId);            
+        public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", MovieId);
 
-        public Movie(string title, int releaseYear, int movieId)
-            : base(title, releaseYear, movieId)
+        public Movie(string title, int releaseYear, int movieId, string posterImagePath)
+            : base(title, releaseYear, movieId, posterImagePath)
         {
+        }
+
+        public string MakePosterImagePath(TmdbApiHelper.PosterImageSize posterImageSize)
+        {
+            return TmdbApiHelper.MakeMoviePosterImagePath(posterImageSize, PosterImagePath);
         }
 
         public class List : List<Movie>

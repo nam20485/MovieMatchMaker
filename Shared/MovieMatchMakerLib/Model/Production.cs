@@ -9,15 +9,18 @@ namespace MovieMatchMakerLib.Model
         public int ReleaseYear { get; set; }
         public int MovieId { get; set; }
         public bool Fetched { get; set; }
+        public string PosterImagePath { get; set; }
+
 
         private const string DisplayIdFormat = "{0} ({1})";
         public string DisplayId => string.Format(DisplayIdFormat, Title, ReleaseYear);
 
-        public Production(string title, int releaseYear, int movieId)
+        public Production(string title, int releaseYear, int movieId, string posterImagePath)
         {
             Title = title;
             ReleaseYear = releaseYear;
             MovieId = movieId;
+            PosterImagePath = posterImagePath;
             Fetched = false;
         }
 

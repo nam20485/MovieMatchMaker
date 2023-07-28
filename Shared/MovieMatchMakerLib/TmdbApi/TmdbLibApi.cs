@@ -40,7 +40,8 @@ namespace MovieMatchMakerLib.TmdbApi
             {
                 var result = searchResult.Results.First();
                 var movieId = result.Id;
-                movie = new Model.Movie(title, releaseYear, movieId);
+                var posterImagePath = result.PosterPath;
+                movie = new Model.Movie(title, releaseYear, movieId, posterImagePath);
             }
 
             return movie;
