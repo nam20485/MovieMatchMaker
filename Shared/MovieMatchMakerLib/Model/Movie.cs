@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLib.Model
 {
