@@ -14,7 +14,7 @@ namespace MovieMatchMakerApi.Services
         {
             _logger = logger;
 
-            var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);                        
+            var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);                        
             MovieConnectionBuilder = new MovieConnectionBuilder(dataCache);            
         }
     }

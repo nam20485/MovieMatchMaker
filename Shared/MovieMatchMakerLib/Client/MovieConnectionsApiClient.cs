@@ -49,7 +49,7 @@ namespace MovieMatchMakerLib.Client
             MovieConnection.List movieConnections = null;
 
             using var httpClient = _httpClientFactory.CreateClient("Api");
-            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(FilterAllMovieConnectionsEndpoint, filters, GlobalSerializerOptions.Options);
+            var response = await httpClient.PostAsJsonAsync(FilterAllMovieConnectionsEndpoint, filters, GlobalSerializerOptions.Options);
             if (response.IsSuccessStatusCode)
             {
                 movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();               
@@ -64,7 +64,7 @@ namespace MovieMatchMakerLib.Client
 
             var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(FilterMovieConnectionsForMovieEndpointFormat, title, releaseYear);
-            var response = await httpClient.PostAsJsonAsync<IEnumerable<IMovieConnectionListFilter>>(uri, filters, GlobalSerializerOptions.Options);
+            var response = await httpClient.PostAsJsonAsync(uri, filters, GlobalSerializerOptions.Options);
             if (response.IsSuccessStatusCode)
             {
                 movieConnections = await response.Content.ReadFromJsonAsync<MovieConnection.List>();                

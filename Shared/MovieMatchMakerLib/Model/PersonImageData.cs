@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Model
 {
-    public interface ITmdbLinkable
+    public class PersonImageData
     {
-        string TmdbLink { get; }
     }
 }

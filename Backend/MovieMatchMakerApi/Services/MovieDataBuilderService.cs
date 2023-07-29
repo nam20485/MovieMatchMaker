@@ -14,10 +14,10 @@ namespace MovieMatchMakerApi.Services
             _logger = logger;
 
             var apiDataSource = new ApiDataSource();
-            var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);
+            var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);
             var cachedDataSource = new CachedDataSource(dataCache, apiDataSource);
 
-            MovieDataBuilder = new MovieDataBuilder(cachedDataSource);
+            MovieDataBuilder = new MovieDataBuilder(cachedDataSource, false);
         }
     }
 }

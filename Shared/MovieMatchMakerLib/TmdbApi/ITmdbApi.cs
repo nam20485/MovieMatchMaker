@@ -7,6 +7,8 @@ namespace MovieMatchMakerLib.TmdbApi
 {
     public interface ITmdbApi
     {
+        Task<ProfileImages> FetchImageDataForPerson(int personId);
+
         //string TmdbApiKey { get; }
 
         Task<Model.Movie> FetchMovieAsync(string title, int releaseYear);

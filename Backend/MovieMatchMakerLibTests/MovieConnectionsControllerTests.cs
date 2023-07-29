@@ -21,7 +21,7 @@ namespace MovieMatchMakerLibTests
             var allConnections = controller.GetAllMovieConnections();
             allConnections.Should().NotBeNull();
             allConnections.Should().NotBeEmpty();
-            allConnections.Should().HaveCount(974);
+            allConnections.Should().HaveCount(328);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace MovieMatchMakerLibTests
             var darkCityConnections = controller.GetMovieConnectionsForMovie("Dark City", 1998);
             darkCityConnections.Should().NotBeNull();
             darkCityConnections.Should().NotBeEmpty();
-            darkCityConnections.Should().HaveCount(45);
+            darkCityConnections.Should().HaveCount(25);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace MovieMatchMakerLibTests
             var allConnections = controller.FilterAllMovieConnections(_filters);
             allConnections.Should().NotBeNull();
             allConnections.Should().NotBeEmpty();
-            allConnections.Should().HaveCount(809);
+            allConnections.Should().HaveCount(236);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace MovieMatchMakerLibTests
             var allConnections = controller.FilterMovieConnectionsForMovie("Dark City", 1998, _filters);
             allConnections.Should().NotBeNull();
             allConnections.Should().NotBeEmpty();
-            allConnections.Should().HaveCount(44);
+            allConnections.Should().HaveCount(24);
         }
 
         [Fact]
