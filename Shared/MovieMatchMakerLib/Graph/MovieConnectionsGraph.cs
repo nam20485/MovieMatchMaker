@@ -39,8 +39,24 @@ namespace MovieMatchMakerLib.Graph
                 }
             }
 
+            TrimGraph(rootGraph);
+
             return rootGraph;
-        }       
+        }
+
+        private void TrimGraph(RootGraph rootGraph)
+        {
+            foreach (var n in rootGraph.Nodes())
+            {
+                
+            }
+            // remove 'subgraphs' with less than n nodes
+        }
+
+        private int CountConnectedNodes(Node n)
+        {
+            return -1;
+        }
 
         public void ExportToSvgFile(string exportPath)
         {
