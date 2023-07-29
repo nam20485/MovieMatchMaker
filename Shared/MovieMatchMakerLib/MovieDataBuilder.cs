@@ -11,24 +11,15 @@ namespace MovieMatchMakerLib
         public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "moviematchmaker.json");
 
         protected readonly IDataSource _dataSource;
-        private readonly bool _threaded;
 
-        public MovieDataBuilder(IDataSource dataSource, bool threaded)
+        public MovieDataBuilder(IDataSource dataSource)
         {
             _dataSource = dataSource;
-            _threaded = threaded;
         }
 
         public async void BuildFromInitial(string title, int releaseYear, int degree)
         {
-            if (!_threaded)
-            {
-                await FindMoviesConnectedToMovie(title, releaseYear, degree);
-            }
-            else
-            {
-                QueueFindMoviesConnectedToMovieThread(title, releaseYear, degree);
-            }
+            await FindMoviesConnectedToMovie(title, releaseYear, degree);            
         }
 
         protected async Task FindMoviesConnectedToMovie(string title, int releaseYear, int degree)
@@ -52,25 +43,7 @@ namespace MovieMatchMakerLib
             public string title;
             public int releaseYear;
             public int degree;
-        }
-
-        protected async void InvokeFindMovieConnectedToMovies(FindMoviesConnectedToMovieArgs args)
-        {
-            await FindMoviesConnectedToMovie(args.title, args.releaseYear, args.degree);
-        }
-
-        protected bool QueueFindMoviesConnectedToMovieThread(string title, int releaseYear, int degree)
-        {
-            const bool preferLocal = true;
-            return ThreadPool.QueueUserWorkItem(InvokeFindMovieConnectedToMovies,
-                                                new FindMoviesConnectedToMovieArgs
-                                                {
-                                                    title = title,
-                                                    releaseYear = releaseYear,
-                                                    degree = degree
-                                                },
-                                                preferLocal);
-        }
+        }       
 
         protected async Task FindMoviesConnectedToMovie(int movieId, int degree)
         {
@@ -92,30 +65,34 @@ namespace MovieMatchMakerLib
             {
                 if (role.ReleaseDate.HasValue)
                 {
-                    if (!_threaded)
-                    {
-                        await FindMoviesConnectedToMovie(role.Title, role.ReleaseDate.Value.Year, degree - 1);
-                    }
-                    else
-                    {
-                        QueueFindMoviesConnectedToMovieThread(role.Title, role.ReleaseDate.Value.Year, degree - 1);
-                    }
+                    await FindMoviesConnectedToMovie(role.Title, role.ReleaseDate.Value.Year, degree - 1);                  
                 }
             }
             foreach (var role in personsMovieCredits.MovieCredits.Crew)
             {
                 if (role.ReleaseDate.HasValue)
                 {
-                    if (!_threaded)
-                    {
-                        await FindMoviesConnectedToMovie(role.Title, role.ReleaseDate.Value.Year, degree - 1);
-                    }
-                    else
-                    {
-                        QueueFindMoviesConnectedToMovieThread(role.Title, role.ReleaseDate.Value.Year, degree - 1);
-                    }
+                    await FindMoviesConnectedToMovie(role.Title, role.ReleaseDate.Value.Year, degree - 1);
                 }
             }
-        }       
+        }
+
+        //protected async void InvokeFindMovieConnectedToMovies(FindMoviesConnectedToMovieArgs args)
+        //{
+        //    await FindMoviesConnectedToMovie(args.title, args.releaseYear, args.degree);
+        //}
+
+        //protected bool QueueFindMoviesConnectedToMovieThread(string title, int releaseYear, int degree)
+        //{
+        //    const bool preferLocal = true;
+        //    return ThreadPool.QueueUserWorkItem(InvokeFindMovieConnectedToMovies,
+        //                                        new FindMoviesConnectedToMovieArgs
+        //                                        {
+        //                                            title = title,
+        //                                            releaseYear = releaseYear,
+        //                                            degree = degree
+        //                                        },
+        //                                        preferLocal);
+        //}
     }
 }
