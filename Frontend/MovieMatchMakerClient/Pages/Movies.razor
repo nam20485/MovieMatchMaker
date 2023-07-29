@@ -47,7 +47,7 @@ else
             {
                 <PropertyColumn Property="m => m.MovieId" Hideable="true" />
             }
-            <TemplateColumn Filterable="false" Sortable="false" CellStyle="width: 50px">
+            <TemplateColumn Filterable="false" Sortable="false" >
                 <CellTemplate>
                         <DetailsButton Href="@($"movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
                             Connections
