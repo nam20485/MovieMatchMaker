@@ -56,5 +56,10 @@ namespace MovieMatchMakerLib.TmdbApi
         {
             return await _apiClient.GetMovieCreditsAsync(movieApiId);
         }
+
+        public async Task<ProfileImages> FetchImageDataForPerson(int personId)
+        {
+            return await _apiClient.GetPersonImagesAsync(personId);
+        }
     }
 }
