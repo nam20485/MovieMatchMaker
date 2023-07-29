@@ -21,26 +21,20 @@ namespace MovieMatchMakerLib
         private readonly RequestProcessingLoopThread<MovieRequest> _movieRequestsLoopThread;
         private readonly RequestProcessingLoopThread<MovieCreditsRequest> _movieCreditsRequestsLoopThread;
         private readonly RequestProcessingLoopThread<PersonCreditsRequest> _personCreditsRequestsLoopThread;
-
-
-        public ThreadedMovieDataBuilder(string filePath)
+       
+        public ThreadedMovieDataBuilder(IDataSource dataSource)
         {
-            _dataSource = CachedDataSource.Create(filePath);
-           
-        }
+            _dataSource = dataSource;
 
-        public ThreadedMovieDataBuilder()
-            : this(FilePath)
-        {
-            _movieRequestsLoopThread = new (ProcessMovieRequestAsync);
-            _movieCreditsRequestsLoopThread = new (ProcessMovieCreditsRequestAsync);
-            _personCreditsRequestsLoopThread = new (ProcessPersonCreditsRequestAsync);
-        }
+            _movieRequestsLoopThread = new(ProcessMovieRequestAsync);
+            _movieCreditsRequestsLoopThread = new(ProcessMovieCreditsRequestAsync);
+            _personCreditsRequestsLoopThread = new(ProcessPersonCreditsRequestAsync);
+        }    
 
         public void BuildFromInitial(string title, int releaseYear, int degree)
-        {
-            Start();
+        {            
             _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear));
+            Start();
         }
 
         private void Start()
