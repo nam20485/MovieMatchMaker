@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace MovieMatchMakerLib
+﻿namespace MovieMatchMakerLib
 {
     public interface IMovieDataBuilder
     {
