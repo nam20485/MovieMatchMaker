@@ -16,13 +16,19 @@ namespace MovieMatchMakerLib.Data
         public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
 
-        private readonly object _lockObj = new object();
+        private readonly object _fileLockObj = new();
 
         public JsonFileCache()
         {
             Movies = new Movie.List();
             PersonsMovieCreditsById = new PersonsMovieCredits.IntDictionary();
             MoviesCreditsById = new MoviesCredits.IntDictionary();
+        }
+
+        public JsonFileCache(string filePath)
+            : this()
+        {
+            FilePath = filePath;
         }
 
         public async Task AddCreditsForMovieAsync(MoviesCredits moviesCredits)
@@ -162,7 +168,7 @@ namespace MovieMatchMakerLib.Data
 
         public void Save()
         {
-            lock (_lockObj)
+            lock (_fileLockObj)
             {
                 var json = JsonSerializer.Serialize(this, GlobalSerializerOptions.Options);
                 File.WriteAllText(FilePath, json);
@@ -175,7 +181,7 @@ namespace MovieMatchMakerLib.Data
             {
                 await JsonSerializer.SerializeAsync(ms, this, GlobalSerializerOptions.Options);
 
-                lock (_lockObj)
+                lock (_fileLockObj)
                 {
                     using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
                     {
