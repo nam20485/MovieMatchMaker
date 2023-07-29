@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,14 +27,14 @@ namespace MovieMatchMakerLib
         {
             _dataSource = dataSource;
 
-            _movieRequestsLoopThread = new(ProcessMovieRequestAsync);
-            _movieCreditsRequestsLoopThread = new(ProcessMovieCreditsRequestAsync);
-            _personCreditsRequestsLoopThread = new(ProcessPersonCreditsRequestAsync);
+            _movieRequestsLoopThread = new (ProcessMovieRequestAsync);
+            _movieCreditsRequestsLoopThread = new (ProcessMovieCreditsRequestAsync);
+            _personCreditsRequestsLoopThread = new (ProcessPersonCreditsRequestAsync);
         }    
 
         public void BuildFromInitial(string title, int releaseYear, int degree)
         {            
-            _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear));
+            _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear, degree));
             Start();
         }
 
@@ -53,8 +54,11 @@ namespace MovieMatchMakerLib
 
         private async void ProcessMovieRequestAsync(MovieRequest movieRequest)
         {
-            var movie = await _dataSource.GetMovieAsync(movieRequest.Title, movieRequest.ReleaseYear);
-            _movieCreditsRequestsLoopThread.AddRequest(new MovieCreditsRequest(movie.MovieId));
+            if (movieRequest.Degree >= 0)
+            {
+                var movie = await _dataSource.GetMovieAsync(movieRequest.Title, movieRequest.ReleaseYear);
+                _movieCreditsRequestsLoopThread.AddRequest(new MovieCreditsRequest(movie.MovieId, movieRequest.Degree));
+            }
         }
       
         private async void ProcessMovieCreditsRequestAsync(MovieCreditsRequest request)
@@ -64,11 +68,11 @@ namespace MovieMatchMakerLib
             var movieCredits = await _dataSource.GetCreditsForMovieAsync(request.MovieId);
             foreach (var castRole in movieCredits.Credits.Cast)
             {
-                _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(castRole.Id));
+                _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(castRole.Id, request.Degree));
             }
             foreach (var crewRole in movieCredits.Credits.Crew)
             {
-                _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(crewRole.Id));
+                _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(crewRole.Id, request.Degree));
             }
         }
 
@@ -77,11 +81,11 @@ namespace MovieMatchMakerLib
             var personCredits = await _dataSource.GetMovieCreditsForPersonAsync(request.PersonId);
             foreach (var castRole in personCredits.MovieCredits.Cast)
             {
-                _movieRequestsLoopThread.AddRequest(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year));
+                _movieRequestsLoopThread.AddRequest(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year, request.Degree - 1));
             }
             foreach (var crewRole in personCredits.MovieCredits.Crew)
             {
-                _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year));
+                _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year, request.Degree - 1));
             }
         }
        
@@ -89,31 +93,37 @@ namespace MovieMatchMakerLib
         {
             public readonly string Title;
             public readonly int ReleaseYear;
+            public readonly int Degree;
 
-            public MovieRequest(string title, int releaseYear)
+            public MovieRequest(string title, int releaseYear, int degree)
             {
                 Title = title;
                 ReleaseYear = releaseYear;
+                Degree = degree;
             }
         }
 
         private readonly struct MovieCreditsRequest
         {
             public readonly int MovieId;
+            public readonly int Degree;
 
-            public MovieCreditsRequest(int movieId)
+            public MovieCreditsRequest(int movieId, int degree)
             {
                 MovieId = movieId;
+                Degree = degree;
             }
         }
 
         private readonly struct PersonCreditsRequest
         {
             public readonly int PersonId;
+            public readonly int Degree;
 
-            public PersonCreditsRequest(int personId)
+            public PersonCreditsRequest(int personId, int degree)
             {
                 PersonId = personId;
+                Degree = degree;
             }
         }       
     }
