@@ -38,7 +38,7 @@ namespace MovieMatchMakerLibTests
         public static MovieDataBuilder CreateMovieDataBuilder()
         {            
             var cachedDataSource = CreateCachedDataSource();
-            var movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource, false);
+            var movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
             return movieNetworkDataBuilder;
         }
 
