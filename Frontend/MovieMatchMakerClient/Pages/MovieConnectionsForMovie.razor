@@ -50,7 +50,7 @@ else
             </TemplateColumn>
             @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
             <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
-            <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
+            <TemplateColumn Sortable="false" Filterable="false">
                 <CellTemplate>
                     <DetailsButton Href="@($"movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
                         Connection

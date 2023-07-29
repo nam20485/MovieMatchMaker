@@ -43,7 +43,7 @@ else
            </TemplateColumn>        
             <PropertyColumn Property="cr => cr.SourceJob" Title="Role" />
             <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Role" />
-            <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
+            <TemplateColumn Sortable="false" Filterable="false">
                 <CellTemplate>
                     <DetailsButton Href="@($"rolesforperson/{@context.Item.PersonId}")">
                         Roles

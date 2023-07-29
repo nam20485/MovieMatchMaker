@@ -36,7 +36,7 @@ else
             <PropertyColumn Title="Movie" Property="r => r.Movie.Title" />
             <PropertyColumn Title="Released" Property="r => r.Movie.ReleaseYear" />
             <PropertyColumn Title="Role" Property="r => r.Job" />
-            <TemplateColumn Filterable="false" Sortable="false" CellStyle="width: 50px">
+            <TemplateColumn Filterable="false" Sortable="false">
                 <CellTemplate>
                     <DetailsButton Href="@($"movieconnectionsformovie/{context.Item.Movie.Title}/{context.Item.Movie.ReleaseYear}")">
                         Connections
