@@ -13,7 +13,7 @@ namespace MovieMatchMakerApi.Services
         {
             _logger = logger;
 
-            MovieConnections = MovieConnection.List.LoadFromFile(MovieConnectionBuilderBase.FilePath);
+            MovieConnections = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
         }
     }
 }
