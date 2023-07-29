@@ -15,9 +15,17 @@ namespace MovieMatchMakerLib.Data
             _dataSource = dataSource;
         }
 
-        public static CachedDataSource Create(string cacheFilePath)
+        public static CachedDataSource CreateWithJsonFileCacheAndApiDataSource(string cacheFilePath, bool loadCache)
         {
-            var dataCache = new JsonFileCache(cacheFilePath);
+            JsonFileCache dataCache;
+            if (loadCache)
+            {
+                dataCache = JsonFileCache.Load(cacheFilePath);
+            }
+            else
+            {
+                dataCache = new JsonFileCache(cacheFilePath);
+            }
             var apiDataSource = new ApiDataSource();
             return new CachedDataSource(dataCache, apiDataSource);
         }
@@ -50,7 +58,8 @@ namespace MovieMatchMakerLib.Data
             {
                 personsMovieCredits = await _dataSource.GetMovieCreditsForPersonAsync(personId);
                 if (personsMovieCredits != null)
-                {
+                {                    
+                    // add poster path
                     await _dataCache.AddPersonsMovieCreditsAsync(personsMovieCredits);
                 }
             }

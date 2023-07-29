@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
 using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.TmdbApi;
 
@@ -40,16 +42,7 @@ namespace MovieMatchMakerLib.Data
             var movieCredits = await _tmdbApi.FetchMovieCreditsForPerson(personId);
             if (movieCredits != null)
             {
-                var profileImageData = "";
-                var personImageData = await _tmdbApi.FetchImageDataForPerson(personId);
-                if (personImageData != null)
-                {
-                    if (personImageData?.Profiles.Count > 0)
-                    {
-                        profileImageData = personImageData.Profiles[0].FilePath;
-                    }
-                }
-
+                var profileImageData = GetPersonPosterPath(movieCredits);               
                 var personsMovieCredits = new PersonsMovieCredits()
                 {
                     PersonId = personId,
@@ -60,6 +53,30 @@ namespace MovieMatchMakerLib.Data
             }
 
             return null;
+        }
+
+        private static string GetPersonPosterPath(MovieCredits movieCredits)
+        {
+            var profileImageData = "";
+            if (movieCredits.Cast.Count > 0)
+            {
+                profileImageData = movieCredits.Cast.First().PosterPath;
+            }
+            else if (movieCredits.Crew.Count > 0)
+            {
+                profileImageData = movieCredits.Crew.First().PosterPath;
+            }
+            return profileImageData;
+
+            // fetch with separate call to the  API
+            //var personImageData = await _tmdbApi.FetchImageDataForPerson(movieCredits.Id);
+            //if (personImageData != null)
+            //{
+            //    if (personImageData?.Profiles.Count > 0)
+            //    {
+            //        profileImageData = personImageData.Profiles[0].FilePath;
+            //    }
+            //}
         }
     }
 }
