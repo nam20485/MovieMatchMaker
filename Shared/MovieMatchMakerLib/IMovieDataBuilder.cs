@@ -4,6 +4,6 @@ namespace MovieMatchMakerLib
 {
     public interface IMovieDataBuilder
     {
-        Task BuildFromInitial(string title, int releaseYear, int degree);
+        void BuildFromInitial(string title, int releaseYear, int degree);
     }
 }

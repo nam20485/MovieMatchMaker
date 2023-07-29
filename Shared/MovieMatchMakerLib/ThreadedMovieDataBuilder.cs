@@ -12,7 +12,7 @@ using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib
 {
-    public class ThreadedMovieDataBuilder
+    public class ThreadedMovieDataBuilder : IMovieDataBuilder
     {
         public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "moviedata.json");
 
@@ -35,6 +35,12 @@ namespace MovieMatchMakerLib
             _movieRequestsLoopThread = new (ProcessMovieRequestAsync);
             _movieCreditsRequestsLoopThread = new (ProcessMovieCreditsRequestAsync);
             _personCreditsRequestsLoopThread = new (ProcessPersonCreditsRequestAsync);
+        }
+
+        public void BuildFromInitial(string title, int releaseYear, int degree)
+        {
+            Start();
+            _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear));
         }
 
         private void Start()
@@ -84,8 +90,7 @@ namespace MovieMatchMakerLib
                 _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year));
             }
         }
-
-
+       
         private readonly struct MovieRequest
         {
             public readonly string Title;

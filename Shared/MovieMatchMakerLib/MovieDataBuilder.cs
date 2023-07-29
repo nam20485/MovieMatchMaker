@@ -17,7 +17,19 @@ namespace MovieMatchMakerLib
         {
             _dataSource = dataSource;
             _threaded = threaded;
-        }     
+        }
+
+        public async void BuildFromInitial(string title, int releaseYear, int degree)
+        {
+            if (!_threaded)
+            {
+                await FindMoviesConnectedToMovie(title, releaseYear, degree);
+            }
+            else
+            {
+                QueueFindMoviesConnectedToMovieThread(title, releaseYear, degree);
+            }
+        }
 
         protected async Task FindMoviesConnectedToMovie(string title, int releaseYear, int degree)
         {
@@ -104,18 +116,6 @@ namespace MovieMatchMakerLib
                     }
                 }
             }
-        }
-
-        public async Task BuildFromInitial(string title, int releaseYear, int degree)
-        {
-            if (!_threaded)
-            {
-                await FindMoviesConnectedToMovie(title, releaseYear, degree);
-            }
-            else
-            {
-                QueueFindMoviesConnectedToMovieThread(title, releaseYear, degree);
-            }
-        }
+        }       
     }
 }
