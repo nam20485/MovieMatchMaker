@@ -41,8 +41,15 @@ else
                     <span style="font-weight:bold">Name: @context.Grouping.Key</span>
                </GroupTemplate>
            </TemplateColumn>        
-            <PropertyColumn Property="cr => cr.SourceJob" Title="Job" />
-            <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Job" />
+            <PropertyColumn Property="cr => cr.SourceJob" Title="Role" />
+            <PropertyColumn Property="cr => cr.TargetJob" Title="Connected Role" />
+            <TemplateColumn Sortable="false" Filterable="false" CellStyle="width: 50px">
+                <CellTemplate>
+                    <DetailsButton Href="@($"rolesforperson/{@context.Item.PersonId}")">
+                        Roles
+                    </DetailsButton>
+                </CellTemplate>
+            </TemplateColumn>
         </Columns>
 
         <PagerContent>

@@ -1,0 +1,161 @@
+{
+    "backdrops": [
+      {
+        "aspect_ratio": 1.778,
+        "height": 720,
+        "iso_639_1": null,
+        "file_path": "/snugqxUpww4uxK4IWsXCBPmw7Zz.jpg",
+        "vote_average": 5.312,
+        "vote_count": 1,
+        "width": 1280
+      },
+      {
+        "aspect_ratio": 1.778,
+        "height": 900,
+        "iso_639_1": null,
+        "file_path": "/kdYgSgFCGhnW1YYHC9Oqzr9Vnwh.jpg",
+        "vote_average": 5.246,
+        "vote_count": 2,
+        "width": 1600
+      },
+      {
+        "aspect_ratio": 1.778,
+        "height": 1080,
+        "iso_639_1": null,
+        "file_path": "/pITz0yy42aDwConce3zckJup3Qh.jpg",
+        "vote_average": 5.246,
+        "vote_count": 2,
+        "width": 1920
+      },
+      {
+        "aspect_ratio": 1.777,
+        "height": 833,
+        "iso_639_1": null,
+        "file_path": "/nKHjWtzQKNyAYZSrOYyj7jHJGyE.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1480
+      },
+      {
+        "aspect_ratio": 1.778,
+        "height": 900,
+        "iso_639_1": null,
+        "file_path": "/nJpxOfjdnm7CEUmtBFB8Mo8OizX.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1600
+      }
+    ],
+    "id": 37327,
+    "logos": [],
+    "posters": [
+      {
+        "aspect_ratio": 0.667,
+        "height": 1500,
+        "iso_639_1": "en",
+        "file_path": "/6yVHAtXoSe2FOQP2fePuR6nnFLr.jpg",
+        "vote_average": 5.18,
+        "vote_count": 3,
+        "width": 1000
+      },
+      {
+        "aspect_ratio": 0.666,
+        "height": 1024,
+        "iso_639_1": "en",
+        "file_path": "/msiWPPci2mgB8zafYilvsO0EEnl.jpg",
+        "vote_average": 5.522,
+        "vote_count": 4,
+        "width": 682
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_639_1": "en",
+        "file_path": "/3bdPyYXyqsIhSn1RJulqKRRMtOu.jpg",
+        "vote_average": 5.384,
+        "vote_count": 2,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.687,
+        "height": 1500,
+        "iso_639_1": "en",
+        "file_path": "/4ZEhx726msGAITGXZKSPoV05qcO.jpg",
+        "vote_average": 5.326,
+        "vote_count": 7,
+        "width": 1030
+      },
+      {
+        "aspect_ratio": 0.698,
+        "height": 1719,
+        "iso_639_1": "es",
+        "file_path": "/fVrDqPEzoQS3fyxSAjgDGysqzbE.jpg",
+        "vote_average": 5.312,
+        "vote_count": 1,
+        "width": 1200
+      },
+      {
+        "aspect_ratio": 0.666,
+        "height": 2000,
+        "iso_639_1": "fr",
+        "file_path": "/iGIejdLNwv2ZSrubXC55meqMpjq.jpg",
+        "vote_average": 5.312,
+        "vote_count": 1,
+        "width": 1333
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 1440,
+        "iso_639_1": "en",
+        "file_path": "/5veAqo2tGpQNlolQCUGqvNCUhV2.jpg",
+        "vote_average": 5.18,
+        "vote_count": 3,
+        "width": 960
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 1500,
+        "iso_639_1": "fr",
+        "file_path": "/v1cLbO8W493LYgFH9v6leCli5Ms.jpg",
+        "vote_average": 5.172,
+        "vote_count": 1,
+        "width": 1000
+      },
+      {
+        "aspect_ratio": 0.71,
+        "height": 2110,
+        "iso_639_1": "hu",
+        "file_path": "/6il3rFGsUCeq7XgcNTr8uV4H2RB.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1498
+      },
+      {
+        "aspect_ratio": 0.711,
+        "height": 1244,
+        "iso_639_1": "es",
+        "file_path": "/A7txwAvUjbm8uYK1LUiEgsZCwyQ.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 884
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 1500,
+        "iso_639_1": "fr",
+        "file_path": "/zVqxCZLTgugHn744bYuWtzxYhiZ.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 750,
+        "iso_639_1": "it",
+        "file_path": "/68oCLvbkBnpyrYBELZE4Myz6Nvk.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 500
+      }
+    ]
+  }

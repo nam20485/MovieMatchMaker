@@ -40,7 +40,8 @@ namespace MovieMatchMakerLib.TmdbApi
             {
                 var result = searchResult.Results.First();
                 var movieId = result.Id;
-                movie = new Model.Movie(title, releaseYear, movieId);
+                var posterImagePath = result.PosterPath;
+                movie = new Model.Movie(title, releaseYear, movieId, posterImagePath);
             }
 
             return movie;
@@ -54,6 +55,11 @@ namespace MovieMatchMakerLib.TmdbApi
         public async Task<Credits> FetchMovieCreditsAsync(int movieApiId)
         {
             return await _apiClient.GetMovieCreditsAsync(movieApiId);
+        }
+
+        public async Task<ProfileImages> FetchImageDataForPerson(int personId)
+        {
+            return await _apiClient.GetPersonImagesAsync(personId);
         }
     }
 }
