@@ -14,10 +14,10 @@ namespace MovieMatchMakerApp
         static Program()
         {
             var apiDataSource = new ApiDataSource();
-            var dataCache = JsonFileCache.Load(MovieDataBuilderBase.FilePath);            
+            var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);            
             var cachedDataSource = new CachedDataSource(dataCache, apiDataSource);
 
-            _movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
+            _movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource, false);
             _connectionBuilder = new MovieConnectionBuilder(dataCache);                        
         }     
 
@@ -43,7 +43,7 @@ namespace MovieMatchMakerApp
                 {
                     stopWatch.Start("Loading movie connections from file... ", false);
 
-                    _connectionBuilder.LoadMovieConnections(MovieConnectionBuilderBase.FilePath);
+                    _connectionBuilder.LoadMovieConnections(MovieConnectionBuilder.FilePath);
                     movieConnectionsLoaded = true;
 
                     stopWatch.Stop("loaded");
@@ -63,7 +63,7 @@ namespace MovieMatchMakerApp
 
                     stopWatch.Start("Saving movie connections to file... ", false);
 
-                    _connectionBuilder.SaveMovieConnections(MovieConnectionBuilderBase.FilePath);
+                    _connectionBuilder.SaveMovieConnections(MovieConnectionBuilder.FilePath);
 
                     stopWatch.Stop("saved");
                 }
