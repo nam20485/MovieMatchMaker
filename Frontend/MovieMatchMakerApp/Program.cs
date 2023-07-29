@@ -17,7 +17,7 @@ namespace MovieMatchMakerApp
             var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);            
             var cachedDataSource = new CachedDataSource(dataCache, apiDataSource);
 
-            _movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource, false);
+            _movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
             _connectionBuilder = new MovieConnectionBuilder(dataCache);                        
         }     
 
