@@ -15,6 +15,13 @@ namespace MovieMatchMakerLib.Data
             _dataSource = dataSource;
         }
 
+        public static CachedDataSource Create(string cacheFilePath)
+        {
+            var dataCache = new JsonFileCache(cacheFilePath);
+            var apiDataSource = new ApiDataSource();
+            return new CachedDataSource(dataCache, apiDataSource);
+        }
+
         public async Task<Movie> GetMovieAsync(string title, int releaseYear)
         {
             var movie = await _dataCache.GetMovieAsync(title, releaseYear);
@@ -34,48 +41,7 @@ namespace MovieMatchMakerLib.Data
             }
 
             return movie;
-        }
-
-        //public async Task UpdateMovieCreditsAsync(string title, int releaseYear)
-        //{
-        //    Movie movie = null;
-        //    using (var dbContext = new MovieMatchMakerContext())
-        //    {
-        //        movie = await dbContext.Movies.SingleOrDefaultAsync(m => m.Title == title &&
-        //                                                            m.ReleaseYear == releaseYear);                
-        //    }
-
-        //    if (movie != null)
-        //    {
-        //        var credits = await GetCreditsForMovieAsync(movie.MovieId);
-        //        if (credits != null)
-        //        {
-        //            if (movie.Members.Count == 0)
-        //            {
-        //                foreach (var crew in credits.Crew)
-        //                {
-        //                    movie.Members.Add(new ProductionMember
-        //                    {
-        //                        Job = crew.Job,
-        //                        Name = new Name(crew.Name),
-        //                        MemberType = ProductionMember.Type.Crew,
-        //                        ApiId = crew.Id
-        //                    });
-        //                }
-        //                foreach (var cast in credits.Cast)
-        //                {
-        //                    movie.Members.Add(new ProductionMember
-        //                    {
-        //                        Job = cast.Character,
-        //                        Name = new Name(cast.Name),
-        //                        MemberType = ProductionMember.Type.Cast,
-        //                        ApiId = cast.Id
-        //                    });
-        //                }
-        //            }
-        //        }
-        //    }
-        //}     
+        }        
 
         public async Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId)
         {
