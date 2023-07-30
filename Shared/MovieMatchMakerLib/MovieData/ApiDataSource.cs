@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Model;
@@ -34,6 +35,10 @@ namespace MovieMatchMakerLib.Data
 
         public async Task<Movie> GetMovieAsync(string title, int releaseYear)
         {
+            if (title == "Stork")
+            {
+                Console.WriteLine();
+            }
             return await _tmdbApi.FetchMovieAsync(title, releaseYear);
         }
 

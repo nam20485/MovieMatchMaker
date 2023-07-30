@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 using TMDbLib.Objects.Movies;
@@ -12,8 +13,10 @@ namespace MovieMatchMakerLib.Model
         [JsonIgnore]
         public int Id { get; set; }
 
-        public class IntDictionary : Dictionary<int, MoviesCredits>
+        public class IntDictionary : ConcurrentDictionary<int, MoviesCredits>
         {
         }
+
+        public class StringDictionary : ConcurrentDictionary<string, MoviesCredits> { }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 using MovieMatchMakerLib.Data;
 using MovieMatchMakerLib.Utils;
@@ -24,10 +25,16 @@ namespace MovieMatchMakerLib
             _personCreditsRequestsLoopThread = new (ProcessPersonCreditsRequestAsync);
         }    
 
-        public void BuildFromInitial(string title, int releaseYear, int degree)
+        public void BuildFreshFromInitial(string title, int releaseYear, int degree)
         {            
             _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear, degree));
             Start();
+        }
+
+        public void ContinueFromExisting(int degree)
+        {
+            // determine from the cache a list of movies to start fetching
+            // movies in PersonsMoviesCredits that don't have corresponding Movies in the cache???
         }
 
         private void Start()
@@ -37,51 +44,78 @@ namespace MovieMatchMakerLib
             _personCreditsRequestsLoopThread.StartProcessingRequests();
         }
 
-        private void Stop()
+        public void Stop()
         {
             _movieRequestsLoopThread.StopProcessingRequests();
             _movieCreditsRequestsLoopThread.StopProcessingRequests();
             _personCreditsRequestsLoopThread.StopProcessingRequests();
         }
 
-        private async void ProcessMovieRequestAsync(MovieRequest movieRequest)
+        public void Wait()
+        {
+            _movieRequestsLoopThread.Wait();
+            _movieCreditsRequestsLoopThread.Wait();
+            _personCreditsRequestsLoopThread.Wait();
+        }
+
+        protected virtual async void ProcessMovieRequestAsync(MovieRequest movieRequest)
         {
             if (movieRequest.Degree >= 0)
-            {
+            {               
                 var movie = await _dataSource.GetMovieAsync(movieRequest.Title, movieRequest.ReleaseYear);
-                _movieCreditsRequestsLoopThread.AddRequest(new MovieCreditsRequest(movie.MovieId, movieRequest.Degree));
+                //if (movie is not null)
+                {
+                    if (movie.Fetched /*|| movieRequest.Degree > 0*/)
+                    {
+                        // if Fetched, then it wasn't from the cache. Otherwise it came from the cache and
+                        // therefor it's already had its credits and its roles' credits fetched and filled out
+                        _movieCreditsRequestsLoopThread.AddRequest(new MovieCreditsRequest(movie.MovieId, movieRequest.Degree));
+                    }
+                }
             }
         }
-      
-        private async void ProcessMovieCreditsRequestAsync(MovieCreditsRequest request)
+
+        protected virtual async void ProcessMovieCreditsRequestAsync(MovieCreditsRequest request)
         {
             // fetch credits            
             // add movie credits to cache
             var movieCredits = await _dataSource.GetCreditsForMovieAsync(request.MovieId);
-            foreach (var castRole in movieCredits.Credits.Cast)
+            if (movieCredits is not null)
             {
-                _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(castRole.Id, request.Degree));
-            }
-            foreach (var crewRole in movieCredits.Credits.Crew)
-            {
-                _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(crewRole.Id, request.Degree));
+                foreach (var castRole in movieCredits.Credits.Cast)
+                {
+                    _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(castRole.Id, request.Degree));
+                }
+                foreach (var crewRole in movieCredits.Credits.Crew)
+                {
+                    _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(crewRole.Id, request.Degree));
+                }
             }
         }
 
-        private async void ProcessPersonCreditsRequestAsync(PersonCreditsRequest request)
+        protected virtual async void ProcessPersonCreditsRequestAsync(PersonCreditsRequest request)
         {
             var personCredits = await _dataSource.GetMovieCreditsForPersonAsync(request.PersonId);
-            foreach (var castRole in personCredits.MovieCredits.Cast)
+            if (personCredits is not null)
             {
-                _movieRequestsLoopThread.AddRequest(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year, request.Degree - 1));
-            }
-            foreach (var crewRole in personCredits.MovieCredits.Crew)
-            {
-                _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year, request.Degree - 1));
+                foreach (var castRole in personCredits.MovieCredits.Cast)
+                {
+                    if (castRole.ReleaseDate.HasValue)
+                    {
+                        _movieRequestsLoopThread.AddRequest(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year, request.Degree - 1));
+                    }
+                }
+                foreach (var crewRole in personCredits.MovieCredits.Crew)
+                {
+                    if (crewRole.ReleaseDate.HasValue)
+                    {
+                        _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year, request.Degree - 1));
+                    }
+                }
             }
         }
        
-        private readonly struct MovieRequest
+        protected readonly struct MovieRequest
         {
             public readonly string Title;
             public readonly int ReleaseYear;
@@ -95,7 +129,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        private readonly struct MovieCreditsRequest
+        protected readonly struct MovieCreditsRequest
         {
             public readonly int MovieId;
             public readonly int Degree;
@@ -107,7 +141,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        private readonly struct PersonCreditsRequest
+        protected readonly struct PersonCreditsRequest
         {
             public readonly int PersonId;
             public readonly int Degree;

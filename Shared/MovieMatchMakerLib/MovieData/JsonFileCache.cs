@@ -13,16 +13,17 @@ namespace MovieMatchMakerLib.Data
         public string FilePath { get; set; }
 
         public Movie.List Movies { get; set; }
-        public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }
+        public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }        
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
+        
 
         private readonly object _fileLockObj = new();
 
         public JsonFileCache()
         {
-            Movies = new Movie.List();
-            PersonsMovieCreditsById = new PersonsMovieCredits.IntDictionary();
-            MoviesCreditsById = new MoviesCredits.IntDictionary();
+            Movies = new ();
+            PersonsMovieCreditsById = new ();
+            MoviesCreditsById = new ();
         }
 
         public JsonFileCache(string filePath)
@@ -148,7 +149,7 @@ namespace MovieMatchMakerLib.Data
                 var fileContent = File.ReadAllText(filePath);
                 if (!string.IsNullOrWhiteSpace(fileContent))
                 {
-                    instance = JsonSerializer.Deserialize<JsonFileCache>(fileContent);
+                    instance = JsonSerializer.Deserialize<JsonFileCache>(fileContent, GlobalSerializerOptions.Options);
                 }
             }
             catch (FileNotFoundException)

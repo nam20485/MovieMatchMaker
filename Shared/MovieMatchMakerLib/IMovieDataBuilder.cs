@@ -2,6 +2,7 @@
 {
     public interface IMovieDataBuilder
     {
-        void BuildFromInitial(string title, int releaseYear, int degree);
+        void BuildFreshFromInitial(string title, int releaseYear, int degree);
+        void ContinueFromExisting(int degree);
     }
 }

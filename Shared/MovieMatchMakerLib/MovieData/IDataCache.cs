@@ -20,7 +20,7 @@ namespace MovieMatchMakerLib.Data
         Movie.List Movies { get; }
         MoviesCredits.IntDictionary MoviesCreditsById { get; }
         PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; }
-
+     
         Movie GetMovie(int movieId);
         void Save();
         void Clear();

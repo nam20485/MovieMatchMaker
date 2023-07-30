@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using TMDbLib.Client;
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.People;
+using TMDbLib.Objects.Search;
 
 namespace MovieMatchMakerLib.TmdbApi
 {
@@ -18,14 +20,21 @@ namespace MovieMatchMakerLib.TmdbApi
 
         public async Task<Credits> FetchMovieCreditsAsync(string title, int releaseYear)
         {
-            var movie = await FetchMovieAsync(title, releaseYear);
-            if (movie != null)
+            try
             {
-                var credits = await _apiClient.GetMovieCreditsAsync(movie.MovieId);
-                if (credits != null)
+                var movie = await FetchMovieAsync(title, releaseYear);
+                if (movie != null)
                 {
-                    return credits;
+                    var credits = await _apiClient.GetMovieCreditsAsync(movie.MovieId);
+                    if (credits != null)
+                    {
+                        return credits;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
 
             return null;
@@ -35,13 +44,32 @@ namespace MovieMatchMakerLib.TmdbApi
         {
             Model.Movie movie = null;
 
-            var searchResult = await _apiClient.SearchMovieAsync(title, primaryReleaseYear: releaseYear);
-            if (searchResult.TotalResults == 1)
+            try
             {
-                var result = searchResult.Results.First();
-                var movieId = result.Id;
-                var posterImagePath = result.PosterPath;
-                movie = new Model.Movie(title, releaseYear, movieId, posterImagePath);
+                var searchResult = await _apiClient.SearchMovieAsync(title, primaryReleaseYear: releaseYear);
+                // handle when multiple results are returned b/c they have the title as a keyword
+                var movieResult = searchResult.Results.FirstOrDefault(r => r.Title == title && r.ReleaseDate.HasValue && r.ReleaseDate.Value.Year == releaseYear);
+
+                //SearchMovie result = null;
+                //if (searchResult.TotalResults == 1)
+                //{
+                //    result = searchResult.Results.First();
+                //}
+                //else if (searchResult.TotalResults > 1)
+                //{
+                //    result = searchResult.Results.FirstOrDefault(r => r.Title == title && r.ReleaseDate.HasValue && r.ReleaseDate.Value.Year == releaseYear);
+                //}
+
+                if (movieResult is not null)
+                {
+                    var movieId = movieResult.Id;
+                    var posterImagePath = movieResult.PosterPath;
+                    movie = new Model.Movie(title, releaseYear, movieId, posterImagePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
 
             return movie;
@@ -49,17 +77,41 @@ namespace MovieMatchMakerLib.TmdbApi
 
         public async Task<MovieCredits> FetchMovieCreditsForPerson(int personApiId)
         {
-            return await _apiClient.GetPersonMovieCreditsAsync(personApiId);
+            try
+            {
+                return await _apiClient.GetPersonMovieCreditsAsync(personApiId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return null;
         }
 
         public async Task<Credits> FetchMovieCreditsAsync(int movieApiId)
         {
-            return await _apiClient.GetMovieCreditsAsync(movieApiId);
+            try
+            {
+                return await _apiClient.GetMovieCreditsAsync(movieApiId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return null;
         }
 
         public async Task<ProfileImages> FetchImageDataForPerson(int personId)
         {
-            return await _apiClient.GetPersonImagesAsync(personId);
+            try
+            {
+                return await _apiClient.GetPersonImagesAsync(personId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return null;
         }
     }
 }

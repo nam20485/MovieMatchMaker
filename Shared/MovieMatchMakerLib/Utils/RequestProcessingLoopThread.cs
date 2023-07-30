@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace MovieMatchMakerLib.Utils
@@ -37,6 +38,16 @@ namespace MovieMatchMakerLib.Utils
         public void AddRequest(TRequest request)
         {
             _requests.Enqueue(request);
+            _processRequestsLoopEvent.Set();
+        }
+
+        public void AddRequests(IEnumerable<TRequest> requests)
+        {
+            foreach (var request in requests)
+            {
+                _requests.Enqueue(request);
+            }
+            _processRequestsLoopEvent.Set();
         }
 
         private void ProcessRequestsLoop()
@@ -50,6 +61,11 @@ namespace MovieMatchMakerLib.Utils
                     _processRequestFunc(request);
                 }
             }
+        }
+
+        public void Wait()
+        {
+            _processRequestsLoopThread?.Join();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace MovieMatchMakerLib
             _dataSource = dataSource;
         }
 
-        public async void BuildFromInitial(string title, int releaseYear, int degree)
+        public async void BuildFreshFromInitial(string title, int releaseYear, int degree)
         {
             await FindMoviesConnectedToMovie(title, releaseYear, degree);            
         }
@@ -75,6 +75,11 @@ namespace MovieMatchMakerLib
                     await FindMoviesConnectedToMovie(role.Title, role.ReleaseDate.Value.Year, degree - 1);
                 }
             }
+        }
+
+        public void ContinueFromExisting(int degree)
+        {
+            throw new System.NotImplementedException();
         }
 
         //protected async void InvokeFindMovieConnectedToMovies(FindMoviesConnectedToMovieArgs args)

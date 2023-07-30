@@ -7,30 +7,7 @@ using MovieMatchMakerLib.Data;
 namespace MovieMatchMakerApp
 {
     internal class Program
-    {
-        private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath)
-        {
-            return new MovieConnectionBuilder(CreateJsonFileCache(filePath));
-        }      
-
-        private static JsonFileCache CreateJsonFileCache(string filePath)
-        {
-            return JsonFileCache.Load(MovieDataBuilder.FilePath);
-        }
-
-        private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded)
-        {
-            var dataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(cacheFilePath, true);
-            if (threaded)
-            {
-                return new ThreadedMovieDataBuilder(dataSource);
-            }
-            else
-            {
-                return new MovieDataBuilder(dataSource);
-            }
-        }
-
+    {        
         static Program()
         {                    
         }     
@@ -51,7 +28,8 @@ namespace MovieMatchMakerApp
                 }
                 else if (args[0] == "--build-data")
                 {
-                    if (args.Length == 9)
+                    if (args.Length == 13 ||
+                        args.Length == 9)       // no title and releaseYear
                     {
                         Console.WriteLine("Building movie data...");
 
@@ -60,6 +38,7 @@ namespace MovieMatchMakerApp
                         var degree = -1;
                         var threaded = false;
                         var file = "";
+                        var continueExisting = true;                        
                         for (int i = 1; i < args.Length - 1; i++)
                         {
                             switch (args[i])
@@ -69,16 +48,31 @@ namespace MovieMatchMakerApp
                                 case "--degree": degree = int.Parse(args[i++ + 1]); break;
                                 case "--threaded": threaded = bool.Parse(args[i++ + 1]); break;
                                 case "--file": file = args[i++ + 1]; break;
+                                case "--continue": continueExisting = bool.Parse(args[i++ + 1]); break;
                             }
                         }
 
                         if (!string.IsNullOrWhiteSpace(title) &&
                             releaseYear > -1 &&
-                            degree > -1 &&
+                            degree > -1 &&                            
                             !string.IsNullOrWhiteSpace(file))
                         {
-                            var movieDataBuilder = CreateMovieDataBuilder(file, threaded);
-                            movieDataBuilder.BuildFromInitial(title, releaseYear, degree);
+                            var movieDataBuilder = CreateMovieDataBuilder(file, threaded, continueExisting);
+                            if (!continueExisting)
+                            {
+                                movieDataBuilder.BuildFreshFromInitial(title, releaseYear, degree);
+                            }
+                            else
+                            {
+                                movieDataBuilder.ContinueFromExisting(degree);
+                            }
+
+                            if (movieDataBuilder is ThreadedMovieDataBuilder t)
+                            {
+                                t.Wait();
+                                t.Stop();
+                            }
+
                             return 0;
                         }
                     }
@@ -151,6 +145,29 @@ namespace MovieMatchMakerApp
             }            
 
             return 1;
+        }
+
+        private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath)
+        {
+            return new MovieConnectionBuilder(CreateJsonFileCache(filePath));
+        }
+
+        private static JsonFileCache CreateJsonFileCache(string filePath)
+        {
+            return JsonFileCache.Load(MovieDataBuilder.FilePath);
+        }
+
+        private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded, bool load)
+        {
+            var dataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(cacheFilePath, load);
+            if (threaded)
+            {
+                return new ThreadedMovieDataBuilder(dataSource);
+            }
+            else
+            {
+                return new MovieDataBuilder(dataSource);
+            }
         }
     }
 }
