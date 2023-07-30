@@ -11,8 +11,8 @@ namespace MovieMatchMakerLib.Utils
             WriteIndented = Macros.IsDebugBuild(),
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
-            ReferenceHandler = ReferenceHandler.Preserve, 
-            PropertyNameCaseInsensitive = true,
+            //ReferenceHandler = ReferenceHandler.Preserve, 
+            //PropertyNameCaseInsensitive = true,
         };
     }
 }
