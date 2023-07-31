@@ -2,25 +2,43 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Utils
 {
     public class RequestProcessingLoopThread<TRequest>
     {
         private readonly ConcurrentQueue<TRequest> _requests;        
-        private readonly Action<TRequest> _processRequestFunc;
+        private readonly Func<TRequest, Task> _processRequestFunc;
 
         private readonly Thread _processRequestsLoopThread;
-        private readonly AutoResetEvent _processRequestsLoopEvent;
-        private bool _stopProcessRequests;        
+        private readonly AutoResetEvent _processRequestsLoopEvent;        
+        private volatile bool _stopProcessRequests;
 
-        public RequestProcessingLoopThread(Action<TRequest> processRequestFunc)
+        private readonly bool _useThreadPool;
+        private readonly ConcurrentQueue<Task> _requestProcessingTasks;
+        // create LongRunning tasks since we process (relatively) heavy long-running requests
+        private const TaskCreationOptions RequestProcessingTaskCreationOptions = TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning;
+
+
+        public int TaskCount => _requestProcessingTasks.Count;
+
+        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc)
         {
             _requests = new ConcurrentQueue<TRequest>();
             _processRequestFunc = processRequestFunc;
             _processRequestsLoopThread = new Thread(ProcessRequestsLoop);
             _processRequestsLoopEvent = new AutoResetEvent(false);
             _stopProcessRequests = false;
+
+            _useThreadPool = false;
+            _requestProcessingTasks = new ConcurrentQueue<Task>();
+        }
+
+        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool)
+            : this(processRequestFunc)
+        {
+            _useThreadPool |= useThreadPool;
         }
 
         public void StartProcessingRequests()
@@ -29,25 +47,31 @@ namespace MovieMatchMakerLib.Utils
         }        
 
         public void StopProcessingRequests()
-        {
+        {            
             _stopProcessRequests = true;
             _processRequestsLoopEvent.Set();
-            _processRequestsLoopThread.Join();
+            Wait();
         }      
 
         public void AddRequest(TRequest request)
         {
-            _requests.Enqueue(request);
-            _processRequestsLoopEvent.Set();
+            if (!_stopProcessRequests)
+            {
+                _requests.Enqueue(request);
+                _processRequestsLoopEvent.Set();
+            }
         }
 
         public void AddRequests(IEnumerable<TRequest> requests)
         {
-            foreach (var request in requests)
+            if (!_stopProcessRequests)
             {
-                _requests.Enqueue(request);
+                foreach (var request in requests)
+                {
+                    _requests.Enqueue(request);
+                }
+                _processRequestsLoopEvent.Set();
             }
-            _processRequestsLoopEvent.Set();
         }
 
         private void ProcessRequestsLoop()
@@ -58,14 +82,36 @@ namespace MovieMatchMakerLib.Utils
 
                 while (_requests.TryDequeue(out var request))
                 {
-                    _processRequestFunc(request);
+                    if (_useThreadPool)
+                    {                    
+                        var task = new Task((r) => _processRequestFunc((TRequest)r), request, RequestProcessingTaskCreationOptions);
+                        _requestProcessingTasks.Enqueue(task);
+                        task.Start();                                                
+                    }
+                    else
+                    {
+                        _processRequestFunc(request);
+                    }
                 }
-            }
-        }
+            }          
+        }       
 
         public void Wait()
         {
-            _processRequestsLoopThread?.Join();
+            _processRequestsLoopThread.Join();
+            if (_useThreadPool)
+            {                
+                // wait for any tasks to complete if we are using the pool
+                while (_requestProcessingTasks.TryDequeue(out var task))
+                {
+                    // should we not wait on threads that haven't started yet?
+                    //if (!task.IsCompleted)
+                    //if (task.Status == TaskStatus.Running)
+                    {
+                        task.Wait();
+                    }
+                }
+            }
         }
     }
 }
