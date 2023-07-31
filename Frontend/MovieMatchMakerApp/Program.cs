@@ -14,7 +14,7 @@ namespace MovieMatchMakerApp
 
         static async Task<int> Main(string[] args)
         {
-            Console.WriteLine(Constants.Strings.Header);
+            Console.WriteLine(Constants.Strings.HeaderWithVersion);
             Console.WriteLine(/* blank line for separation */);
 
             if (args.Length > 0)
@@ -31,6 +31,8 @@ namespace MovieMatchMakerApp
                     if (args.Length == 13 ||
                         args.Length == 9)       // no title and releaseYear
                     {
+                        ErrorLog.Reset();
+
                         Console.WriteLine("Building movie data...");
 
                         var title = "";
@@ -60,7 +62,7 @@ namespace MovieMatchMakerApp
                             var movieDataBuilder = CreateMovieDataBuilder(file, threaded, continueExisting);
                             if (!continueExisting)
                             {
-                                movieDataBuilder.BuildFreshFromInitial(title, releaseYear, degree);
+                                await movieDataBuilder.BuildFreshFromInitial(title, releaseYear, degree);
                             }
                             else
                             {
@@ -69,8 +71,48 @@ namespace MovieMatchMakerApp
 
                             if (movieDataBuilder is ThreadedMovieDataBuilder t)
                             {
-                                t.Wait();
-                                t.Stop();
+                                Console.WriteLine();
+                                Console.WriteLine("(Press CTRL+m to quit)");
+
+                                using (var timerAnimation = new ConsoleAnimation(0, 6, () =>
+                                {
+                                    return $"Movies:        {movieDataBuilder.MoviesFetched,5:#.##} ({movieDataBuilder.MoviesFetchPerSecond,5:0.00}/s)    \nMovieCredits:  {movieDataBuilder.MovieCreditsFetched,5:0.##} ({movieDataBuilder.MovieCreditsFetchPerSecond,5:0.00}/s)    \nPersonCredits: {movieDataBuilder.PersonMovieCreditsFetched,5:0.##} ({movieDataBuilder.PersonMovieCreditsFetchPerSecond,5:0.00}/s) ";
+                                }))
+                                {
+                                    timerAnimation.Start();
+
+                                    while (true)
+                                    {
+                                        var keyInfo = Console.ReadKey(true);
+                                        if (keyInfo.Key == ConsoleKey.M &&
+                                            keyInfo.Modifiers == ConsoleModifiers.Control)
+                                        {
+                                            // CTRL+m to exit
+                                            break;
+                                        }
+                                    }
+
+                                    timerAnimation.Stop();
+
+                                    t.Stop();
+
+                                    Console.WriteLine("\n\nStopping...");
+
+                                    if (t.TaskCount > 0)
+                                    {
+                                        using (var remainingTasksAnimation = new ConsoleAnimation(0, 12, () =>
+                                        {
+                                            return $"Waiting for tasks to complete ({t.TaskCount})... ";
+                                        }))
+                                        {
+                                            remainingTasksAnimation.Start();                                            
+                                        }
+
+                                        Console.WriteLine();
+                                    }                                    
+
+                                    Console.WriteLine($"\nFinished (ran for {t.RunTime:hh\\:mm\\:ss\\:ff}).");
+                                }
                             }
 
                             return 0;
@@ -154,7 +196,7 @@ namespace MovieMatchMakerApp
 
         private static JsonFileCache CreateJsonFileCache(string filePath)
         {
-            return JsonFileCache.Load(MovieDataBuilder.FilePath);
+            return JsonFileCache.Load(filePath);
         }
 
         private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded, bool load)

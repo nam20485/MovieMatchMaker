@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Data;
@@ -10,15 +11,26 @@ namespace MovieMatchMakerLib
     {
         public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "moviematchmaker.json");
 
-        protected readonly IDataSource _dataSource;
+        public double MoviesFetchPerSecond => _dataSource.MoviesFetched / (DateTime.UtcNow - _started).Seconds;
+        public double MovieCreditsFetchPerSecond => _dataSource.MovieCreditsFetched / (DateTime.UtcNow - _started).Seconds;
+        public double PersonMovieCreditsFetchPerSecond => _dataSource.PersonMoviesCreditsFetched / (DateTime.UtcNow - _started).Seconds;
+
+        public int MovieCreditsFetched => _dataSource.MovieCreditsFetched;
+        public int MoviesFetched => _dataSource.MoviesFetched;
+        public int PersonMovieCreditsFetched => _dataSource.PersonMoviesCreditsFetched;
+
+        private DateTime _started;
+
+        private readonly IDataSource _dataSource;
 
         public MovieDataBuilder(IDataSource dataSource)
         {
             _dataSource = dataSource;
         }
 
-        public async void BuildFreshFromInitial(string title, int releaseYear, int degree)
+        public async Task BuildFreshFromInitial(string title, int releaseYear, int degree)
         {
+            _started = DateTime.UtcNow;
             await FindMoviesConnectedToMovie(title, releaseYear, degree);            
         }
 
@@ -30,7 +42,7 @@ namespace MovieMatchMakerLib
                 if (sourceMovie != null)
                 {
                     // not from the cache (if so we already have its credits)
-                    if (sourceMovie.Fetched)
+                    if (sourceMovie.Fetched || degree > 0)
                     {
                         await FindMoviesConnectedToMovie(sourceMovie.MovieId, degree);
                     }

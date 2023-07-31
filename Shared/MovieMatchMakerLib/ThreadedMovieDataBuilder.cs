@@ -1,8 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Data;
 using MovieMatchMakerLib.Utils;
+
+using TMDbLib.Objects.TvShows;
 
 namespace MovieMatchMakerLib
 {
@@ -13,21 +18,42 @@ namespace MovieMatchMakerLib
         private readonly IDataSource _dataSource;
 
         private readonly RequestProcessingLoopThread<MovieRequest> _movieRequestsLoopThread;
-        private readonly RequestProcessingLoopThread<MovieCreditsRequest> _movieCreditsRequestsLoopThread;
-        private readonly RequestProcessingLoopThread<PersonCreditsRequest> _personCreditsRequestsLoopThread;
-       
+        
+        private DateTime _started;
+        private DateTime _stopped;
+
+        public TimeSpan RunTime => _stopped - _started;
+
+        public double MoviesFetchPerSecond => CalculateRate(_dataSource.MoviesFetched, DateTime.UtcNow - _started);       
+        public double MovieCreditsFetchPerSecond => CalculateRate(_dataSource.MovieCreditsFetched, DateTime.UtcNow - _started);
+        public double PersonMovieCreditsFetchPerSecond => CalculateRate(_dataSource.PersonMoviesCreditsFetched, DateTime.UtcNow - _started);
+
+        public int MovieCreditsFetched => _dataSource.MovieCreditsFetched;
+        public int MoviesFetched => _dataSource.MoviesFetched;
+        public int PersonMovieCreditsFetched => _dataSource.PersonMoviesCreditsFetched;
+
+        public int TaskCount => _movieRequestsLoopThread.TaskCount;
+
+        private static double CalculateRate(int count, TimeSpan interval)
+        {
+            if (interval.TotalSeconds > 0)
+            {
+                return count / interval.TotalSeconds;
+            }
+            return 0.0;
+        }       
+
         public ThreadedMovieDataBuilder(IDataSource dataSource)
         {
             _dataSource = dataSource;
 
-            _movieRequestsLoopThread = new (ProcessMovieRequestAsync);
-            _movieCreditsRequestsLoopThread = new (ProcessMovieCreditsRequestAsync);
-            _personCreditsRequestsLoopThread = new (ProcessPersonCreditsRequestAsync);
-        }    
+            _movieRequestsLoopThread = new(ProcessMovieRequestAsync, true);            
+        }
 
-        public void BuildFreshFromInitial(string title, int releaseYear, int degree)
-        {            
+        public async Task BuildFreshFromInitial(string title, int releaseYear, int degree)
+        {
             _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear, degree));
+            //await ProcessMovieRequestAsync(new MovieRequest(title, releaseYear, degree));
             Start();
         }
 
@@ -38,83 +64,79 @@ namespace MovieMatchMakerLib
         }
 
         private void Start()
-        {
-            _movieRequestsLoopThread.StartProcessingRequests();
-            _movieCreditsRequestsLoopThread.StartProcessingRequests();
-            _personCreditsRequestsLoopThread.StartProcessingRequests();
+        {            
+            _started = DateTime.UtcNow;
+            _movieRequestsLoopThread.StartProcessingRequests();         
         }
 
         public void Stop()
         {
             _movieRequestsLoopThread.StopProcessingRequests();
-            _movieCreditsRequestsLoopThread.StopProcessingRequests();
-            _personCreditsRequestsLoopThread.StopProcessingRequests();
+            _stopped = DateTime.UtcNow;
         }
 
         public void Wait()
         {
-            _movieRequestsLoopThread.Wait();
-            _movieCreditsRequestsLoopThread.Wait();
-            _personCreditsRequestsLoopThread.Wait();
+            _movieRequestsLoopThread.Wait();           
         }
 
-        protected virtual async void ProcessMovieRequestAsync(MovieRequest movieRequest)
+        protected async Task ProcessMovieRequestAsync(MovieRequest movieRequest)
         {
-            if (movieRequest.Degree >= 0)
-            {               
-                var movie = await _dataSource.GetMovieAsync(movieRequest.Title, movieRequest.ReleaseYear);
-                //if (movie is not null)
+            var movie = await _dataSource.GetMovieAsync(movieRequest.Title, movieRequest.ReleaseYear);
+            if (movie is not null)
+            {
+                if (movie.Fetched || movieRequest.Degree > 0)
                 {
-                    if (movie.Fetched /*|| movieRequest.Degree > 0*/)
-                    {
-                        // if Fetched, then it wasn't from the cache. Otherwise it came from the cache and
-                        // therefor it's already had its credits and its roles' credits fetched and filled out
-                        _movieCreditsRequestsLoopThread.AddRequest(new MovieCreditsRequest(movie.MovieId, movieRequest.Degree));
-                    }
+                    // if Fetched, then it wasn't from the cache. Otherwise it -came from the cache and
+                    // therefor it's already had its credits and its roles' credits fetched and filled out
+                    await ProcessMovieCreditsRequestAsync(new MovieCreditsRequest(movie.MovieId, movieRequest.Degree));
                 }
-            }
+            }            
         }
 
-        protected virtual async void ProcessMovieCreditsRequestAsync(MovieCreditsRequest request)
+        protected async Task ProcessMovieCreditsRequestAsync(MovieCreditsRequest request)
         {
-            // fetch credits            
-            // add movie credits to cache
-            var movieCredits = await _dataSource.GetCreditsForMovieAsync(request.MovieId);
+            var movieCredits = await _dataSource.GetCreditsForMovieAsync(request.MovieId);            
             if (movieCredits is not null)
             {
                 foreach (var castRole in movieCredits.Credits.Cast)
                 {
-                    _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(castRole.Id, request.Degree));
+                    await ProcessPersonCreditsRequestAsync(new PersonCreditsRequest(castRole.Id, request.Degree));
                 }
                 foreach (var crewRole in movieCredits.Credits.Crew)
                 {
-                    _personCreditsRequestsLoopThread.AddRequest(new PersonCreditsRequest(crewRole.Id, request.Degree));
+                    await ProcessPersonCreditsRequestAsync(new PersonCreditsRequest(crewRole.Id, request.Degree));
                 }
             }
         }
 
-        protected virtual async void ProcessPersonCreditsRequestAsync(PersonCreditsRequest request)
+        protected async Task ProcessPersonCreditsRequestAsync(PersonCreditsRequest request)
         {
             var personCredits = await _dataSource.GetMovieCreditsForPersonAsync(request.PersonId);
             if (personCredits is not null)
             {
-                foreach (var castRole in personCredits.MovieCredits.Cast)
+                if (request.Degree > 0)
                 {
-                    if (castRole.ReleaseDate.HasValue)
+                    foreach (var castRole in personCredits.MovieCredits.Cast)
                     {
-                        _movieRequestsLoopThread.AddRequest(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year, request.Degree - 1));
+                        if (castRole.ReleaseDate.HasValue)
+                        {
+                            _movieRequestsLoopThread.AddRequest(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year, request.Degree - 1));
+                            //await ProcessMovieRequestAsync(new MovieRequest(castRole.Title, castRole.ReleaseDate.Value.Year, request.Degree - 1));
+                        }
                     }
-                }
-                foreach (var crewRole in personCredits.MovieCredits.Crew)
-                {
-                    if (crewRole.ReleaseDate.HasValue)
+                    foreach (var crewRole in personCredits.MovieCredits.Crew)
                     {
-                        _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year, request.Degree - 1));
+                        if (crewRole.ReleaseDate.HasValue)
+                        {
+                            _movieRequestsLoopThread.AddRequest(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year, request.Degree - 1));
+                            //await ProcessMovieRequestAsync(new MovieRequest(crewRole.Title, crewRole.ReleaseDate.Value.Year, request.Degree - 1));
+                        }
                     }
                 }
             }
         }
-       
+
         protected readonly struct MovieRequest
         {
             public readonly string Title;
@@ -151,6 +173,6 @@ namespace MovieMatchMakerLib
                 PersonId = personId;
                 Degree = degree;
             }
-        }       
+        }
     }
 }
