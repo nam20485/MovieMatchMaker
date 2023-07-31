@@ -9,10 +9,14 @@ namespace MovieMatchMakerLib.Data
         private readonly IDataCache _dataCache;
         private readonly IDataSource _dataSource;
 
+        public int MoviesFetched => _dataCache.MovieCount;
+        public int MovieCreditsFetched => _dataCache.MovieCreditsCount;
+        public int PersonMoviesCreditsFetched => _dataCache.PersonMoviesCreditsCount;        
+
         public CachedDataSource(IDataCache dataCache, IDataSource dataSource)
         {
             _dataCache = dataCache;
-            _dataSource = dataSource;
+            _dataSource = dataSource;           
         }
 
         public static CachedDataSource CreateWithJsonFileCacheAndApiDataSource(string cacheFilePath, bool loadCache)
@@ -47,7 +51,7 @@ namespace MovieMatchMakerLib.Data
             {
                 movie.Fetched = false;
             }
-
+         
             return movie;
         }        
 
@@ -63,7 +67,7 @@ namespace MovieMatchMakerLib.Data
                     await _dataCache.AddPersonsMovieCreditsAsync(personsMovieCredits);
                 }
             }
-
+          
             return personsMovieCredits;
         }
 
@@ -75,7 +79,7 @@ namespace MovieMatchMakerLib.Data
                 moviesCredits = await _dataSource.GetCreditsForMovieAsync(movieId);
                 if (moviesCredits != null)
                 {
-                    await _dataCache.AddCreditsForMovieAsync(moviesCredits);
+                    await _dataCache.AddCreditsForMovieAsync(moviesCredits);                   
                 }
             }
 

@@ -24,5 +24,9 @@ namespace MovieMatchMakerLib.Data
         Movie GetMovie(int movieId);
         void Save();
         void Clear();
+
+        int MovieCount { get; }
+        int MovieCreditsCount { get; }
+        int PersonMoviesCreditsCount { get; }
     }
 }

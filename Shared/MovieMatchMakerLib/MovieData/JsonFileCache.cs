@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Model;
@@ -15,16 +16,30 @@ namespace MovieMatchMakerLib.Data
         public Movie.List Movies { get; set; }
         public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }        
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
-        
+
+        [JsonIgnore]
+        public int MoviesFetched { get; set; }
+        [JsonIgnore]
+        public int MovieCreditsFetched { get; set; }
+        [JsonIgnore]
+        public int PersonMoviesCreditsFetched { get; set; }
+
+        public int MovieCount => Movies.Count;
+        public int MovieCreditsCount => MoviesCreditsById.Count;
+        public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;
 
         private readonly object _fileLockObj = new();
+
+        private RequestProcessingLoopThread<string> _serializeToFileLoopThread;
 
         public JsonFileCache()
         {
             Movies = new ();
             PersonsMovieCreditsById = new ();
             MoviesCreditsById = new ();
-        }
+
+            //_serializeToFileLoopThread = new RequestProcessingLoopThread<string>(SerializeToFile, false);
+        }        
 
         public JsonFileCache(string filePath)
             : this()
@@ -69,7 +84,7 @@ namespace MovieMatchMakerLib.Data
                 MoviesCreditsById[moviesCredits.MovieId] = moviesCredits;
                 Save();
                 //await SaveAsync();
-            }
+            }            
         }
 
         public void AddMovie(Movie movie)
@@ -79,7 +94,7 @@ namespace MovieMatchMakerLib.Data
                 Movies.Add(movie);
                 Save();
                 //await SaveAsync();
-            }
+            }            
         }
 
         public void AddPersonsMovieCredits(PersonsMovieCredits personsMovieCredits)
@@ -100,6 +115,7 @@ namespace MovieMatchMakerLib.Data
                 if (MoviesCreditsById.ContainsKey(movieId))
                 {
                     instance = MoviesCreditsById[movieId];
+                    MovieCreditsFetched++;
                 }
             });
             return instance;
@@ -115,6 +131,7 @@ namespace MovieMatchMakerLib.Data
                     return m.Title == title &&
                            m.ReleaseYear == releaseYear;
                 });
+                MoviesFetched++;                
             });
             return instance;
         }
@@ -125,6 +142,7 @@ namespace MovieMatchMakerLib.Data
             {
                 return m.MovieId == movieId;
             });
+            MoviesFetched++;
             return movie;
         }
 
@@ -136,6 +154,7 @@ namespace MovieMatchMakerLib.Data
                 if (PersonsMovieCreditsById.ContainsKey(personId))
                 {
                     instance = PersonsMovieCreditsById[personId];
+                    PersonMoviesCreditsFetched++;
                 }
             });
             return instance;
@@ -149,6 +168,7 @@ namespace MovieMatchMakerLib.Data
                 var fileContent = File.ReadAllText(filePath);
                 if (!string.IsNullOrWhiteSpace(fileContent))
                 {
+                    //instance = JsonSerializer.Deserialize(fileContent, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)) as JsonFileCache;
                     instance = JsonSerializer.Deserialize<JsonFileCache>(fileContent, GlobalSerializerOptions.Options);
                 }
             }
@@ -167,28 +187,40 @@ namespace MovieMatchMakerLib.Data
             MoviesCreditsById.Clear();
         }
 
-        public void Save()
+        private Task SerializeToFile(string filePath)
         {
             lock (_fileLockObj)
             {
-                var json = JsonSerializer.Serialize(this, GlobalSerializerOptions.Options);
+                // TODO: use JsonSerializerContext-dervied class to optimize serialization
+                //var json = JsonSerializer.Serialize(this, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options));
+                var json = JsonSerializer.Serialize(this);
                 File.WriteAllText(FilePath, json);
+                // write a backup so if one gets corrupted by an error during write, the other should still be OK
+                File.WriteAllText(FilePath + ".bak.json", json);
             }
+            return Task.CompletedTask;
+        }
+
+        public void Save()
+        {
+            //_serializeToFileLoopThread.AddRequest(FilePath);
+            SerializeToFile(FilePath);
         }
 
         public async Task SaveAsync()
         {
             using (var ms = new MemoryStream())
             {
+                //await JsonSerializer.SerializeAsync(ms, this, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)); 
                 await JsonSerializer.SerializeAsync(ms, this, GlobalSerializerOptions.Options);
 
                 lock (_fileLockObj)
                 {
-                    using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
+                    using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
                     {
                         ms.Position = 0;
                         fs.CopyTo(ms);
-                        //fs.Flush();
+                        fs.Flush();
                         fs.Close();
                     }
                 }

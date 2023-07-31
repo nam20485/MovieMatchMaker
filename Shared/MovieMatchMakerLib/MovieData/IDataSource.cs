@@ -9,5 +9,9 @@ namespace MovieMatchMakerLib.Data
         Task<Movie> GetMovieAsync(string title, int releaseYear);
         Task<MoviesCredits> GetCreditsForMovieAsync(int movieId);
         Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId);
+
+        int MoviesFetched { get; }
+        int MovieCreditsFetched { get; }
+        int PersonMoviesCreditsFetched { get; }     
     }
 }

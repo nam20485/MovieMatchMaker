@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.TmdbApi;
+using MovieMatchMakerLib.Utils;
 
 using TMDbLib.Objects.People;
 
@@ -12,6 +13,10 @@ namespace MovieMatchMakerLib.Data
     public class ApiDataSource : IDataSource
     {
         private readonly ITmdbApi _tmdbApi;
+
+        public int MoviesFetched { get; set; }
+        public int MovieCreditsFetched { get; set; }
+        public int PersonMoviesCreditsFetched { get; set; }
 
         public ApiDataSource()
         {
@@ -22,12 +27,13 @@ namespace MovieMatchMakerLib.Data
         {
             var movieCredits = await _tmdbApi.FetchMovieCreditsAsync(movieId);
             if (movieCredits != null)
-            {
+            {                
                 var moviesCredits = new MoviesCredits()
                 {
                     MovieId = movieId,
                     Credits = movieCredits
                 };
+                MovieCreditsFetched++;
                 return moviesCredits;
             }
             return null;
@@ -35,18 +41,16 @@ namespace MovieMatchMakerLib.Data
 
         public async Task<Movie> GetMovieAsync(string title, int releaseYear)
         {
-            if (title == "Stork")
-            {
-                Console.WriteLine();
-            }
-            return await _tmdbApi.FetchMovieAsync(title, releaseYear);
+            var movie = await _tmdbApi.FetchMovieAsync(title, releaseYear);
+            MoviesFetched++;
+            return movie;
         }
 
         public async Task<PersonsMovieCredits> GetMovieCreditsForPersonAsync(int personId)
         {
             var movieCredits = await _tmdbApi.FetchMovieCreditsForPerson(personId);
             if (movieCredits != null)
-            {
+            {                
                 var profileImageData = GetPersonPosterPath(movieCredits);               
                 var personsMovieCredits = new PersonsMovieCredits()
                 {
@@ -54,6 +58,7 @@ namespace MovieMatchMakerLib.Data
                     MovieCredits = movieCredits,
                     ProfileImagePath = profileImageData
                 };
+                MovieCreditsFetched++;
                 return personsMovieCredits;
             }
 
@@ -72,16 +77,6 @@ namespace MovieMatchMakerLib.Data
                 profileImageData = movieCredits.Crew.First().PosterPath;
             }
             return profileImageData;
-
-            // fetch with separate call to the  API
-            //var personImageData = await _tmdbApi.FetchImageDataForPerson(movieCredits.Id);
-            //if (personImageData != null)
-            //{
-            //    if (personImageData?.Profiles.Count > 0)
-            //    {
-            //        profileImageData = personImageData.Profiles[0].FilePath;
-            //    }
-            //}
         }
     }
 }
