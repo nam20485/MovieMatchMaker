@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib.Data
 {
-    public class JsonFileCache : IDataCache
+    public class JsonFileCache : IDataCache, IDisposable
     {
         public string FilePath { get; set; }
 
@@ -28,9 +29,12 @@ namespace MovieMatchMakerLib.Data
         public int MovieCreditsCount => MoviesCreditsById.Count;
         public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;
 
+        private const int SaveFrequencyMs = 1000;
         private readonly object _fileLockObj = new();
 
-        private RequestProcessingLoopThread<string> _serializeToFileLoopThread;
+        private readonly RequestProcessingLoopThread<string> _serializeToFileLoopThread;
+
+        private bool disposedValue;
 
         public JsonFileCache()
         {
@@ -38,7 +42,9 @@ namespace MovieMatchMakerLib.Data
             PersonsMovieCreditsById = new ();
             MoviesCreditsById = new ();
 
-            //_serializeToFileLoopThread = new RequestProcessingLoopThread<string>(SerializeToFile, false);
+            // save to the disk ever 1 s
+            _serializeToFileLoopThread = new RequestProcessingLoopThread<string>(SerializeToFile, false, SaveFrequencyMs);
+            Start();
         }        
 
         public JsonFileCache(string filePath)
@@ -53,8 +59,6 @@ namespace MovieMatchMakerLib.Data
             {
                 AddCreditsForMovie(moviesCredits);
             });
-
-            //await SaveAsync();
         }
 
         public async Task AddMovieAsync(Movie movie)
@@ -63,8 +67,6 @@ namespace MovieMatchMakerLib.Data
             {
                 AddMovie(movie);
             });
-
-            //await SaveAsync();
         }
 
         public async Task AddPersonsMovieCreditsAsync(PersonsMovieCredits personsMovieCredits)
@@ -73,8 +75,6 @@ namespace MovieMatchMakerLib.Data
             {
                 AddPersonsMovieCredits(personsMovieCredits);
             });
-
-            //await SaveAsync();
         }
 
         public void AddCreditsForMovie(MoviesCredits moviesCredits)
@@ -83,7 +83,6 @@ namespace MovieMatchMakerLib.Data
             {
                 MoviesCreditsById[moviesCredits.MovieId] = moviesCredits;
                 Save();
-                //await SaveAsync();
             }            
         }
 
@@ -93,7 +92,6 @@ namespace MovieMatchMakerLib.Data
             {
                 Movies.Add(movie);
                 Save();
-                //await SaveAsync();
             }            
         }
 
@@ -103,7 +101,6 @@ namespace MovieMatchMakerLib.Data
             {
                 PersonsMovieCreditsById[personsMovieCredits.PersonId] = personsMovieCredits;
                 Save();
-                //await SaveAsync();
             }
         }
 
@@ -162,22 +159,16 @@ namespace MovieMatchMakerLib.Data
 
         public static JsonFileCache Load(string filePath)
         {
-            var instance = new JsonFileCache();
             try
             {
-                var fileContent = File.ReadAllText(filePath);
-                if (!string.IsNullOrWhiteSpace(fileContent))
-                {
-                    //instance = JsonSerializer.Deserialize(fileContent, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)) as JsonFileCache;
-                    instance = JsonSerializer.Deserialize<JsonFileCache>(fileContent, GlobalSerializerOptions.Options);
-                }
+                var fileContent = File.ReadAllText(filePath);                                                
+                return JsonSerializer.Deserialize<JsonFileCache>(fileContent, GlobalSerializerOptions.Options);
+                //instance = JsonSerializer.Deserialize(fileContent, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)) as JsonFileCache;
             }
             catch (FileNotFoundException)
             {
-                // do nothing (no previous cache exists)
-            }
-            instance.FilePath = filePath;
-            return instance;
+                return null;
+            }            
         }
 
         public void Clear()
@@ -188,7 +179,8 @@ namespace MovieMatchMakerLib.Data
         }
 
         private Task SerializeToFile(string filePath)
-        {
+        {            
+            // filePath not used, get path from the member property
             lock (_fileLockObj)
             {
                 // TODO: use JsonSerializerContext-dervied class to optimize serialization
@@ -196,35 +188,63 @@ namespace MovieMatchMakerLib.Data
                 var json = JsonSerializer.Serialize(this);
                 File.WriteAllText(FilePath, json);
                 // write a backup so if one gets corrupted by an error during write, the other should still be OK
-                File.WriteAllText(FilePath + ".bak.json", json);
-            }
+                File.WriteAllText(FilePath.Replace(".json", string.Empty) + ".bak.json", json);
+            }      
             return Task.CompletedTask;
         }
 
         public void Save()
         {
-            //_serializeToFileLoopThread.AddRequest(FilePath);
-            SerializeToFile(FilePath);
+            _serializeToFileLoopThread.AddRequest(FilePath);
+            //SerializeToFile(FilePath);
         }
 
         public async Task SaveAsync()
         {
-            using (var ms = new MemoryStream())
-            {
-                //await JsonSerializer.SerializeAsync(ms, this, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)); 
-                await JsonSerializer.SerializeAsync(ms, this, GlobalSerializerOptions.Options);
+            using var ms = new MemoryStream();
+            //await JsonSerializer.SerializeAsync(ms, this, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)); 
+            await JsonSerializer.SerializeAsync(ms, this, GlobalSerializerOptions.Options);
 
-                lock (_fileLockObj)
-                {
-                    using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
-                    {
-                        ms.Position = 0;
-                        fs.CopyTo(ms);
-                        fs.Flush();
-                        fs.Close();
-                    }
-                }
+            lock (_fileLockObj)
+            {
+                using var fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
+                ms.Position = 0;
+                fs.CopyTo(ms);
+                fs.Flush();
+                fs.Close();
             }
+        }
+
+        public void Start()
+        {
+            _serializeToFileLoopThread.StartProcessingRequests();
+        }
+
+        public void Stop()
+        {
+            _serializeToFileLoopThread.StopProcessingRequests();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Stop();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }     
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

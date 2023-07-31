@@ -8,6 +8,7 @@ namespace MovieMatchMakerLib.Data
     {
         private readonly IDataCache _dataCache;
         private readonly IDataSource _dataSource;
+        private bool disposedValue;
 
         public int MoviesFetched => _dataCache.MovieCount;
         public int MovieCreditsFetched => _dataCache.MovieCreditsCount;
@@ -84,6 +85,37 @@ namespace MovieMatchMakerLib.Data
             }
 
             return moviesCredits;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    _dataCache.Dispose();
+                    _dataSource.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~CachedDataSource()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            System.GC.SuppressFinalize(this);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Utils
 {
-    public class RequestProcessingLoopThread<TRequest>
+    public class RequestProcessingLoopThread<TRequest> : IDisposable
     {
         private readonly ConcurrentQueue<TRequest> _requests;        
         private readonly Func<TRequest, Task> _processRequestFunc;
@@ -14,6 +14,8 @@ namespace MovieMatchMakerLib.Utils
         private readonly Thread _processRequestsLoopThread;
         private readonly AutoResetEvent _processRequestsLoopEvent;        
         private volatile bool _stopProcessRequests;
+        private bool disposedValue;
+        private readonly int _loopDelayMs = 0;
 
         private readonly bool _useThreadPool;
         private readonly ConcurrentQueue<Task> _requestProcessingTasks;
@@ -35,10 +37,23 @@ namespace MovieMatchMakerLib.Utils
             _requestProcessingTasks = new ConcurrentQueue<Task>();
         }
 
-        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool)
+        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool, int loopDelayMs)
             : this(processRequestFunc)
         {
-            _useThreadPool |= useThreadPool;
+            _useThreadPool = useThreadPool;
+            _loopDelayMs = loopDelayMs;
+        }
+
+        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, int loopDelayMs)
+            : this(processRequestFunc, false, loopDelayMs)
+        {           
+            _loopDelayMs = loopDelayMs;
+        }
+
+        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool)
+            : this(processRequestFunc, useThreadPool, 0)
+        {
+            _useThreadPool = useThreadPool;           
         }
 
         public void StartProcessingRequests()
@@ -46,12 +61,15 @@ namespace MovieMatchMakerLib.Utils
             _processRequestsLoopThread.Start();
         }        
 
-        public void StopProcessingRequests()
-        {            
+        public void StopProcessingRequests(bool wait = true)
+        {
             _stopProcessRequests = true;
             _processRequestsLoopEvent.Set();
-            Wait();
-        }      
+            if (wait)
+            {
+                Wait();
+            }            
+        }
 
         public void AddRequest(TRequest request)
         {
@@ -92,6 +110,11 @@ namespace MovieMatchMakerLib.Utils
                     {
                         _processRequestFunc(request);
                     }
+
+                    if (_loopDelayMs > 0)
+                    {
+                        Thread.Sleep(_loopDelayMs);
+                    }
                 }
             }          
         }       
@@ -112,6 +135,37 @@ namespace MovieMatchMakerLib.Utils
                     }
                 }
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    // don't wait (waiting in Dispose might have consequences?)
+                    StopProcessingRequests(false);
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~RequestProcessingLoopThread()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

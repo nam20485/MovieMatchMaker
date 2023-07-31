@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerLib.Data
 {
-    public interface IDataCache : IDataSource
+    public interface IDataCache : IDataSource, IDisposable
     {
         //void Load();
         Task SaveAsync();
