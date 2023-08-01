@@ -60,6 +60,10 @@ namespace MovieMatchMakerLib.TmdbApi
                         // request timed out
                     }
                 }
+                catch (ObjectDisposedException ode)
+                {
+                    ErrorLog.Log(ode);
+                }
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
@@ -100,6 +104,10 @@ namespace MovieMatchMakerLib.TmdbApi
                         // request timed out
                     }
                 }
+                catch (ObjectDisposedException ode)
+                {
+                    ErrorLog.Log(ode);
+                }
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
@@ -131,6 +139,10 @@ namespace MovieMatchMakerLib.TmdbApi
                     {
                         // request timed out
                     }
+                }
+                catch (ObjectDisposedException ode)
+                {
+                    ErrorLog.Log(ode);
                 }
                 catch (RequestLimitExceededException rlee)
                 {
@@ -168,6 +180,10 @@ namespace MovieMatchMakerLib.TmdbApi
                     ErrorLog.Log(rlee);
                     Thread.Sleep(Convert.ToInt32(timeoutDelay * Math.Pow(2, retryCount)));
                 }
+                catch (ObjectDisposedException ode)
+                {
+                    ErrorLog.Log(ode);
+                }
                 catch (Exception ex)
                 {
                     ErrorLog.Log(ex);
@@ -193,6 +209,10 @@ namespace MovieMatchMakerLib.TmdbApi
                     {
                         // request timed out
                     }
+                }
+                catch (ObjectDisposedException ode)
+                {
+                    ErrorLog.Log(ode);
                 }
                 catch (RequestLimitExceededException rlee)
                 {
@@ -222,14 +242,7 @@ namespace MovieMatchMakerLib.TmdbApi
                 disposedValue = true;
             }
         }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~TmdbLibApi()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
+       
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
