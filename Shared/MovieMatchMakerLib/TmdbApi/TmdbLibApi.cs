@@ -15,15 +15,18 @@ namespace MovieMatchMakerLib.TmdbApi
 {
     public class TmdbLibApi : ITmdbApi
     {
-        private const int RetryCount = 5;
+        private const int MaxRetryCount = 5;
+        private const int InitialTimeoutDelayMs = 25;
 
         private readonly TMDbClient _apiClient;
+
         private bool disposedValue;
-        private const int InitialTimeoutDelayMs = 100;        
      
         public TmdbLibApi(string apiKey)
         {
             _apiClient = new TMDbClient(apiKey);
+            //_apiClient.MaxRetryCount = 4;
+            //_apiClient.GetConfigAsync().Wait();
         }       
 
         public async Task<Model.Movie> FetchMovieAsync(string title, int releaseYear)
@@ -32,7 +35,7 @@ namespace MovieMatchMakerLib.TmdbApi
 
             var timeoutDelay = InitialTimeoutDelayMs;
             var retryCount = 0;
-            while (retryCount++ < RetryCount)
+            while (retryCount++ <= MaxRetryCount)
             {
                 try
                 {
@@ -67,7 +70,7 @@ namespace MovieMatchMakerLib.TmdbApi
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
-                    Thread.Sleep(Convert.ToInt32(timeoutDelay * Math.Pow(2, retryCount)));
+                    Thread.Sleep(timeoutDelay *= 2);
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +85,7 @@ namespace MovieMatchMakerLib.TmdbApi
         {
             var timeoutDelay = InitialTimeoutDelayMs;
             var retryCount = 0;
-            while (retryCount++ < RetryCount)
+            while (retryCount++ <= MaxRetryCount)
             {
                 try
                 {
@@ -111,7 +114,7 @@ namespace MovieMatchMakerLib.TmdbApi
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
-                    Thread.Sleep(Convert.ToInt32(timeoutDelay * Math.Pow(2, retryCount)));
+                    Thread.Sleep(timeoutDelay *= 2);
                 }
                 catch (Exception ex)
                 {
@@ -126,7 +129,7 @@ namespace MovieMatchMakerLib.TmdbApi
         {
             var timeoutDelay = InitialTimeoutDelayMs;
             var retryCount = 0;
-            while (retryCount++ < RetryCount)
+            while (retryCount++ <= MaxRetryCount)
             {
                 try
                 {
@@ -147,7 +150,7 @@ namespace MovieMatchMakerLib.TmdbApi
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
-                    Thread.Sleep(Convert.ToInt32(timeoutDelay * Math.Pow(2, retryCount)));
+                    Thread.Sleep(timeoutDelay *= 2);
                 }
                 catch (Exception ex)
                 {
@@ -161,7 +164,7 @@ namespace MovieMatchMakerLib.TmdbApi
         {
             var timeoutDelay = InitialTimeoutDelayMs;
             var retryCount = 0;
-            while (retryCount++ < RetryCount)
+            while (retryCount++ <= MaxRetryCount)
             {
                 try
                 {
@@ -178,7 +181,7 @@ namespace MovieMatchMakerLib.TmdbApi
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
-                    Thread.Sleep(Convert.ToInt32(timeoutDelay * Math.Pow(2, retryCount)));
+                    Thread.Sleep(timeoutDelay*=2);
                 }
                 catch (ObjectDisposedException ode)
                 {
@@ -196,7 +199,7 @@ namespace MovieMatchMakerLib.TmdbApi
         {
             var timeoutDelay = InitialTimeoutDelayMs;
             var retryCount = 0;
-            while (retryCount++ < RetryCount)
+            while (retryCount++ < MaxRetryCount)
             {
                 try
                 {
@@ -217,7 +220,7 @@ namespace MovieMatchMakerLib.TmdbApi
                 catch (RequestLimitExceededException rlee)
                 {
                     ErrorLog.Log(rlee);
-                    Thread.Sleep(Convert.ToInt32(timeoutDelay * Math.Pow(2, retryCount)));
+                    Thread.Sleep(timeoutDelay *= 2);
                 }
                 catch (Exception ex)
                 {
