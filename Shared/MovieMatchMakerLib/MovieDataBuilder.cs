@@ -13,22 +13,25 @@ namespace MovieMatchMakerLib
 
         private readonly IDataSource _dataSource;
 
-        public double MoviesFetchPerSecond => _dataSource.MoviesFetched / (DateTime.UtcNow - _started).Seconds;
-        public double MovieCreditsFetchPerSecond => _dataSource.MovieCreditsFetched / (DateTime.UtcNow - _started).Seconds;
-        public double PersonMovieCreditsFetchPerSecond => _dataSource.PersonMoviesCreditsFetched / (DateTime.UtcNow - _started).Seconds;
+        public double MoviesFetchPerSecond => MoviesFetched / (DateTime.UtcNow - _started).TotalSeconds;
+        public double MovieCreditsFetchPerSecond => MovieCreditsFetched / (DateTime.UtcNow - _started).TotalSeconds;
+        public double PersonMovieCreditsFetchPerSecond => PersonMovieCreditsFetched / (DateTime.UtcNow - _started).TotalSeconds;
+        public double TotalFetchPerSecond => TotalFetched / (DateTime.UtcNow - _started).TotalSeconds;
 
         public int MovieCreditsFetched => _dataSource.MovieCreditsFetched;
         public int MoviesFetched => _dataSource.MoviesFetched;
         public int PersonMovieCreditsFetched => _dataSource.PersonMoviesCreditsFetched;
+        public int TotalFetched => MoviesFetched + MovieCreditsFetched + PersonMovieCreditsFetched;
 
         private bool disposedValue;
 
         private DateTime _started;
         private DateTime _stopped;
         
-        public TimeSpan RunTime => _stopped - _started;
+        public TimeSpan TotalRunTime => _stopped - _started;
+        public TimeSpan RunningTime => DateTime.UtcNow - _started;
 
-        public int TaskCount => 1;
+        public int TaskCount => 0;      
 
         public MovieDataBuilder(IDataSource dataSource)
         {

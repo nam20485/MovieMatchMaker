@@ -105,7 +105,7 @@ namespace MovieMatchMakerApp
 
                 using (var timerAnimation = new ConsoleAnimation(0, 6, () =>
                 {
-                    return $"Movies:        {movieDataBuilder.MoviesFetched,5:#.##} ({movieDataBuilder.MoviesFetchPerSecond,5:0.00}/s)    \nMovieCredits:  {movieDataBuilder.MovieCreditsFetched,5:0.##} ({movieDataBuilder.MovieCreditsFetchPerSecond,5:0.00}/s)    \nPersonCredits: {movieDataBuilder.PersonMovieCreditsFetched,5:0.##} ({movieDataBuilder.PersonMovieCreditsFetchPerSecond,5:0.00}/s) ";
+                    return $"Movies:        {movieDataBuilder.MoviesFetched,5:#.##} ({movieDataBuilder.MoviesFetchPerSecond,6:0.0}/s)    \nMovieCredits:  {movieDataBuilder.MovieCreditsFetched,5:0.##} ({movieDataBuilder.MovieCreditsFetchPerSecond,6:0.0}/s)    \nPersonCredits: {movieDataBuilder.PersonMovieCreditsFetched,5:0.##} ({movieDataBuilder.PersonMovieCreditsFetchPerSecond,6:0.0}/s) \n------------------------------- \nTotal:         {movieDataBuilder.TotalFetched,5:0.##} ({movieDataBuilder.TotalFetchPerSecond,6:0.0}/s)\n\nRunning for {movieDataBuilder.RunningTime:hh\\:mm\\:ss\\:ff} ";
                 }))
                 {
                     timerAnimation.Start();
@@ -141,7 +141,7 @@ namespace MovieMatchMakerApp
                 Console.WriteLine();
             }
 
-            Console.WriteLine($"\nFinished (ran for {movieDataBuilder.RunTime:hh\\:mm\\:ss\\:ff}).");
+            //Console.WriteLine($"\nFinished (ran for {movieDataBuilder.RunTime:hh\\:mm\\:ss\\:ff}).");
 
             return true;
         }

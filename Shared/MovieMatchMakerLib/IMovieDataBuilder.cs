@@ -20,7 +20,10 @@ namespace MovieMatchMakerLib
         void Stop();
         void Wait();
 
-        TimeSpan RunTime { get; }
+        TimeSpan TotalRunTime { get; }
         int TaskCount { get; }
+        int TotalFetched { get; }
+        double TotalFetchPerSecond { get; }
+        TimeSpan RunningTime { get; }
     }
 }

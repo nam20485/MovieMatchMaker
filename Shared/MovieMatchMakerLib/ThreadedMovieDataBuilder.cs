@@ -23,17 +23,22 @@ namespace MovieMatchMakerLib
         private DateTime _stopped;
         private bool disposedValue;
 
-        public TimeSpan RunTime => _stopped - _started;
+        public TimeSpan TotalRunTime => _stopped - _started;
+        public TimeSpan RunningTime => DateTime.UtcNow - _started;
 
-        public double MoviesFetchPerSecond => CalculateRate(_dataSource.MoviesFetched, DateTime.UtcNow - _started);       
-        public double MovieCreditsFetchPerSecond => CalculateRate(_dataSource.MovieCreditsFetched, DateTime.UtcNow - _started);
-        public double PersonMovieCreditsFetchPerSecond => CalculateRate(_dataSource.PersonMoviesCreditsFetched, DateTime.UtcNow - _started);
+        public double MoviesFetchPerSecond => CalculateRate(MoviesFetched, DateTime.UtcNow - _started);       
+        public double MovieCreditsFetchPerSecond => CalculateRate(MovieCreditsFetched, DateTime.UtcNow - _started);
+        public double PersonMovieCreditsFetchPerSecond => CalculateRate(PersonMovieCreditsFetched, DateTime.UtcNow - _started);
+        public double TotalFetchPerSecond => CalculateRate(TotalFetched, DateTime.UtcNow - _started);
 
         public int MovieCreditsFetched => _dataSource.MovieCreditsFetched;
         public int MoviesFetched => _dataSource.MoviesFetched;
         public int PersonMovieCreditsFetched => _dataSource.PersonMoviesCreditsFetched;
+        public int TotalFetched => MoviesFetched + MovieCreditsFetched + PersonMovieCreditsFetched;
 
         public int TaskCount => _movieRequestsLoopThread.TaskCount;
+
+        private readonly int _getPersonCreditsLoopDelayMs = 10;
 
         private static double CalculateRate(int count, TimeSpan interval)
         {
@@ -55,9 +60,9 @@ namespace MovieMatchMakerLib
         {
             await Task.Run(() =>
             {
-                _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear, degree));
-                //await ProcessMovieRequestAsync(new MovieRequest(title, releaseYear, degree));
                 Start();
+                _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear, degree));
+                //await ProcessMovieRequestAsync(new MovieRequest(title, releaseYear, degree));                
             });
         }
 
@@ -108,10 +113,18 @@ namespace MovieMatchMakerLib
                 foreach (var castRole in movieCredits.Credits.Cast)
                 {
                     await ProcessPersonCreditsRequestAsync(new PersonCreditsRequest(castRole.Id, request.Degree));
+                    //if (_getPersonCreditsLoopDelayMs > 0)
+                    {
+                        Thread.Sleep(_getPersonCreditsLoopDelayMs);
+                    }
                 }
                 foreach (var crewRole in movieCredits.Credits.Crew)
                 {
                     await ProcessPersonCreditsRequestAsync(new PersonCreditsRequest(crewRole.Id, request.Degree));
+                    //if (_getPersonCreditsLoopDelayMs > 0)
+                    {
+                        Thread.Sleep(_getPersonCreditsLoopDelayMs);
+                    }
                 }
             }
         }
