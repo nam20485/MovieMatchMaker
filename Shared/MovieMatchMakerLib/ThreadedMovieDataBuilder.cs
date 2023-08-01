@@ -53,12 +53,12 @@ namespace MovieMatchMakerLib
 
         public async Task BuildFreshFromInitial(string title, int releaseYear, int degree)
         {
-            //await Task.Run(() =>
-            //{
+            await Task.Run(() =>
+            {
                 _movieRequestsLoopThread.AddRequest(new MovieRequest(title, releaseYear, degree));
                 //await ProcessMovieRequestAsync(new MovieRequest(title, releaseYear, degree));
                 Start();
-            //});
+            });
         }
 
         public void ContinueFromExisting(int degree)
