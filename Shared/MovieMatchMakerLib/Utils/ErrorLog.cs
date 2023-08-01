@@ -13,13 +13,24 @@ namespace MovieMatchMakerLib.Utils
         {
             lock (_writeLock)
             {
-                File.AppendAllText(ErrorLogFile, message);
+                var s = "";
+                if (! IsFirstWrite())
+                {
+                    s += Environment.NewLine;
+                }
+                s += message;
+                File.AppendAllText(ErrorLogFile, s);
             }
+        }
+
+        private static bool IsFirstWrite()
+        {
+            return !File.Exists(ErrorLogFile) || new FileInfo(ErrorLogFile).Length == 0;
         }
 
         public static void Log(Exception e)
         {
-            Log(e.ToString());
+            Log($"Exception:\n{e}");            
         }
 
         public static void Reset()
