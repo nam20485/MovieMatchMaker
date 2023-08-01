@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Model;
@@ -29,12 +30,13 @@ namespace MovieMatchMakerLib.Data
         public int MovieCreditsCount => MoviesCreditsById.Count;
         public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;
 
-        private const int SaveFrequencyPerS = 1000;
+        private const int SaveFrequencyPerS = 4;
         private const int MsPerS = 1000;
+        public const int SavePeriodMs = MsPerS / SaveFrequencyPerS;
 
         private readonly object _fileLockObj = new();
 
-        private readonly RequestProcessingLoopThread<string> _serializeToFileLoopThread;
+        private readonly Timer _saveTimer;
 
         private bool disposedValue;
 
@@ -44,10 +46,18 @@ namespace MovieMatchMakerLib.Data
             PersonsMovieCreditsById = new ();
             MoviesCreditsById = new ();
 
-            // save to the disk every 1 ms
-            _serializeToFileLoopThread = new RequestProcessingLoopThread<string>(SerializeToFile, false, MsPerS / SaveFrequencyPerS);
+            // no state is passed, and timer is started for one cycle/non-periodic (we restart the timer one cycle at a time)
+            _saveTimer = new Timer(new TimerCallback(TimerCallback), null, 0, Timeout.Infinite);
+
             Start();
-        }        
+        }    
+        
+        private void TimerCallback(object state)
+        {
+            SerializeToFile();
+            // kick the timer off again for one cycle
+            _saveTimer.Change(SavePeriodMs, 0);
+        }
 
         public JsonFileCache(string filePath)
             : this()
@@ -180,7 +190,7 @@ namespace MovieMatchMakerLib.Data
             MoviesCreditsById.Clear();
         }
 
-        private Task SerializeToFile(string filePath)
+        private Task SerializeToFile()
         {            
             // filePath not used, get path from the member property
             lock (_fileLockObj)
@@ -197,7 +207,7 @@ namespace MovieMatchMakerLib.Data
 
         public void Save()
         {
-            _serializeToFileLoopThread.AddRequest(FilePath);
+            // do nothing- saving is handled in the timer callback!
             //SerializeToFile(FilePath);
         }
 
@@ -218,13 +228,15 @@ namespace MovieMatchMakerLib.Data
         }
 
         public void Start()
-        {
-            _serializeToFileLoopThread.StartProcessingRequests();
+        {            
+            //start the timer for one cycle
+            _saveTimer.Change(SavePeriodMs, Timeout.Infinite);
         }
 
         public void Stop()
         {
-            _serializeToFileLoopThread.StopProcessingRequests(true);
+            // stop the timer
+            _saveTimer.Change(0, 0);            
         }
 
         protected virtual void Dispose(bool disposing)
@@ -234,7 +246,7 @@ namespace MovieMatchMakerLib.Data
                 if (disposing)
                 {
                     Stop();
-                    _serializeToFileLoopThread.Dispose();
+                    _saveTimer.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
