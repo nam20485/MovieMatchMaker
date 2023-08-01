@@ -122,26 +122,26 @@ namespace MovieMatchMakerApp
                     }
 
                     timerAnimation.Stop();
-                    movieDataBuilder.Stop();
-
-                    Console.WriteLine("\n\nStopping...");
-
-                    if (movieDataBuilder.TaskCount > 0)
-                    {
-                        using (var remainingTasksAnimation = new ConsoleAnimation(0, 12, () =>
-                        {
-                            return $"Waiting for tasks to complete ({movieDataBuilder.TaskCount})... ";
-                        }))
-                        {
-                            remainingTasksAnimation.Start();
-                        }
-
-                        Console.WriteLine();
-                    }
-
-                    Console.WriteLine($"\nFinished (ran for {movieDataBuilder.RunTime:hh\\:mm\\:ss\\:ff}).");
                 }
             }
+
+            Console.WriteLine("\n\nStopping...");
+            movieDataBuilder.Stop();
+
+            if (movieDataBuilder.TaskCount > 0)
+            {
+                using (var remainingTasksAnimation = new ConsoleAnimation(0, 12, () =>
+                {
+                    return $"Waiting for tasks to complete ({movieDataBuilder.TaskCount})... ";
+                }))
+                {
+                    remainingTasksAnimation.Start();
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.WriteLine($"\nFinished (ran for {movieDataBuilder.RunTime:hh\\:mm\\:ss\\:ff}).");
 
             return true;
         }
