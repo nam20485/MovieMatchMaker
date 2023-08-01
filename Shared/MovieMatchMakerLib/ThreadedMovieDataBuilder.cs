@@ -21,6 +21,7 @@ namespace MovieMatchMakerLib
         
         private DateTime _started;
         private DateTime _stopped;
+        private bool disposedValue;
 
         public TimeSpan RunTime => _stopped - _started;
 
@@ -66,7 +67,7 @@ namespace MovieMatchMakerLib
             // movies in PersonsMoviesCredits that don't have corresponding Movies in the cache???
         }
 
-        private void Start()
+        public void Start()
         {            
             _started = DateTime.UtcNow;
             _movieRequestsLoopThread.StartProcessingRequests();         
@@ -74,6 +75,8 @@ namespace MovieMatchMakerLib
 
         public void Stop()
         {
+            // TODO: dispose here?
+            //_dataSource.Dispose();
             _movieRequestsLoopThread.StopProcessingRequests();
             _stopped = DateTime.UtcNow;
         }
@@ -176,6 +179,37 @@ namespace MovieMatchMakerLib
                 PersonId = personId;
                 Degree = degree;
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    _dataSource.Dispose();
+                    _movieRequestsLoopThread.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~ThreadedMovieDataBuilder()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

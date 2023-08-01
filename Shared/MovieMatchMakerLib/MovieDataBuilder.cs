@@ -11,6 +11,8 @@ namespace MovieMatchMakerLib
     {
         public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "moviematchmaker.json");
 
+        private readonly IDataSource _dataSource;
+
         public double MoviesFetchPerSecond => _dataSource.MoviesFetched / (DateTime.UtcNow - _started).Seconds;
         public double MovieCreditsFetchPerSecond => _dataSource.MovieCreditsFetched / (DateTime.UtcNow - _started).Seconds;
         public double PersonMovieCreditsFetchPerSecond => _dataSource.PersonMoviesCreditsFetched / (DateTime.UtcNow - _started).Seconds;
@@ -19,9 +21,14 @@ namespace MovieMatchMakerLib
         public int MoviesFetched => _dataSource.MoviesFetched;
         public int PersonMovieCreditsFetched => _dataSource.PersonMoviesCreditsFetched;
 
-        private DateTime _started;
+        private bool disposedValue;
 
-        private readonly IDataSource _dataSource;
+        private DateTime _started;
+        private DateTime _stopped;
+        
+        public TimeSpan RunTime => _stopped - _started;
+
+        public int TaskCount => 1;
 
         public MovieDataBuilder(IDataSource dataSource)
         {
@@ -91,7 +98,55 @@ namespace MovieMatchMakerLib
 
         public void ContinueFromExisting(int degree)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        public void Start()
+        {
+            // do nothing
+            _started = DateTime.UtcNow;
+        }
+
+        public void Stop()
+        {
+            // do nothing
+            Wait();
+            _stopped = DateTime.UtcNow;
+        }
+
+        public void Wait()
+        {
+            // do nothing
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    _dataSource.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~MovieDataBuilder()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         //protected async void InvokeFindMovieConnectedToMovies(FindMoviesConnectedToMovieArgs args)

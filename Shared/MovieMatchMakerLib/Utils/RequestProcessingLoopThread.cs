@@ -8,22 +8,26 @@ namespace MovieMatchMakerLib.Utils
 {
     public class RequestProcessingLoopThread<TRequest> : IDisposable
     {
+        public int TaskCount => _requestProcessingTasks.Count;
+        public int RemainingRequests => _requests.Count;
+
         private readonly ConcurrentQueue<TRequest> _requests;        
         private readonly Func<TRequest, Task> _processRequestFunc;
 
         private readonly Thread _processRequestsLoopThread;
-        private readonly AutoResetEvent _processRequestsLoopEvent;        
-        private volatile bool _stopProcessRequests;
-        private bool disposedValue;
-        private readonly int _loopDelayMs = 0;
+        private readonly AutoResetEvent _processRequestsLoopEvent;
+        private readonly ConcurrentQueue<Task> _requestProcessingTasks;
 
         private readonly bool _useThreadPool;
-        private readonly ConcurrentQueue<Task> _requestProcessingTasks;
+        private readonly int _loopDelayMs = 0;
+
+        private volatile bool _stopProcessingRequests;
+        private volatile bool _forceStop;
+
         // create LongRunning tasks since we process (relatively) heavy long-running requests
         private const TaskCreationOptions RequestProcessingTaskCreationOptions = TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning;
 
-
-        public int TaskCount => _requestProcessingTasks.Count;
+        private bool disposedValue;
 
         public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc)
         {
@@ -31,7 +35,7 @@ namespace MovieMatchMakerLib.Utils
             _processRequestFunc = processRequestFunc;
             _processRequestsLoopThread = new Thread(ProcessRequestsLoop);
             _processRequestsLoopEvent = new AutoResetEvent(false);
-            _stopProcessRequests = false;
+            _stopProcessingRequests = false;
 
             _useThreadPool = false;
             _requestProcessingTasks = new ConcurrentQueue<Task>();
@@ -53,7 +57,7 @@ namespace MovieMatchMakerLib.Utils
         public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool)
             : this(processRequestFunc, useThreadPool, 0)
         {
-            _useThreadPool = useThreadPool;           
+            _useThreadPool = useThreadPool;            
         }
 
         public void StartProcessingRequests()
@@ -61,19 +65,17 @@ namespace MovieMatchMakerLib.Utils
             _processRequestsLoopThread.Start();
         }        
 
-        public void StopProcessingRequests(bool wait = true)
+        public void StopProcessingRequests(bool force = false)
         {
-            _stopProcessRequests = true;
+            _forceStop = force;
+            _stopProcessingRequests = true;            
             _processRequestsLoopEvent.Set();
-            if (wait)
-            {
-                Wait();
-            }            
+            Wait();            
         }
 
         public void AddRequest(TRequest request)
         {
-            if (!_stopProcessRequests)
+            if (!_stopProcessingRequests)
             {
                 _requests.Enqueue(request);
                 _processRequestsLoopEvent.Set();
@@ -82,7 +84,7 @@ namespace MovieMatchMakerLib.Utils
 
         public void AddRequests(IEnumerable<TRequest> requests)
         {
-            if (!_stopProcessRequests)
+            if (!_stopProcessingRequests)
             {
                 foreach (var request in requests)
                 {
@@ -94,21 +96,29 @@ namespace MovieMatchMakerLib.Utils
 
         private void ProcessRequestsLoop()
         {
-            while (!_stopProcessRequests)
+            while (!_stopProcessingRequests)
             {
                 _processRequestsLoopEvent.WaitOne();
 
-                while (_requests.TryDequeue(out var request))
+                while (!_forceStop && 
+                       _requests.TryDequeue(out var request))
                 {
-                    if (_useThreadPool)
-                    {                    
-                        var task = new Task((r) => _processRequestFunc((TRequest)r), request, RequestProcessingTaskCreationOptions);
-                        _requestProcessingTasks.Enqueue(task);
-                        task.Start();                                                
-                    }
-                    else
+                    try
                     {
-                        _processRequestFunc(request);
+                        if (_useThreadPool)
+                        {
+                            var task = new Task((r) => _processRequestFunc((TRequest)r), request, RequestProcessingTaskCreationOptions);
+                            _requestProcessingTasks.Enqueue(task);
+                            task.Start();
+                        }
+                        else
+                        {
+                            _processRequestFunc(request);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLog.Log($"{GetType()}: exception processing request\n{ex}");
                     }
 
                     if (_loopDelayMs > 0)
@@ -125,13 +135,21 @@ namespace MovieMatchMakerLib.Utils
             if (_useThreadPool)
             {                
                 // wait for any tasks to complete if we are using the pool
-                while (_requestProcessingTasks.TryDequeue(out var task))
+                while (!_forceStop &&
+                       _requestProcessingTasks.TryDequeue(out var task))
                 {
-                    // should we not wait on threads that haven't started yet?
-                    //if (!task.IsCompleted)
-                    //if (task.Status == TaskStatus.Running)
+                    try
                     {
-                        task.Wait();
+                        // should we not wait on threads that haven't started yet?
+                        //if (!task.IsCompleted)
+                        //if (task.Status == TaskStatus.Running)
+                        {
+                            task.Wait();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLog.Log(ex);
                     }
                 }
             }
@@ -143,8 +161,8 @@ namespace MovieMatchMakerLib.Utils
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
-                    // don't wait (waiting in Dispose might have consequences?)
+                    // dispose managed state (managed objects)
+                    // TODO: don't wait (waiting in Dispose might have consequences?)
                     StopProcessingRequests(false);
                 }
 

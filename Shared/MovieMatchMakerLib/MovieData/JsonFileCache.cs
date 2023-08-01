@@ -29,7 +29,9 @@ namespace MovieMatchMakerLib.Data
         public int MovieCreditsCount => MoviesCreditsById.Count;
         public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;
 
-        private const int SaveFrequencyMs = 1000;
+        private const int SaveFrequencyPerS = 1000;
+        private const int MsPerS = 1000;
+
         private readonly object _fileLockObj = new();
 
         private readonly RequestProcessingLoopThread<string> _serializeToFileLoopThread;
@@ -42,8 +44,8 @@ namespace MovieMatchMakerLib.Data
             PersonsMovieCreditsById = new ();
             MoviesCreditsById = new ();
 
-            // save to the disk ever 1 s
-            _serializeToFileLoopThread = new RequestProcessingLoopThread<string>(SerializeToFile, false, SaveFrequencyMs);
+            // save to the disk every 1 ms
+            _serializeToFileLoopThread = new RequestProcessingLoopThread<string>(SerializeToFile, false, MsPerS / SaveFrequencyPerS);
             Start();
         }        
 
@@ -222,7 +224,7 @@ namespace MovieMatchMakerLib.Data
 
         public void Stop()
         {
-            _serializeToFileLoopThread.StopProcessingRequests();
+            _serializeToFileLoopThread.StopProcessingRequests(true);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -232,6 +234,7 @@ namespace MovieMatchMakerLib.Data
                 if (disposing)
                 {
                     Stop();
+                    _serializeToFileLoopThread.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

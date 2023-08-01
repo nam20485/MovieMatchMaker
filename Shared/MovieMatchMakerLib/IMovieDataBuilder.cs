@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib
 {
-    public interface IMovieDataBuilder
+    public interface IMovieDataBuilder  : IDisposable
     {
         double MovieCreditsFetchPerSecond { get; }
         double MoviesFetchPerSecond { get; }
@@ -14,5 +15,12 @@ namespace MovieMatchMakerLib
 
         Task BuildFreshFromInitial(string title, int releaseYear, int degree);
         void ContinueFromExisting(int degree);
+
+        void Start();
+        void Stop();
+        void Wait();
+
+        TimeSpan RunTime { get; }
+        int TaskCount { get; }
     }
 }
