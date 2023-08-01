@@ -39,6 +39,7 @@ namespace MovieMatchMakerLib.Data
         private readonly Timer _saveTimer;
 
         private bool disposedValue;
+        private bool _stopped;
 
         public JsonFileCache()
         {
@@ -51,14 +52,7 @@ namespace MovieMatchMakerLib.Data
 
             Start();
         }    
-        
-        private void TimerCallback(object state)
-        {
-            SerializeToFile();
-            // kick the timer off again for one cycle
-            _saveTimer.Change(SavePeriodMs, 0);
-        }
-
+             
         public JsonFileCache(string filePath)
             : this()
         {
@@ -227,14 +221,26 @@ namespace MovieMatchMakerLib.Data
             }
         }
 
+        private void TimerCallback(object state)
+        {
+            if (!_stopped)
+            {
+                SerializeToFile();
+                // kick the timer off again for one cycle
+                _saveTimer.Change(SavePeriodMs, 0);
+            }
+        }
+
         public void Start()
-        {            
+        {
+            _stopped = false;
             //start the timer for one cycle
             _saveTimer.Change(SavePeriodMs, Timeout.Infinite);
         }
 
         public void Stop()
         {
+            _stopped = true;
             // stop the timer
             _saveTimer.Change(0, 0);            
         }
