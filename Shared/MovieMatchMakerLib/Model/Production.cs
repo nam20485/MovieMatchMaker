@@ -20,6 +20,11 @@ namespace MovieMatchMakerLib.Model
 
         private const string DisplayIdFormat = "{0} ({1})";
 
+        public Production()
+        {
+            // required for deserialization
+        }
+
         public Production(string title, int releaseYear, int movieId, string posterImagePath)
         {
             Title = title;

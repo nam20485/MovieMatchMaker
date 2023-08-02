@@ -15,6 +15,11 @@ namespace MovieMatchMakerLib.Model
 
         public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("person", PersonId);
 
+        public ConnectedRole()
+        {
+            // required for deserialization
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as ConnectedRole);

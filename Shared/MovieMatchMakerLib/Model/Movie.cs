@@ -10,6 +10,10 @@ namespace MovieMatchMakerLib.Model
         [JsonIgnore]
         public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", MovieId);
 
+        public Movie()
+        {
+        }
+
         public Movie(string title, int releaseYear, int movieId, string posterImagePath)
             : base(title, releaseYear, movieId, posterImagePath)
         {
