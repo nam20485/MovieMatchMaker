@@ -2,7 +2,7 @@
 using MovieMatchMakerLib;
 using MovieMatchMakerLib.Utils;
 using MovieMatchMakerLib.Data;
-
+using System.Diagnostics;
 
 namespace MovieMatchMakerApp
 {
@@ -19,11 +19,38 @@ namespace MovieMatchMakerApp
 
             if (args.Length > 0)
             {
+                var title = "";
+                var releaseYear = -1;
+                var degree = -1;
+                var threaded = false;
+                var file = "";
+                var continueExisting = true;
+                for (int i = 1; i < args.Length - 1; i++)
+                {
+                    switch (args[i])
+                    {
+                        case "--title": title = args[i+++1]; break;
+                        case "--releaseYear": releaseYear = int.Parse(args[++i]); break;
+                        case "--degree": degree = int.Parse(args[++i]); break;
+                        case "--file": file = args[++i]; break;
+                        case "--continue": continueExisting = bool.Parse(args[++i]); break;
+                        case "--threaded": threaded = bool.Parse(args[++i]); break;
+                    }
+                }
+
                 if (args[0] == "--build-connections")
                 {
-                    if (await BuildMovieConnections())
+                    if (args.Length == 5)
                     {
-                        return 0;
+                        if (!string.IsNullOrWhiteSpace(file))
+                        {
+                            ErrorLog.Reset();
+
+                            if (await BuildMovieConnections(file, threaded))
+                            {
+                                return 0;
+                            }
+                        }
                     }
                 }
                 else if (args[0] == "--build-data")
@@ -31,26 +58,9 @@ namespace MovieMatchMakerApp
                     if (args.Length == 13 ||
                         args.Length == 9)       // no title and releaseYear
                     {
-                        ErrorLog.Reset();
+                        //--build - data--title "Dark City"--releaseYear 1998--degree 1--threaded true--file./ movie - data.json--continue false
 
-                        var title = "";
-                        var releaseYear = -1;
-                        var degree = -1;
-                        var threaded = false;
-                        var file = "";
-                        var continueExisting = true;
-                        for (int i = 1; i < args.Length - 1; i++)
-                        {
-                            switch (args[i])
-                            {
-                                case "--title": title = args[i++ + 1]; break;
-                                case "--releaseYear": releaseYear = int.Parse(args[++i]); break;
-                                case "--degree": degree = int.Parse(args[++i]); break;                                
-                                case "--file": file = args[++i]; break;
-                                case "--continue": continueExisting = bool.Parse(args[++i]); break;
-                                case "--threaded": threaded = bool.Parse(args[++i]); break;
-                            }
-                        }
+                        ErrorLog.Reset();
 
                         if (!string.IsNullOrWhiteSpace(title) &&
                             releaseYear > -1 &&
@@ -63,24 +73,33 @@ namespace MovieMatchMakerApp
                             }
                         }
                     }
-                    else if (args[0] == "--time")
+                }
+                else if (args[0] == "--time")
+                {
+                    if (args.Length == 5)
                     {
-                        if (TimeBuildingConnectionsAndApplyingFilters())
+                        if (!string.IsNullOrWhiteSpace(file))
                         {
-                            return 0;
+                            if (TimeBuildingConnectionsAndApplyingFilters(file, threaded))
+                            {
+                                return 0;
+                            }
                         }
                     }
-                }               
+                }                       
             }
 
             return 1;
         }
 
-        private static async Task<bool> BuildMovieConnections()
+        private static async Task<bool> BuildMovieConnections(string file, bool threaded)
         {
             Console.WriteLine("Building movie connections...");
 
-            await CreateMovieConnectionBuilder(MovieDataBuilder.FilePath).FindMovieConnections();
+            var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);                
+            await connectionBuilder.FindMovieConnections();
+            connectionBuilder.SaveMovieConnections(MovieConnectionBuilder.FilePath);
+
             return true;
         }
 
@@ -146,14 +165,14 @@ namespace MovieMatchMakerApp
             return true;
         }
 
-        private static bool TimeBuildingConnectionsAndApplyingFilters()
+        private static bool TimeBuildingConnectionsAndApplyingFilters(string file, bool threaded)
         {
             var stopWatch = new PrintStopwatch();
 
             //await _connectionManager.FindMoviesConnectedToMovie("Dark City", 1998, 1);
             //await _dataCache.SaveAsync();
 
-            var connectionBuilder = CreateMovieConnectionBuilder(MovieDataBuilder.FilePath);
+            var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
 
             bool movieConnectionsLoaded = false;
             try
@@ -214,9 +233,17 @@ namespace MovieMatchMakerApp
             return false;
         }
 
-        private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath)
+        private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath, bool threaded)
         {
-            return new MovieConnectionBuilder(CreateJsonFileCache(filePath));
+            var dataCache = CreateJsonFileCache(filePath);
+            if (threaded)
+            {
+                return new ThreadedMovieConnectionBuilder(dataCache);
+            }
+            else
+            {
+                return new MovieConnectionBuilder(dataCache);
+            }
         }
 
         private static JsonFileCache CreateJsonFileCache(string filePath)
