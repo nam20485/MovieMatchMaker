@@ -76,11 +76,11 @@ namespace MovieMatchMakerApp
                 }
                 else if (args[0] == "--time")
                 {
-                    if (args.Length == 5)
+                    if (args.Length == 7)
                     {
                         if (!string.IsNullOrWhiteSpace(file))
                         {
-                            if (TimeBuildingConnectionsAndApplyingFilters(file, threaded))
+                            if (TimeBuildingConnectionsAndApplyingFilters(file, threaded, continueExisting))
                             {
                                 return 0;
                             }
@@ -165,24 +165,24 @@ namespace MovieMatchMakerApp
             return true;
         }
 
-        private static bool TimeBuildingConnectionsAndApplyingFilters(string file, bool threaded)
+        private static bool TimeBuildingConnectionsAndApplyingFilters(string file, bool threaded, bool continueExisting)
         {
             var stopWatch = new PrintStopwatch();
-
-            //await _connectionManager.FindMoviesConnectedToMovie("Dark City", 1998, 1);
-            //await _dataCache.SaveAsync();
 
             var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
 
             bool movieConnectionsLoaded = false;
             try
             {
-                stopWatch.Start("Loading movie connections from file... ", false);
+                if (continueExisting)
+                {
+                    stopWatch.Start("Loading movie connections from file... ", false);
 
-                connectionBuilder.LoadMovieConnections(MovieConnectionBuilder.FilePath);
-                movieConnectionsLoaded = true;
+                    connectionBuilder.LoadMovieConnections(MovieConnectionBuilder.FilePath);
+                    movieConnectionsLoaded = true;
 
-                stopWatch.Stop("loaded");
+                    stopWatch.Stop("loaded");
+                }
             }
             catch (Exception)
             {
@@ -193,7 +193,10 @@ namespace MovieMatchMakerApp
             {
                 stopWatch.Start("Finding movie connections... ", false);
 
+                connectionBuilder.Start();
                 connectionBuilder.FindMovieConnections().Wait();
+                connectionBuilder.Wait();
+                connectionBuilder.Stop();
 
                 stopWatch.Stop("complete");
 
@@ -208,6 +211,9 @@ namespace MovieMatchMakerApp
 
             if (connectionBuilder.MovieConnections.Count > 0)
             {
+                //await _connectionManager.FindMoviesConnectedToMovie("Dark City", 1998, 1);
+                //await _dataCache.SaveAsync();
+
                 stopWatch.Start("Applying filters... ", false);
 
                 var sorted = new SortFilter().Apply(connectionBuilder.MovieConnections);
@@ -235,7 +241,7 @@ namespace MovieMatchMakerApp
 
         private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath, bool threaded)
         {
-            var dataCache = CreateJsonFileCache(filePath);
+            var dataCache = JsonFileCache.Load(filePath);
             if (threaded)
             {
                 return new ThreadedMovieConnectionBuilder(dataCache);
@@ -244,12 +250,7 @@ namespace MovieMatchMakerApp
             {
                 return new MovieConnectionBuilder(dataCache);
             }
-        }
-
-        private static JsonFileCache CreateJsonFileCache(string filePath)
-        {
-            return JsonFileCache.Load(filePath);
-        }
+        }      
 
         private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded, bool load)
         {
