@@ -7,6 +7,10 @@ namespace MovieMatchMakerLib
     public interface IMovieConnectionBuilder : IDisposable
     {
         MovieConnection.List MovieConnections { get; }
+        int MovieConnectionsFound { get; }
+        double MovieConnectionsFoundPerSecond { get; }
+        TimeSpan RunningTime { get; }
+        TimeSpan TotalRunTime { get; }
 
         Task FindMovieConnections();
         void LoadMovieConnections(string path);

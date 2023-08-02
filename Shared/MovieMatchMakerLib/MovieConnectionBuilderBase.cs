@@ -20,9 +20,19 @@ namespace MovieMatchMakerLib
 
         public MovieConnection.List MovieConnections { get; }
 
+        public TimeSpan TotalRunTime => _stopped - _started;
+        public TimeSpan RunningTime => DateTime.UtcNow - _started;
+
+        public double MovieConnectionsFoundPerSecond => CalculateRate(MovieConnectionsFound, DateTime.UtcNow - _started);
+       
+        public int MovieConnectionsFound => MovieConnections.Count;       
+
         protected readonly IDataCache _dataCache;
 
         private bool disposedValue;
+
+        private DateTime _started;
+        private DateTime _stopped;                
 
         protected MovieConnectionBuilderBase(IDataCache dataCache)
         {
@@ -179,5 +189,13 @@ namespace MovieMatchMakerLib
         {
         }
 
+        private static double CalculateRate(int count, TimeSpan interval)
+        {
+            if (interval.TotalSeconds > 0)
+            {
+                return count / interval.TotalSeconds;
+            }
+            return 0.0;
+        }
     }
 }
