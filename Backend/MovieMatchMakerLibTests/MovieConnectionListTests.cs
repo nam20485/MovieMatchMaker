@@ -17,7 +17,7 @@ namespace MovieMatchMakerLibTests
         public void Test_LoadFromFile()
         {
             File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder   .FilePath);
+            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(17413);

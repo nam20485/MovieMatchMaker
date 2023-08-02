@@ -9,7 +9,7 @@ namespace MovieMatchMakerLib
 {
     public class MovieDataBuilder : IMovieDataBuilder
     {
-        public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "moviematchmaker.json");
+        public static string FilePath => Path.Combine(SystemFolders.LocalAppDataPath, "movie-data.json");
 
         private readonly IDataSource _dataSource;
 
