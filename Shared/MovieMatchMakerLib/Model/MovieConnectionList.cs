@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -187,7 +188,15 @@ namespace MovieMatchMakerLib.Model
 
             public static List LoadFromFile(string path)
             {
-                return FromJson(File.ReadAllText(path));
+                try
+                {
+                    return FromJson(File.ReadAllText(path));
+                }
+                catch (Exception e)
+                {
+                    ErrorLog.Log(e);
+                    return null;
+                }
             }
 
             public MovieConnection GetOrCreateMovieConnection(Movie sourceMovie, Movie targetMovie)
