@@ -8,11 +8,13 @@ namespace MovieMatchMakerLib.Utils
 {
     public class RequestProcessingLoopThread<TRequest> : IDisposable
     {
+        public delegate Task ProcessRequestFunc(TRequest request);
+
         public int TaskCount => _requestProcessingTasks.Count;
         public int RemainingRequests => _requests.Count;
 
         private readonly ConcurrentQueue<TRequest> _requests;        
-        private readonly Func<TRequest, Task> _processRequestFunc;
+        private readonly ProcessRequestFunc _processRequestFunc;
 
         private readonly Thread _processRequestsLoopThread;
         private readonly AutoResetEvent _processRequestsLoopEvent;
@@ -29,7 +31,7 @@ namespace MovieMatchMakerLib.Utils
 
         private bool disposedValue;
 
-        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc)
+        public RequestProcessingLoopThread(ProcessRequestFunc processRequestFunc)
         {
             _requests = new ConcurrentQueue<TRequest>();
             _processRequestFunc = processRequestFunc;
@@ -41,20 +43,20 @@ namespace MovieMatchMakerLib.Utils
             _requestProcessingTasks = new ConcurrentQueue<Task>();
         }
 
-        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool, int loopDelayMs)
+        public RequestProcessingLoopThread(ProcessRequestFunc processRequestFunc, bool useThreadPool, int loopDelayMs)
             : this(processRequestFunc)
         {
             _useThreadPool = useThreadPool;
             _loopDelayMs = loopDelayMs;
         }
 
-        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, int loopDelayMs)
+        public RequestProcessingLoopThread(ProcessRequestFunc processRequestFunc, int loopDelayMs)
             : this(processRequestFunc, false, loopDelayMs)
         {           
             _loopDelayMs = loopDelayMs;
         }
 
-        public RequestProcessingLoopThread(Func<TRequest, Task> processRequestFunc, bool useThreadPool)
+        public RequestProcessingLoopThread(ProcessRequestFunc processRequestFunc, bool useThreadPool)
             : this(processRequestFunc, useThreadPool, 0)
         {
             _useThreadPool = useThreadPool;            
