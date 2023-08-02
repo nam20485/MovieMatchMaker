@@ -12,7 +12,7 @@ namespace MovieMatchMakerLibTests
     {
         public static JsonFileCache LoadJsonFileCache()
         {
-            var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);
+            var dataCache = JsonFileCache.Load(Constants.Strings.MovieDataFilePath);
             return dataCache;
         }
 
@@ -22,7 +22,7 @@ namespace MovieMatchMakerLibTests
             var connectionBuilder = new MovieConnectionBuilder(dataCache);
             if (loaded)
             {
-                connectionBuilder.LoadMovieConnections();
+                connectionBuilder.LoadMovieConnections(Constants.Strings.MovieConnectionsFilePath);
             }
             return connectionBuilder;
         }        
