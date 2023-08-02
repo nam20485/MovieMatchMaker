@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MovieMatchMakerLib.Data;
 using MovieMatchMakerLib.Utils;
 
@@ -30,12 +31,14 @@ namespace MovieMatchMakerLib
 
         public override void Start()
         {
+            _started = DateTime.UtcNow;
             _findMovieConnectionsLoopThread.StartProcessingRequests();
         }
 
         public override void Stop()
         {
            _findMovieConnectionsLoopThread.StopProcessingRequests();
+            _started = DateTime.UtcNow;
         }
 
         public override void Wait()

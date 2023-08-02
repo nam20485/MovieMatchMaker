@@ -73,7 +73,7 @@ namespace MovieMatchMakerLib
         public void Start()
         {            
             _started = DateTime.UtcNow;
-            _movieRequestsLoopThread.StartProcessingRequests();         
+            _movieRequestsLoopThread.StartProcessingRequests();            
         }
 
         public void Stop()

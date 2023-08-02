@@ -12,6 +12,10 @@ namespace MovieMatchMakerLib
         TimeSpan RunningTime { get; }
         TimeSpan TotalRunTime { get; }
 
+        int MovieCreditsCount { get; }
+        int MoviesCount { get; }
+        int PersonMovieCreditsCount { get; }
+
         Task FindMovieConnections();
         void LoadMovieConnections(string path);
         void LoadMovieConnections();

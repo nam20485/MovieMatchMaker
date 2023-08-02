@@ -22,17 +22,19 @@ namespace MovieMatchMakerLib
 
         public TimeSpan TotalRunTime => _stopped - _started;
         public TimeSpan RunningTime => DateTime.UtcNow - _started;
-
         public double MovieConnectionsFoundPerSecond => CalculateRate(MovieConnectionsFound, DateTime.UtcNow - _started);
-       
-        public int MovieConnectionsFound => MovieConnections.Count;       
+
+        public int MovieConnectionsFound => MovieConnections.Count;
+        public int MovieCreditsCount => _dataCache.MovieCreditsCount;
+        public int MoviesCount => _dataCache.MovieCount;
+        public int PersonMovieCreditsCount => _dataCache.PersonMoviesCreditsCount;
 
         protected readonly IDataCache _dataCache;
 
         private bool disposedValue;
 
-        private DateTime _started;
-        private DateTime _stopped;                
+        protected DateTime _started;
+        protected DateTime _stopped;                
 
         protected MovieConnectionBuilderBase(IDataCache dataCache)
         {
@@ -135,13 +137,16 @@ namespace MovieMatchMakerLib
         protected async Task FindMovieConnectionsFor(Model.Movie sourceMovie)
         {
             var sourceMoviesCredits = await _dataCache.GetCreditsForMovieAsync(sourceMovie.MovieId);
-            foreach (var sourceRole in sourceMoviesCredits.Credits.Cast)
+            if (sourceMoviesCredits != null)
             {
-                await FindMovieConnectionsFor(sourceMovie, sourceRole);
-            }
-            foreach (var sourceRole in sourceMoviesCredits.Credits.Crew)
-            {
-                await FindMovieConnectionsFor(sourceMovie, sourceRole);
+                foreach (var sourceRole in sourceMoviesCredits.Credits.Cast)
+                {
+                    await FindMovieConnectionsFor(sourceMovie, sourceRole);
+                }
+                foreach (var sourceRole in sourceMoviesCredits.Credits.Crew)
+                {
+                    await FindMovieConnectionsFor(sourceMovie, sourceRole);
+                }
             }
         }       
 

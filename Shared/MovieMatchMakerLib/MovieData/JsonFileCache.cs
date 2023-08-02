@@ -48,9 +48,9 @@ namespace MovieMatchMakerLib.Data
             MoviesCreditsById = new ();
 
             // no state is passed, and timer is started for one cycle/non-periodic (we restart the timer one cycle at a time)
-            _saveTimer = new Timer(new TimerCallback(TimerCallback), null, 0, Timeout.Infinite);
+            _saveTimer = new Timer(new TimerCallback(TimerCallback), null, Timeout.Infinite, Timeout.Infinite);
 
-            Start();
+            //Start();
         }    
              
         public JsonFileCache(string filePath)

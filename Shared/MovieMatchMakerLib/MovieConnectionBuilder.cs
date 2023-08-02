@@ -1,12 +1,6 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Data;
-using MovieMatchMakerLib.Model;
-using MovieMatchMakerLib.Utils;
-
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Movies;
 
 namespace MovieMatchMakerLib
 {

@@ -9,7 +9,9 @@ namespace MovieMatchMakerLib.Utils
 {
     public class ConsoleAnimation : IDisposable
     {
-        private readonly Func<string> _getFrameTextFunc;
+        public delegate string GetFrameTextFunc(ulong frameNumber);
+
+        private readonly GetFrameTextFunc _getFrameTextFunc;
         private readonly Thread _thread;
         private readonly int _delayMs = 0;
 
@@ -18,7 +20,9 @@ namespace MovieMatchMakerLib.Utils
 
         private bool _stop = false;
 
-        public ConsoleAnimation(int left, int top, Func<string> getFrameTextFunc)
+        private ulong _frameNumber = 0;
+
+        public ConsoleAnimation(int left, int top, GetFrameTextFunc getFrameTextFunc)
         {
             _top = top;
             _left = left;
@@ -26,7 +30,7 @@ namespace MovieMatchMakerLib.Utils
             _thread = new Thread(DrawFrameLoop);          
         }
 
-        public ConsoleAnimation(Func<string> getFrameTextFunc)
+        public ConsoleAnimation(GetFrameTextFunc getFrameTextFunc)
             : this(-1, -1, getFrameTextFunc)
         {
         }
@@ -54,7 +58,7 @@ namespace MovieMatchMakerLib.Utils
 
         private void DrawFrame()
         {
-            var s = _getFrameTextFunc();
+            var s = _getFrameTextFunc(_frameNumber++);
             Console.SetCursorPosition(_left, _top);                                 
             Console.Write(s);
         }

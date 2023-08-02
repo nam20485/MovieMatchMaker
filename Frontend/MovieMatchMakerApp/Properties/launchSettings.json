@@ -2,7 +2,7 @@
   "profiles": {
     "MovieMatchMakerApp": {
       "commandName": "Project",
-      "commandLineArgs": "--time --threaded true --file ./movie-data.json --continue false"
+      "commandLineArgs": "--build-connections --threaded true --file ./movie-data.json"
     },
     "WSL": {
       "commandName": "WSL2",

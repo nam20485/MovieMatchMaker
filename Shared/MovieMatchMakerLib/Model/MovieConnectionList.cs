@@ -14,6 +14,8 @@ namespace MovieMatchMakerLib.Model
         {
             public static readonly List Empty = new();
 
+            private readonly object _lock = new object();
+
             public List()
                 : base()
             {
@@ -116,17 +118,20 @@ namespace MovieMatchMakerLib.Model
 
             public MovieConnection FindConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
             {
-                return Find(mc =>
+                lock (_lock)
                 {
-                    return ((mc.SourceMovie.Title == sourceMovieTitle &&
-                             mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
-                             mc.TargetMovie.Title == targetMovieTitle &&
-                             mc.TargetMovie.ReleaseYear == targetMovieReleaseYear) ||
-                            (mc.SourceMovie.Title == targetMovieTitle &&
-                             mc.SourceMovie.ReleaseYear == targetMovieReleaseYear &&
-                             mc.TargetMovie.Title == sourceMovieTitle &&
-                             mc.TargetMovie.ReleaseYear == sourceMovieReleaseYear));
-                });
+                    return Find(mc =>
+                    {
+                        return ((mc.SourceMovie.Title == sourceMovieTitle &&
+                                 mc.SourceMovie.ReleaseYear == sourceMovieReleaseYear &&
+                                 mc.TargetMovie.Title == targetMovieTitle &&
+                                 mc.TargetMovie.ReleaseYear == targetMovieReleaseYear) ||
+                                (mc.SourceMovie.Title == targetMovieTitle &&
+                                 mc.SourceMovie.ReleaseYear == targetMovieReleaseYear &&
+                                 mc.TargetMovie.Title == sourceMovieTitle &&
+                                 mc.TargetMovie.ReleaseYear == sourceMovieReleaseYear));
+                    });
+                }
             }
 
             public MovieConnection FindConnectionExact(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
@@ -201,19 +206,22 @@ namespace MovieMatchMakerLib.Model
 
             public MovieConnection GetOrCreateMovieConnection(Movie sourceMovie, Movie targetMovie)
             {
-                var movieConnection = FindConnection(sourceMovie.Title, sourceMovie.ReleaseYear, targetMovie.Title, targetMovie.ReleaseYear);
-                if (movieConnection is null)
+                lock (_lock)
                 {
-                    // not found, return an empty new one
-                    movieConnection = new MovieConnection(sourceMovie, targetMovie)
+                    var movieConnection = FindConnection(sourceMovie.Title, sourceMovie.ReleaseYear, targetMovie.Title, targetMovie.ReleaseYear);
+                    if (movieConnection is null)
                     {
-                        // set a unique id
-                        Id = Count
-                    };
-                    Add(movieConnection);
-                }
+                        // not found, return an empty new one
+                        movieConnection = new MovieConnection(sourceMovie, targetMovie)
+                        {
+                            // set a unique id
+                            Id = Count
+                        };
+                        Add(movieConnection);
+                    }
 
-                return movieConnection;
+                    return movieConnection;
+                }
             }
 
             public bool Contains(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
