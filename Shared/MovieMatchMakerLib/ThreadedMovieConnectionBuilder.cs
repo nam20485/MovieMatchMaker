@@ -21,16 +21,21 @@ namespace MovieMatchMakerLib
 
         protected readonly IDataCache _dataCache;
 
+        private readonly RequestProcessingLoopThread<Model.Movie> _findMovieConnectionsLoopThread;
+        private bool disposedValue;
+
         public ThreadedMovieConnectionBuilder(IDataCache dataCache)
         {
             MovieConnections = new MovieConnection.List();
             _dataCache = dataCache;
+            _findMovieConnectionsLoopThread = new RequestProcessingLoopThread<Model.Movie>(FindMovieConnectionsFor);
         }
 
         public void LoadMovieConnections(string path)
         {
             var loaded = MovieConnection.List.LoadFromFile(path);
             MovieConnections.AddRange(loaded);
+            //MovieConnections = MovieConnection.List.LoadFromFile(path);
         }
 
         public void LoadMovieConnections()
@@ -50,21 +55,30 @@ namespace MovieMatchMakerLib
 
         public async Task FindMovieConnections()
         {
-            foreach (var sourceMovie in _dataCache.Movies)
+            await Task.Run(() =>
             {
-                var sourceMoviesCredits = await _dataCache.GetCreditsForMovieAsync(sourceMovie.MovieId);
-                foreach (var sourceRole in sourceMoviesCredits.Credits.Cast)
+                foreach (var sourceMovie in _dataCache.Movies)
                 {
-                    await FindMovieConnectionsFromRole(sourceMovie, sourceRole);
+                    //await FindMovieConnectionsFor(sourceMovie);
+                    _findMovieConnectionsLoopThread.AddRequest(sourceMovie);
                 }
-                foreach (var sourceRole in sourceMoviesCredits.Credits.Crew)
-                {
-                    await FindMovieConnectionsFromRole(sourceMovie, sourceRole);
-                }
+            });           
+        }
+
+        private async Task FindMovieConnectionsFor(Model.Movie sourceMovie)
+        {
+            var sourceMoviesCredits = await _dataCache.GetCreditsForMovieAsync(sourceMovie.MovieId);
+            foreach (var sourceRole in sourceMoviesCredits.Credits.Cast)
+            {
+                await FindMovieConnectionsFor(sourceMovie, sourceRole);
+            }
+            foreach (var sourceRole in sourceMoviesCredits.Credits.Crew)
+            {
+                await FindMovieConnectionsFor(sourceMovie, sourceRole);
             }
         }
 
-        protected async Task FindMovieConnectionsFromRole(Model.Movie sourceMovie, Cast sourceRole)
+        private async Task FindMovieConnectionsFor(Model.Movie sourceMovie, Cast sourceRole)
         {
             var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
             if (personCredits != null)
@@ -88,7 +102,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        protected async Task FindMovieConnectionsFromRole(Model.Movie sourceMovie, Crew sourceRole)
+        private async Task FindMovieConnectionsFor(Model.Movie sourceMovie, Crew sourceRole)
         {
             var personCredits = await _dataCache.GetMovieCreditsForPersonAsync(sourceRole.Id);
             if (personCredits != null)
@@ -112,7 +126,7 @@ namespace MovieMatchMakerLib
             }
         }
 
-        protected void AddMovieConnection(string name, Model.Movie sourceMovie, string sourceRole, Model.Movie targetMovie, string targetRole, int personId, string profileImagePath)
+        private void AddMovieConnection(string name, Model.Movie sourceMovie, string sourceRole, Model.Movie targetMovie, string targetRole, int personId, string profileImagePath)
         {
             if (targetMovie != null)
             {                
@@ -136,6 +150,52 @@ namespace MovieMatchMakerLib
                     }
                 }
             }
+        }
+
+        public void Start()
+        {
+            _findMovieConnectionsLoopThread.StartProcessingRequests();
+        }
+
+        public void Stop()
+        {
+           _findMovieConnectionsLoopThread.StopProcessingRequests();
+        }
+
+        public void Wait()
+        {
+            _findMovieConnectionsLoopThread.Wait();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    Stop();
+                    _dataCache.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~ThreadedMovieConnectionBuilder()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
