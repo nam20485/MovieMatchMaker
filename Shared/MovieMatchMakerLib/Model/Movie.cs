@@ -17,7 +17,7 @@ namespace MovieMatchMakerLib.Model
 
         public string MakePosterImagePath(TmdbApiHelper.PosterImageSize posterImageSize)
         {
-            return TmdbApiHelper.MakeImagePath(posterImageSize, PosterImagePath);
+            return TmdbApiHelper.MakeImagePath(posterImageSize, PosterImagePathSuffix);
         }
 
         public class List : List<Movie>

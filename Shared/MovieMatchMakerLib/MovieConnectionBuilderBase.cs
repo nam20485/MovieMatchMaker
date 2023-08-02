@@ -76,7 +76,7 @@ namespace MovieMatchMakerLib
                         SourceJob = sourceRole,
                         TargetJob = targetRole,
                         PersonId = personId,
-                        PersonPosterPath = profileImagePath
+                        PersonPosterPathSuffix = profileImagePath
                     };
                     if (!movieConnection.ConnectedRoles.Contains(connectedRole))
                     {

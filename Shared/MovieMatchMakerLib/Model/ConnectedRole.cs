@@ -10,7 +10,8 @@ namespace MovieMatchMakerLib.Model
         public int PersonId { get; set; }
         public string TargetJob { get; set; }
         public string SourceJob { get; set; }
-        public string PersonPosterPath { get; set; }
+        public string PersonPosterPathSuffix { get; set; }
+        public string PersonPosterPath => TmdbApiHelper.MakeImagePath(TmdbApiHelper.PosterImageSize.w92, PersonPosterPathSuffix);
 
         public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("person", PersonId);
 

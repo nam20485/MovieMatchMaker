@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+using MovieMatchMakerLib.TmdbApi;
+
 namespace MovieMatchMakerLib.Model
 {
     public class Production : IEquatable<Production>
@@ -9,8 +11,8 @@ namespace MovieMatchMakerLib.Model
         public string Title { get; set; }
         public int ReleaseYear { get; set; }
         public int MovieId { get; set; }
-        public string PosterImagePath { get; set; }
-
+        public string PosterImagePathSuffix { get; set; }        
+        public string PosterImagePath => TmdbApiHelper.MakeImagePath(TmdbApiHelper.PosterImageSize.w92, PosterImagePathSuffix);
         [JsonIgnore]
         public bool Fetched { get; set; }        
         [JsonIgnore]
@@ -23,7 +25,7 @@ namespace MovieMatchMakerLib.Model
             Title = title;
             ReleaseYear = releaseYear;
             MovieId = movieId;
-            PosterImagePath = posterImagePath;
+            PosterImagePathSuffix = posterImagePath;
             Fetched = false;
         }
 
