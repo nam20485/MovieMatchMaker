@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using MovieMatchMakerLib.Data;
 using MovieMatchMakerLib.Utils;
 
-using TMDbLib.Objects.TvShows;
-
 namespace MovieMatchMakerLib
 {
     public class ThreadedMovieDataBuilder : IMovieDataBuilder
