@@ -13,10 +13,15 @@ namespace MovieMatchMakerLib.Utils
         {
         }
 
-        public SpinnerAnimation(int left, int top)
-            : base(left, top, GetSpinnerFrameText)
+        public SpinnerAnimation(int delayMs)
+           : base(delayMs, GetSpinnerFrameText)
         {
         }
+
+        public SpinnerAnimation(int left, int top, int delayMs)
+            : base(left, top, delayMs, GetSpinnerFrameText)
+        {
+        }       
 
         private static string GetSpinnerFrameText(ulong frameNumber)
         {
