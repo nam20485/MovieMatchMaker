@@ -4,17 +4,22 @@ using MovieMatchMakerLib.Utils;
 using MovieMatchMakerLib.Data;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MovieMatchMakerApp
 {
     internal class Program
-    {        
+    {
+        private const string MovieConnectionsFilePath = "./movie-connections.json";
+
         static Program()
         {                    
         }
 
         static async Task<int> Main(string[] args)
         {
+            ErrorLog.Reset();
+
             Console.WriteLine(Constants.Strings.HeaderWithVersion);
             Console.WriteLine(/* blank line for separation */);
 
@@ -43,10 +48,10 @@ namespace MovieMatchMakerApp
                 {
                     if (args.Length == 5)
                     {
-                        if (!string.IsNullOrWhiteSpace(file))
-                        {
-                            ErrorLog.Reset();
+                        //--build-connections --threaded true --file ./movie-data.json
 
+                        if (!string.IsNullOrWhiteSpace(file))
+                        {                           
                             if (await BuildMovieConnections(file, threaded))
                             {
                                 return 0;
@@ -59,9 +64,7 @@ namespace MovieMatchMakerApp
                     if (args.Length == 13 ||
                         args.Length == 9)       // no title and releaseYear
                     {
-                        //--build - data--title "Dark City"--releaseYear 1998--degree 1--threaded true--file./ movie - data.json--continue false
-
-                        ErrorLog.Reset();
+                        //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue false
 
                         if (!string.IsNullOrWhiteSpace(title) &&
                             releaseYear > -1 &&
@@ -90,6 +93,7 @@ namespace MovieMatchMakerApp
                 //}                       
             }
 
+            // invalid args
             return 1;
         }
 
@@ -102,9 +106,9 @@ namespace MovieMatchMakerApp
                 return (fn % 4) switch
                 {
                     0 => "/",
-                    1 => "|",
+                    1 => "-",
                     2 => @"\",
-                    3 => "-",                    
+                    3 => "|",                 
                 };
             });
             
@@ -112,9 +116,8 @@ namespace MovieMatchMakerApp
             using var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
             loadingAnimation.Stop();
             loadingAnimation.Dispose();            
-
-            Console.WriteLine(/**/);
-            Console.WriteLine($"Movies:               {connectionBuilder.MoviesCount,5}\nMovie Credits:        {connectionBuilder.MovieCreditsCount,5}\nPerson Movie Credits: {connectionBuilder.PersonMovieCreditsCount,5}");            
+            
+            Console.WriteLine($"\n\nMovies:               {connectionBuilder.MoviesCount,5}\nMovie Credits:        {connectionBuilder.MovieCreditsCount,5}\nPerson Movie Credits: {connectionBuilder.PersonMovieCreditsCount,5}");            
 
             Console.WriteLine(/**/);
             Console.WriteLine("Building movie connections...");
@@ -126,7 +129,7 @@ namespace MovieMatchMakerApp
                 Console.WriteLine();
                 Console.WriteLine("(Press CTRL+m to quit)");
 
-                using (var timerAnimation = new ConsoleAnimation(0, 9, (fn) =>
+                using (var timerAnimation = new ConsoleAnimation(0, 12, (fn) =>
                 {
                     return $"MovieConnections found: {connectionBuilder.MovieConnectionsFound,5:0.} ({connectionBuilder.MovieConnectionsFoundPerSecond,6:0.0}/s) ";
                 }))
@@ -136,12 +139,9 @@ namespace MovieMatchMakerApp
                 }
             }
 
-            Console.WriteLine("\n\nStopping...");
             connectionBuilder.Stop();
-
-            const string movieConnectionsFilePath = "./movie-connections.json";
-            Console.WriteLine($"\nSaving ({movieConnectionsFilePath})...");            
-            connectionBuilder.SaveMovieConnections(movieConnectionsFilePath);
+            Console.WriteLine($"\n\nSaving ({MovieConnectionsFilePath})...");            
+            connectionBuilder.SaveMovieConnections(MovieConnectionsFilePath);
 
             return true;
         }
