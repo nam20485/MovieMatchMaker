@@ -21,19 +21,27 @@ jobs:
           dotnet-version: 7.0.x
 
       - name: Restore dependencies (linux-x64)
-        working-directory: ./Backend
-        run: dotnet restore -r linux-x64
+        #working-directory: ./Backend
+        run: |
+          cd Backend
+          dotnet restore -r linux-x64
 
       - name: Build
-        working-directory: ./Backend
-        run: dotnet build -c Release --no-restore
+        #working-directory: ./Backend
+        run: |
+          cd Backend
+          dotnet build -c Release --no-restore
 
       - name: Publish (linux-x64)
-        working-directory: ./Backend
-        run: dotnet publish -c Release -r linux-x64 --no-build 
+        #working-directory: ./Backend
+        run: |
+          cd Backend
+          dotnet publish -c Release -r linux-x64 --no-build
 
       - name: Test
-        working-directory: ./Backend
-        run: dotnet test -c Release -r linux-x64 --no-build --verbosity normal
+        #working-directory: ./Backend
+        run: |
+          cd Backend
+          dotnet test -c Release -r linux-x64 --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
