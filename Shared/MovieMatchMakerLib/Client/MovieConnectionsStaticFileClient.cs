@@ -17,7 +17,7 @@ namespace MovieMatchMakerLib.Client
 {
     public class MovieConnectionsStaticFileClient : IMovieConnectionsClient
     {
-        public const string MovieConnectionsFilename = "movieconnections.json";       
+        public const string MovieConnectionsFilename = "movie-connections.json";       
 
         private readonly IHttpClientFactory _httpClientFactory;
 

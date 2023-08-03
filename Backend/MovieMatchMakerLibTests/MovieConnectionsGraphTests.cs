@@ -10,8 +10,8 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public void Test_ExportGraphForMoviesConnections_Svg_DarkCity_1998()
         {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+            File.Exists(Constants.Strings.MovieConnectionsFilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(Constants.Strings.MovieConnectionsFilePath);
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(17413);
@@ -34,8 +34,8 @@ namespace MovieMatchMakerLibTests
         {
             const string ExportPath = "darkcity_1998_connections.png";
 
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+            File.Exists(Constants.Strings.MovieConnectionsFilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(Constants.Strings.MovieConnectionsFilePath);
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(17413);

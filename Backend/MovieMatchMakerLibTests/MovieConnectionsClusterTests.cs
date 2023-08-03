@@ -11,8 +11,8 @@ namespace MovieMatchMakerLibTests
         {
             const string ExportPath = "connections_cluster.png";
 
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+            File.Exists(Constants.Strings.MovieConnectionsFilePath).Should().BeTrue();
+            var loaded = MovieConnection.List.LoadFromFile(Constants.Strings.MovieConnectionsFilePath);
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(17413);
