@@ -1,0 +1,37 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET Frontend
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Restore dependencies
+        working-directory: ./Frontend
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ./Frontend
+        run: dotnet build -c Release --no-restore
+
+      - name: Publish
+        working-directory: ./Frontend
+        run: dotnet publish -c Release --no-build
+
+      - name: Test
+        working-directory: ./Frontend
+        run: dotnet test -c Release --no-build --verbosity normal      
