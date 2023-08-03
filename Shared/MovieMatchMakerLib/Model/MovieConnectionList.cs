@@ -14,7 +14,7 @@ namespace MovieMatchMakerLib.Model
         {
             public static readonly List Empty = new();
 
-            private readonly object _lock = new object();
+            private readonly object _accessLock = new();
 
             public List()
                 : base()
@@ -106,19 +106,16 @@ namespace MovieMatchMakerLib.Model
 
             public List FindForMovie(string title, int releaseYear)
             {
-                var genericList = FindAll(mc =>
+                return new List(FindAll(mc =>
                 {
                     return (mc.SourceMovie.Title == title && mc.SourceMovie.ReleaseYear == releaseYear) ||
                            (mc.TargetMovie.Title == title && mc.TargetMovie.ReleaseYear == releaseYear);
-                });
-
-                var mcList = new List(genericList);
-                return mcList;
+                }));
             }
 
             public MovieConnection FindConnection(string sourceMovieTitle, int sourceMovieReleaseYear, string targetMovieTitle, int targetMovieReleaseYear)
             {
-                lock (_lock)
+                lock (_accessLock)
                 {
                     return Find(mc =>
                     {
@@ -206,7 +203,7 @@ namespace MovieMatchMakerLib.Model
 
             public MovieConnection GetOrCreateMovieConnection(Movie sourceMovie, Movie targetMovie)
             {
-                lock (_lock)
+                lock (_accessLock)
                 {
                     var movieConnection = FindConnection(sourceMovie.Title, sourceMovie.ReleaseYear, targetMovie.Title, targetMovie.ReleaseYear);
                     if (movieConnection is null)
