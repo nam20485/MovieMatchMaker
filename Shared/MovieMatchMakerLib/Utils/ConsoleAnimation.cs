@@ -19,12 +19,12 @@ namespace MovieMatchMakerLib.Utils
         private volatile bool _stop = false;
 
         private ulong _frameNumber;
-        private string _lastFrameText;
+        private int _longestFrameText;
 
         public ConsoleAnimation(int left, int top, int delayMs, GetFrameTextFunc getFrameTextFunc)
         {
             _frameNumber = 0;
-            _lastFrameText = "";
+            _longestFrameText = 0;
             _top = top;
             _left = left;
             _delayMs = delayMs;
@@ -65,15 +65,24 @@ namespace MovieMatchMakerLib.Utils
 
         public void Stop()
         {
-            _stop = true;
+            _stop = true;            
             _thread.Join();
+
+            //Console.SetCursorPosition(_left, _top);
+            //Console.Write(new string(' ', _longestFrameText));
         }
 
         private void DrawFrame()
         {
-            _lastFrameText = _getFrameTextFunc(_frameNumber++);
+            var ft = _getFrameTextFunc(_frameNumber++);
             Console.SetCursorPosition(_left, _top);                                 
-            Console.Write(_lastFrameText);
+            Console.Write(ft);
+
+            // capture longest frame text length for erasing when Stop()'ing
+            if (ft.Length > _longestFrameText)
+            {
+                _longestFrameText = ft.Length;
+            }
         }
 
         private void DrawFrameLoop()
