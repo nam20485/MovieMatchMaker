@@ -165,8 +165,10 @@ namespace MovieMatchMakerApp
 
             if (threaded)
             {
-                Console.WriteLine();
-                Console.WriteLine("(Press CTRL+m to quit)");
+                Console.WriteLine();                
+                ConsoleEx.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("(Press CTRL+m to quit)");    
+                ConsoleEx.ResetForegroundColor();
 
                 using (var timerAnimation = new ConsoleAnimation(0, 6, (fn) =>
                 {
@@ -174,18 +176,7 @@ namespace MovieMatchMakerApp
                 }))
                 {
                     timerAnimation.Start();
-
-                    while (true)
-                    {
-                        var keyInfo = Console.ReadKey(true);
-                        if (keyInfo.Key == ConsoleKey.M &&
-                            keyInfo.Modifiers == ConsoleModifiers.Control)
-                        {
-                            // CTRL+m to exit
-                            break;
-                        }
-                    }
-
+                    WaitForExitChar();
                     timerAnimation.Stop();
                 }
             }
