@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerClient", "Mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieMatchMakerLib", "..\Shared\MovieMatchMakerLib\MovieMatchMakerLib.csproj", "{00527131-4D6E-4E57-9AFE-C45F790963CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{B4CE5AB2-6727-45F9-BC73-97E11AF0F39C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00527131-4D6E-4E57-9AFE-C45F790963CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4CE5AB2-6727-45F9-BC73-97E11AF0F39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4CE5AB2-6727-45F9-BC73-97E11AF0F39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4CE5AB2-6727-45F9-BC73-97E11AF0F39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4CE5AB2-6727-45F9-BC73-97E11AF0F39C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
