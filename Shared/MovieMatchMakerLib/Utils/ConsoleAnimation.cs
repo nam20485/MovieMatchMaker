@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Utils
 {
@@ -20,10 +16,13 @@ namespace MovieMatchMakerLib.Utils
 
         private bool _stop = false;
 
-        private ulong _frameNumber = 0;
+        private ulong _frameNumber;
+        private string _lastFrameText;
 
         public ConsoleAnimation(int left, int top, GetFrameTextFunc getFrameTextFunc)
         {
+            _frameNumber = 0;
+            _lastFrameText = "";
             _top = top;
             _left = left;
             _getFrameTextFunc = getFrameTextFunc;
@@ -58,9 +57,9 @@ namespace MovieMatchMakerLib.Utils
 
         private void DrawFrame()
         {
-            var s = _getFrameTextFunc(_frameNumber++);
+            _lastFrameText = _getFrameTextFunc(_frameNumber++);
             Console.SetCursorPosition(_left, _top);                                 
-            Console.Write(s);
+            Console.Write(_lastFrameText);
         }
 
         private void DrawFrameLoop()
