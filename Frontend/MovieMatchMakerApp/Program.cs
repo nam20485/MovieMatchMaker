@@ -99,9 +99,9 @@ namespace MovieMatchMakerApp
 
         private static async Task<bool> BuildMovieConnections(string file, bool threaded)
         {
-            Console.Write("Loading movie data... ");
+            Console.Write("Loading movie data");
 
-            using var loadingAnimation = new SpinnerAnimation();            
+            using var loadingAnimation = new EllipsisAnimation();            
             loadingAnimation.Start();
             using var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
             loadingAnimation.Stop();
@@ -118,14 +118,14 @@ namespace MovieMatchMakerApp
                 Console.WriteLine();
                 Console.WriteLine("(Press CTRL+m to quit)");
 
-                using (var timerAnimation = new ConsoleAnimation(0, 12, (fn) =>
+                using var timerAnimation = new ConsoleAnimation(0, 12, (fn) =>
                 {
                     return $"MovieConnections found: {connectionBuilder.MovieConnectionsFound,5:0.} ({connectionBuilder.MovieConnectionsFoundPerSecond,6:0.0}/s) ";
-                }))
-                {
-                    timerAnimation.Start();
-                    WaitForExitChar();                    
-                }
+                });
+                
+                timerAnimation.Start();
+                WaitForExitChar();
+                timerAnimation.Stop();
             }
 
             connectionBuilder.Stop();
