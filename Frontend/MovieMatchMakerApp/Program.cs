@@ -101,21 +101,10 @@ namespace MovieMatchMakerApp
         {
             Console.Write("Loading movie data... ");
 
-            var loadingAnimation = new ConsoleAnimation((fn) =>
-            {
-                return (fn % 4) switch
-                {
-                    0 => "/",
-                    1 => "-",
-                    2 => @"\",
-                    3 => "|",                 
-                };
-            });
-            
+            using var loadingAnimation = new SpinnerAnimation();            
             loadingAnimation.Start();
             using var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
             loadingAnimation.Stop();
-            loadingAnimation.Dispose();            
             
             Console.WriteLine($"\n\nMovies:               {connectionBuilder.MoviesCount,5}\nMovie Credits:        {connectionBuilder.MovieCreditsCount,5}\nPerson Movie Credits: {connectionBuilder.PersonMovieCreditsCount,5}");            
 
