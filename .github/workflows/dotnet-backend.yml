@@ -20,7 +20,7 @@ jobs:
         with:
           dotnet-version: 7.0.x
 
-      - name: Restore dependencies (linux-x64)
+      - name: Restore dependencies
         working-directory: ./Backend
         run: dotnet restore
 
@@ -28,7 +28,7 @@ jobs:
         working-directory: ./Backend
         run: dotnet build -c Release --no-restore
 
-      - name: Publish (linux-x64)
+      - name: Publish
         working-directory: ./Backend
         run: dotnet publish -c Release --no-build
 
