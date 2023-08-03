@@ -30,7 +30,7 @@ jobs:
 
       - name: Publish (linux-x64)
         working-directory: ./Backend
-        run: dotnet publish -c Release --no-build --no-restore
+        run: dotnet publish -c Release --no-build
 
       - name: Test
         working-directory: ./Backend
