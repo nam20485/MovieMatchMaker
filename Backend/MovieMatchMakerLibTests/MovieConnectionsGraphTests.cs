@@ -51,5 +51,5 @@ namespace MovieMatchMakerLibTests
     //        graph.ExportToPngFile(ExportPath);
     //        File.Exists(ExportPath).Should().BeTrue();
     //    }
-    //}
+    }
 }
