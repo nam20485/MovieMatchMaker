@@ -22,7 +22,7 @@ jobs:
 
       - name: Restore dependencies (linux-x64)
         working-directory: ./Backend
-        run: dotnet restore -r linux-x64
+        run: dotnet restore
 
       - name: Build
         working-directory: ./Backend
@@ -30,10 +30,10 @@ jobs:
 
       - name: Publish (linux-x64)
         working-directory: ./Backend
-        run: dotnet publish -c Release -r linux-x64 --no-self-contained --no-build --no-restore
+        run: dotnet publish -c Release --no-build --no-restore
 
       - name: Test
         working-directory: ./Backend
-        run: dotnet test -c Release -r linux-x64 --no-build --verbosity normal
+        run: dotnet test -c Release --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
