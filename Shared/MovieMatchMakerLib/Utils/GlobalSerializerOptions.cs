@@ -15,7 +15,8 @@ namespace MovieMatchMakerLib.Utils
                 WriteIndented = Macros.IsDebugBuild(),
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 AllowTrailingCommas = true,
-                //ReferenceHandler = ReferenceHandler.Preserve, 
+                // TODO: why does this need to be on if there is no reference $id metadata in the JSON file?
+                ReferenceHandler = ReferenceHandler.Preserve, 
                 //PropertyNameCaseInsensitive = true,                
             };
             Options.Converters.Add(new JsonStringEnumConverter());
