@@ -101,26 +101,29 @@ namespace MovieMatchMakerApp
         {
             Console.Write("Loading movie data");
 
-            using var loadingAnimation = new EllipsisAnimation();            
+            using var loadingAnimation = new EllipsisAnimation();
+            loadingAnimation.LastFrame = "...";
             loadingAnimation.Start();
             using var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
             loadingAnimation.Stop();
             
-            Console.WriteLine($"\n\nMovies:               {connectionBuilder.MoviesCount,5}\nMovie Credits:        {connectionBuilder.MovieCreditsCount,5}\nPerson Movie Credits: {connectionBuilder.PersonMovieCreditsCount,5}");            
+            Console.WriteLine($"\n\nMovies:               {connectionBuilder.MoviesCount,5}\nMovie Credits:        {connectionBuilder.MovieCreditsCount,5}\nPerson Movie Credits: {connectionBuilder.PersonMovieCreditsCount,5}");
 
-            Console.WriteLine(/**/);
-            Console.WriteLine("Building movie connections...");
+            using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
+            {
+                Console.WriteLine("\n(Press CTRL+m to quit)");
+            }
+
+            Console.WriteLine("\nBuilding movie connections...");
+            
             connectionBuilder.Start();
             await connectionBuilder.FindMovieConnections();            
 
             if (threaded)
-            {
-                Console.WriteLine();
-                Console.WriteLine("(Press CTRL+m to quit)");
-
+            {                           
                 using var timerAnimation = new ConsoleAnimation(0, 12, (fn) =>
                 {
-                    return $"MovieConnections found: {connectionBuilder.MovieConnectionsFound,5:0.} ({connectionBuilder.MovieConnectionsFoundPerSecond,6:0.0}/s) ";
+                    return $"MovieConnections found: {connectionBuilder.MovieConnectionsFound,5:0.} ({connectionBuilder.MovieConnectionsFoundPerSecond,6:0.0}/s)\n\nRunning for {connectionBuilder.RunningTime:hh\\:mm\\:ss\\:ff} ";
                 });
                 
                 timerAnimation.Start();
@@ -165,10 +168,11 @@ namespace MovieMatchMakerApp
 
             if (threaded)
             {
-                Console.WriteLine();                
-                ConsoleEx.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine("(Press CTRL+m to quit)");    
-                ConsoleEx.ResetForegroundColor();
+                Console.WriteLine();
+                using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
+                {                    
+                    Console.WriteLine("(Press CTRL+m to quit)");                 
+                }
 
                 using (var timerAnimation = new ConsoleAnimation(0, 6, (fn) =>
                 {
@@ -181,7 +185,8 @@ namespace MovieMatchMakerApp
                 }
             }
 
-            Console.WriteLine("\n\nStopping...");
+            Console.WriteLine();
+            //Console.WriteLine("\nStopping...");
             movieDataBuilder.Stop();
 
             if (movieDataBuilder.TaskCount > 0)

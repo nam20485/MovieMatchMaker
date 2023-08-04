@@ -7,29 +7,64 @@ namespace MovieMatchMakerLib.Utils
     {
         public delegate string GetFrameTextFunc(ulong frameNumber);
 
-        public const int DefaultDelayMs = 0;
+        private const int DefaultDelayMs = 0;
 
-        private readonly GetFrameTextFunc _getFrameTextFunc;
-        private readonly Thread _thread;
-        private readonly int _delayMs;
+        public int Top { get; private set; }
+        public int Left { get; private set; }
 
-        private int _top = -1;
-        private int _left = -1;
+        public int DelayMs {  get; set; }
+        public bool HideCursor { get; set; }
+        public bool Clear { get; set; }
+        public string LastFrame { get; set; }
+        
+        public ConsoleColor ForegroundColor
+        {
+            get
+            {
+                return Console.ForegroundColor;
+            }
+            set
+            {
+                _consoleColors.ForegroundColor = value;
+            }
+        }
+        public ConsoleColor BackgroundColor
+        {
+            get
+            {
+                return Console.BackgroundColor;
+            }
+            set
+            {
+                _consoleColors.BackgroundColor = value;
+            }
+        }
+
+        private ConsoleColors _consoleColors;
+
+        protected GetFrameTextFunc _getFrameTextFunc;
+        private readonly Thread _thread;             
 
         private volatile bool _stop = false;
-
         private ulong _frameNumber;
         private int _longestFrameText;
 
         public ConsoleAnimation(int left, int top, int delayMs, GetFrameTextFunc getFrameTextFunc)
         {
+            _getFrameTextFunc = getFrameTextFunc;
+            _thread = new Thread(DrawFrameLoop);
             _frameNumber = 0;
             _longestFrameText = 0;
-            _top = top;
-            _left = left;
-            _delayMs = delayMs;
-            _getFrameTextFunc = getFrameTextFunc;
-            _thread = new Thread(DrawFrameLoop);            
+            _consoleColors = new ConsoleColors();
+
+            Top = top;
+            Left = left;
+            DelayMs = delayMs;         
+            HideCursor = true;
+            Clear = false;
+
+            ForegroundColor = Console.ForegroundColor;
+            BackgroundColor = Console.BackgroundColor;                    
         }
 
         public ConsoleAnimation(int left, int top, GetFrameTextFunc getFrameTextFunc)
@@ -47,20 +82,39 @@ namespace MovieMatchMakerLib.Utils
         {
         }
 
+        private string LongestFrameLengthBlank() => new (' ', _longestFrameText);
+
         public void Dispose()
         {            
             Stop();
+            _consoleColors.Dispose();
             GC.SuppressFinalize(this);
         }
 
         public void Start()
         {
-            if (_left == -1 &&
-                _top == -1)
+            if (HideCursor)
             {
-                (_left, _top) = Console.GetCursorPosition();
+                Console.CursorVisible = false;
+            }
+            if (Left == -1 &&
+                Top == -1)
+            {
+                (Left, Top) = Console.GetCursorPosition();
             }
             _thread.Start();
+        }
+
+        private (int Left, int Top) _saved = Console.GetCursorPosition();
+
+        private void SavePosition()
+        {
+            _saved = Console.GetCursorPosition();
+        }
+
+        public void RestPosition()
+        {
+            Console.SetCursorPosition(_saved.Left, _saved.Top);
         }
 
         public void Stop()
@@ -68,29 +122,51 @@ namespace MovieMatchMakerLib.Utils
             _stop = true;            
             _thread.Join();
 
-            //Console.SetCursorPosition(_left, _top);
-            //Console.Write(new string(' ', _longestFrameText));
+            SavePosition();
+
+            if (Clear)
+            {
+                EraseFrame();
+            }
+
+            if (!string.IsNullOrWhiteSpace(LastFrame))
+            {
+                EraseFrame();
+                DrawFrame(LastFrame);
+            }
+
+            RestPosition();
+            
+            if (HideCursor)
+            {
+                Console.CursorVisible = true;
+            }
         }
 
-        private void DrawFrame()
-        {
-            var ft = _getFrameTextFunc(_frameNumber++);
-            Console.SetCursorPosition(_left, _top);                                 
-            Console.Write(ft);
+        private void EraseFrame()
+        {            
+            DrawFrame(LongestFrameLengthBlank());            
+        }
 
-            // capture longest frame text length for erasing when Stop()'ing
-            if (ft.Length > _longestFrameText)
-            {
-                _longestFrameText = ft.Length;
-            }
+        private void DrawFrame(string frameText)
+        {
+            Console.Write(LongestFrameLengthBlank());
+            Console.SetCursorPosition(Left, Top);                                 
+            Console.Write(frameText);            
         }
 
         private void DrawFrameLoop()
         {
             while (! _stop)
             {
-                DrawFrame();
-                Thread.Sleep(_delayMs);
+                var ft = _getFrameTextFunc(_frameNumber++);
+                DrawFrame(ft);
+                // capture longest frame text length for erasing when Stop()'ing
+                if (ft.Length > _longestFrameText)
+                {
+                    _longestFrameText = ft.Length;
+                }
+                Thread.Sleep(DelayMs);
             }
         }
     }
