@@ -101,7 +101,10 @@ namespace MovieMatchMakerApp
         {
             Console.Write("Loading movie data");
 
-            using var loadingAnimation = new EllipsisAnimation();     
+            using var loadingAnimation = new EllipsisAnimation()
+            {
+                LastFrame = "..."
+            };     
             loadingAnimation.Start();
             using var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
             loadingAnimation.Stop();
