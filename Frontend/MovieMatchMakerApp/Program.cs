@@ -125,7 +125,7 @@ namespace MovieMatchMakerApp
             {                           
                 using var timerAnimation = new ConsoleAnimation(0, 12, (fn) =>
                 {
-                    return $"MovieConnections found: {connectionBuilder.MovieConnectionsFound,5:0.} ({connectionBuilder.MovieConnectionsFoundPerSecond,6:0.0}/s)\n\nRunning for {connectionBuilder.RunningTime:hh\\:mm\\:ss\\:ff}  ";
+                    return $"MovieConnections found: {connectionBuilder.MovieConnectionsFound,5:0.} ({connectionBuilder.MovieConnectionsFoundPerSecond,6:0.0}/s) \n\nRunning for {connectionBuilder.RunningTime:hh\\:mm\\:ss\\:ff} ";
                 });
                 
                 timerAnimation.Start();
