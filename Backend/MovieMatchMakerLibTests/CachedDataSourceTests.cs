@@ -1,4 +1,6 @@
-﻿namespace MovieMatchMakerLibTests
+﻿using FluentAssertions;
+
+namespace MovieMatchMakerLibTests
 {
     public class CachedDataSourceTests
     {
@@ -9,8 +11,10 @@
         [Fact]
         public async void Test_GetMovie_DarkCity_1998()
         {
-            var dataSource = Utils.CreateCachedDataSource();            
-
+            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
+            var dataSource = Utils.CreateCachedDataSource();
+            dataSource.Should().NotBeNull();            
+            
             var movie = await dataSource.GetMovieAsync(title, releaseYear);
             Assert.NotNull(movie);
             movie.MovieId.Should().Be(darkCityMovieId);

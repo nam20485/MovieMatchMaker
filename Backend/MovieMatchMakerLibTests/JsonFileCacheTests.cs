@@ -5,6 +5,7 @@
         [Fact]
         public void Test_Load()
         {
+            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
@@ -16,6 +17,7 @@
         [Fact]
         public async void Test_GetMovieAsync_DarkCity_1998()
         {
+            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
            
@@ -28,7 +30,8 @@
 
         [Fact]
         public void Test_GetMovie_ById_DarkCity_1998()
-        {           
+        {
+            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
