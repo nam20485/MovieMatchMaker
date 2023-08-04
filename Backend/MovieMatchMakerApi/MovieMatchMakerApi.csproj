@@ -7,7 +7,18 @@
     <UserSecretsId>bc0c69c5-7ba1-4f75-ab08-14500f37b1cb</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <DockerfileFile>..\..\Dockerfile.backend</DockerfileFile>
-	  <DockerfileContext>.</DockerfileContext>
+	<DockerfileContext>.</DockerfileContext>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+	<WarningLevel>7</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+	<WarningLevel>7</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
