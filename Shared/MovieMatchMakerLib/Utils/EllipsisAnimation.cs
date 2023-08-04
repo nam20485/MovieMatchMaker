@@ -6,30 +6,21 @@ using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Utils
 {
-    public class EllipsisAnimation : ConsoleAnimation
+    public class EllipsisAnimation : SequenceAnimation
     {
-        private const int DelayMs = 200;
+        private static readonly string[] _ellipsisSequence = { ".", "..", "...", "..", "." };
+        //private static readonly string[] _ellipsisSequence = { ".", "..", "...", "   " };
+
+        //public bool EndWithBlank { get; set; }
 
         public EllipsisAnimation()
-                : base(DelayMs, GetFrameText)
-        {
-        }      
-
-        public EllipsisAnimation(int left, int top)
-            : base(left, top, DelayMs, GetFrameText)
-        {
+            : base(_ellipsisSequence)
+        {            
         }
-
-        private static string GetFrameText(ulong frameNumber)
-        {
-            return (frameNumber % 4) switch
-            {
-                0 => ".",
-                1 => "..",
-                2 => "...",
-                //3 => "   ",
-                3 => "..",                
-            };
+       
+        public EllipsisAnimation(int left, int top)
+            : base(left, top, _ellipsisSequence)
+        {        
         }
     }
 }

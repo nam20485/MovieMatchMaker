@@ -1,37 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MovieMatchMakerLib.Utils
+﻿namespace MovieMatchMakerLib.Utils
 {
-    public class SpinnerAnimation : ConsoleAnimation
+    public class SpinnerAnimation : SequenceAnimation
     {
+        private static readonly string[] _spinnerSequence = { "/", "-", "\\" };
+
         public SpinnerAnimation()
-            : base(GetSpinnerFrameText)
-        {
-        }
-
-        public SpinnerAnimation(int delayMs)
-           : base(delayMs, GetSpinnerFrameText)
-        {
-        }
-
-        public SpinnerAnimation(int left, int top, int delayMs)
-            : base(left, top, delayMs, GetSpinnerFrameText)
-        {
+            : base(_spinnerSequence)
+        {            
         }       
 
-        private static string GetSpinnerFrameText(ulong frameNumber)
-        {
-            return (frameNumber % 4) switch
-            {
-                0 => "/",
-                1 => "-",
-                2 => @"\",
-                3 => "|",
-            };
-        }
+        public SpinnerAnimation(int left, int top)
+            : base(left, top, _spinnerSequence)
+        {            
+        }        
     }
 }

@@ -5,84 +5,65 @@ namespace MovieMatchMakerLib.Utils
 {
     public class ConsoleAnimation : IDisposable
     {
-        public delegate string GetFrameTextFunc(ulong frameNumber);
+        public delegate string GetFrameTextFunc(uint frameNumber);
 
         private const int DefaultDelayMs = 0;
 
         public int Top { get; private set; }
         public int Left { get; private set; }
 
-        public int DelayMs {  get; set; }
+        public int FrameDelayMs {  get; set; }
         public bool HideCursor { get; set; }
         public bool Clear { get; set; }
         public string LastFrame { get; set; }
         
         public ConsoleColor ForegroundColor
         {
-            get
-            {
-                return Console.ForegroundColor;
-            }
-            set
-            {
-                _consoleColors.ForegroundColor = value;
-            }
+            get => Console.ForegroundColor;
+            set => _consoleColors.ForegroundColor = value;
         }
         public ConsoleColor BackgroundColor
         {
-            get
-            {
-                return Console.BackgroundColor;
-            }
-            set
-            {
-                _consoleColors.BackgroundColor = value;
-            }
+            get => Console.BackgroundColor;
+            set => _consoleColors.BackgroundColor = value;
         }
 
-        private ConsoleColors _consoleColors;
+        private readonly GetFrameTextFunc _getFrameTextFunc;
+        private readonly Thread _thread;
 
-        protected GetFrameTextFunc _getFrameTextFunc;
-        private readonly Thread _thread;             
-
+        private readonly ConsoleColors _consoleColors;        
+        
         private volatile bool _stop = false;
-        private ulong _frameNumber;
+        private uint _frameNumber;
         private int _longestFrameText;
+        private (int Left, int Top) _prevPosition;
 
-        public ConsoleAnimation(int left, int top, int delayMs, GetFrameTextFunc getFrameTextFunc)
+        public ConsoleAnimation(int left, int top, GetFrameTextFunc getFrameTextFunc)            
         {
+            Top = top;
+            Left = left;
+
             _getFrameTextFunc = getFrameTextFunc;
             _thread = new Thread(DrawFrameLoop);
+
+            _prevPosition = Console.GetCursorPosition();
             _frameNumber = 0;
             _longestFrameText = 0;
             _consoleColors = new ConsoleColors();
-
-            Top = top;
-            Left = left;
-            DelayMs = delayMs;         
+            FrameDelayMs = DefaultDelayMs;
             HideCursor = true;
-            Clear = false;
+            Clear = false;                
 
             ForegroundColor = Console.ForegroundColor;
-            BackgroundColor = Console.BackgroundColor;                    
-        }
-
-        public ConsoleAnimation(int left, int top, GetFrameTextFunc getFrameTextFunc)
-            : this(left, top, DefaultDelayMs, getFrameTextFunc)
-        {
-        }
-
-        public ConsoleAnimation(int delayMs, GetFrameTextFunc getFrameTextFunc)
-            : this(-1, -1, delayMs, getFrameTextFunc)
-        {
+            BackgroundColor = Console.BackgroundColor;
         }
 
         public ConsoleAnimation(GetFrameTextFunc getFrameTextFunc)
-           : this(DefaultDelayMs, getFrameTextFunc)
+            : this(-1, -1, getFrameTextFunc)
         {
-        }
+        }      
 
-        private string LongestFrameLengthBlank() => new (' ', _longestFrameText);
+        private string LongestFrameLengthBlank() => new (' ', _longestFrameText+1);
 
         public void Dispose()
         {            
@@ -97,24 +78,25 @@ namespace MovieMatchMakerLib.Utils
             {
                 Console.CursorVisible = false;
             }
+
+            // if no Left, Top provided, then use the current position (i.e. just after the last Console.Write)
             if (Left == -1 &&
                 Top == -1)
             {
                 (Left, Top) = Console.GetCursorPosition();
             }
-            _thread.Start();
-        }
 
-        private (int Left, int Top) _saved = Console.GetCursorPosition();
+            _thread.Start();
+        }        
 
         private void SavePosition()
         {
-            _saved = Console.GetCursorPosition();
+            _prevPosition = Console.GetCursorPosition();
         }
 
-        public void RestPosition()
+        public void ResetPosition()
         {
-            Console.SetCursorPosition(_saved.Left, _saved.Top);
+            Console.SetCursorPosition(_prevPosition.Left, _prevPosition.Top);
         }
 
         public void Stop()
@@ -135,7 +117,7 @@ namespace MovieMatchMakerLib.Utils
                 DrawFrame(LastFrame);
             }
 
-            RestPosition();
+            ResetPosition();
             
             if (HideCursor)
             {
@@ -149,7 +131,7 @@ namespace MovieMatchMakerLib.Utils
         }
 
         private void DrawFrame(string frameText)
-        {
+        {            
             Console.Write(LongestFrameLengthBlank());
             Console.SetCursorPosition(Left, Top);                                 
             Console.Write(frameText);            
@@ -159,15 +141,21 @@ namespace MovieMatchMakerLib.Utils
         {
             while (! _stop)
             {
-                var ft = _getFrameTextFunc(_frameNumber++);
+                var ft = GetFrameText(_frameNumber++);
                 DrawFrame(ft);
                 // capture longest frame text length for erasing when Stop()'ing
                 if (ft.Length > _longestFrameText)
                 {
                     _longestFrameText = ft.Length;
                 }
-                Thread.Sleep(DelayMs);
+                Thread.Sleep(FrameDelayMs);
             }
+        }
+
+        // override in extended base class to implement specific animation types
+        protected virtual string GetFrameText(uint frameNumber)
+        {
+            return _getFrameTextFunc(frameNumber);
         }
     }
 }
