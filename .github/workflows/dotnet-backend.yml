@@ -38,13 +38,12 @@ jobs:
         with:
           repository: "nam20485/mmm-test"
           ref: "master"
-          path: "./mmm-test"
-          lfs: true
-        env: 
-          TEST_DATA_DIR_PATH: ${{ vars.TEST_DATA_DIR_PATH }}      
+          path: "${{ vars.TEST_DATA_DIR_PATH }}"
+          lfs: true          
 
       - name: Test
         working-directory: ./Backend
         run: dotnet test -c Release --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          TEST_DATA_DIR_PATH: ${{ vars.TEST_DATA_DIR_PATH }}      
