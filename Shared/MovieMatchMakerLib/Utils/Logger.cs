@@ -9,37 +9,36 @@ namespace MovieMatchMakerLib.Utils
 {
     public class Logger : IDisposable
     {
-        public string FilePath { get; private set; }
-
         public LogLevel MinimumLogLevel { get; set; }
 
-        public List<TextWriter> TextWriterOutputs { get; }
+        public IEnumerable<TextWriter> TextWriterOutputs { get; protected set; }
 
         public string MessageFormat { get; set; }
 
         private const string DefaultMessageFormat = "[{0}] {1} {2}";
-        private const string DefaultFilePath = "./log.txt";
-        private const LogLevel DefaultLogLevel = LogLevel.Warning;
-
-        private readonly TextWriter[] _defaultTextWriterOutputs = { Console.Out, Console.Error };        
+        private const LogLevel DefaultLogLevel = LogLevel.Warning;        
 
         private readonly RequestProcessingLoopThread<LogMessageRequest> _logMessagesLoopThread;
 
         private bool disposedValue;
 
-        public Logger()
-            : this(DefaultFilePath, DefaultLogLevel)
+        protected Logger(LogLevel logLevel)
         {
+            MinimumLogLevel = logLevel;
         }
 
-        public Logger(string filepath, LogLevel logLevel)
+        public Logger(IEnumerable<TextWriter> outputs, LogLevel logLevel)
+            : this(logLevel)
         {
-            FilePath = filepath;
-            MinimumLogLevel = logLevel;
             MessageFormat = DefaultMessageFormat;
-            TextWriterOutputs = new List<TextWriter>(_defaultTextWriterOutputs);            
+            TextWriterOutputs = outputs;
             _logMessagesLoopThread = new RequestProcessingLoopThread<LogMessageRequest>(LogMessageRequestFunc);
         }
+
+        public Logger(IEnumerable<TextWriter> outputs)
+            : this(outputs, DefaultLogLevel)
+        {
+        }        
 
         private async Task LogMessageRequestFunc(LogMessageRequest request)
         {
@@ -47,6 +46,7 @@ namespace MovieMatchMakerLib.Utils
             foreach (var textWriterOutput in TextWriterOutputs)
             {                
                 await textWriterOutput.WriteLineAsync(message);
+                await textWriterOutput.FlushAsync();                
             }            
         }
 
@@ -85,8 +85,15 @@ namespace MovieMatchMakerLib.Utils
                 if (disposing)
                 {
                     Stop();
+                    // TODO: will Dispose()'ing Console.Out throw an exception
+                    foreach (var textWriterOutput in TextWriterOutputs)
+                    {
+                        textWriterOutput.Flush();
+                        textWriterOutput.Close();
+                        textWriterOutput.Dispose();
+                    }
                 }
-               
+
                 disposedValue = true;
             }
         }       
@@ -110,6 +117,12 @@ namespace MovieMatchMakerLib.Utils
                 LogLevel = level;
                 Message = message;
             }
+        }
+
+        private struct TextWriterFileMapping
+        {
+            public IEnumerable<TextWriter> TextWriters { get; set; }
+            public string Filename { get; set; }
         }
     }
 }
