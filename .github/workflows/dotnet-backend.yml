@@ -47,9 +47,8 @@ jobs:
         #working-directory: ./Backend
         run: |
           pwd
-          dir
-          dir "${{ vars.TEST_DATA_DIR_PATH }}}}/.."
-          dir "${{ vars.TEST_DATA_DIR_PATH }}}}"
+          ls -al          
+          ls -al "${{ vars.TEST_DATA_DIR_PATH }}"
           dotnet test ./Backend -c Release --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
