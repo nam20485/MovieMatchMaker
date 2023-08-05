@@ -5,8 +5,6 @@
         [Fact]
         public void Test_Load()
         {
-            Console.WriteLine($"Current Working Directory: [{Directory.GetCurrentDirectory()}]");
-
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
