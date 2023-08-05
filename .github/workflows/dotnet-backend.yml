@@ -38,6 +38,7 @@ jobs:
 
       - name: Checkout Test Data
         uses: actions/checkout@v3
+        #uses: nschloe/action-cached-lfs-checkout@v1
         with:
           repository: "nam20485/mmm-test"
           ref: "master"

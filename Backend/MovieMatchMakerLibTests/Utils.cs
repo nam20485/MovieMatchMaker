@@ -45,7 +45,9 @@ namespace MovieMatchMakerLibTests
 
         public static MovieConnectionsController CreateMovieConnectionsController(bool applyDefaultFilters)
         {
-            return new MovieConnectionsController(CreateLogger<MovieConnectionsController>(), CreateMovieConnectionsService(), applyDefaultFilters);
+            return new MovieConnectionsController(CreateLogger<MovieConnectionsController>(),
+                                                  CreateMovieConnectionsService(),
+                                                  applyDefaultFilters);
         }
 
         public static MovieConnectionsService CreateMovieConnectionsService()
