@@ -5,7 +5,7 @@ namespace MovieMatchMakerLib.Utils
 {
     public static class ErrorLog
     {
-        public const string ErrorLogFile = "error.txt";
+        public static string File { get; set; } = "error.txt";
 
         private static readonly object _writeLock = new();
 
@@ -19,23 +19,23 @@ namespace MovieMatchMakerLib.Utils
                     s += Environment.NewLine;
                 }
                 s += message;
-                File.AppendAllText(ErrorLogFile, s);
+                System.IO.File.AppendAllText(File, s);
             }
         }
 
         private static bool IsFirstWrite()
         {
-            return !File.Exists(ErrorLogFile) || new FileInfo(ErrorLogFile).Length == 0;
+            return !System.IO.File.Exists(File) || new FileInfo(File).Length == 0;
         }
 
         public static void Log(Exception e)
         {
-            Log($"Exception:\n{e}");            
+            Log(e.ToString());            
         }
 
         public static void Reset()
         {
-            File.Delete(ErrorLogFile);
+            System.IO.File.Delete(File);
         }
     }
 }
