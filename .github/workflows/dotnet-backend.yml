@@ -42,14 +42,13 @@ jobs:
           lfs: true          
 
       - name: Test
-        # can't set working-directory for entire step b/c the TEST_DATA_DIR_PATH uses a relative path, 
-        # which would place it under the Backend directory when it's really at the root of the repo
-        #working-directory: ./Backend
+        working-directory: ./Backend
         run: |
           pwd
-          ls -al          
-          ls -al "${{ vars.TEST_DATA_DIR_PATH }}"
-          dotnet test ./Backend -c Release --no-build --verbosity normal
+          ls -al
+          echo ${{ vars.TEST_DATA_DIR_PATH }}      
+          ls -al ${{ vars.TEST_DATA_DIR_PATH }}
+          dotnet test -c Release --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           TEST_DATA_DIR_PATH: ${{ vars.TEST_DATA_DIR_PATH }}      
