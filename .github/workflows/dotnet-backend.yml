@@ -43,12 +43,7 @@ jobs:
 
       - name: Test
         working-directory: ./Backend
-        run: |
-          pwd
-          ls -al
-          echo ${{ vars.TEST_DATA_DIR_PATH }}      
-          ls -al ${{ vars.TEST_DATA_DIR_PATH }}
-          dotnet test -c Release --no-build --verbosity normal
+        run: dotnet test -c Release --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           TEST_DATA_DIR_PATH: ${{ vars.TEST_DATA_DIR_PATH }}      
