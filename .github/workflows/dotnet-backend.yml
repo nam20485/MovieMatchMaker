@@ -48,4 +48,4 @@ jobs:
           dotnet test -c Release --no-build --verbosity normal
         env:          
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          TEST_DATA_DIR_PATH: "${{ vars.GITHUB_WORKSPACE }}/${{ vars.TEST_DATA_DIR_NAME }}"
+          TEST_DATA_DIR_PATH: "${{ github.workspace }}/${{ vars.TEST_DATA_DIR_NAME }}"
