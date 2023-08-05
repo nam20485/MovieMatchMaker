@@ -39,7 +39,9 @@ jobs:
           repository: "nam20485/mmm-test"
           ref: "master"
           path: "./mmm-test"
-          lfs: true        
+          lfs: true
+        env: 
+          TEST_DATA_DIR_PATH: ${{ vars.TEST_DATA_DIR_PATH }}      
 
       - name: Test
         working-directory: ./Backend
