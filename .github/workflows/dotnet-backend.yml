@@ -38,7 +38,7 @@ jobs:
         with:
           repository: "nam20485/mmm-test"
           ref: "master"
-          path: "./${{ vars.TEST_DATA_DIR_NAME }}"
+          path: "${{ github.workspace }}/${{ vars.TEST_DATA_DIR_NAME }}"
           lfs: true          
 
       - name: Test
