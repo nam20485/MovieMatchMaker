@@ -6,8 +6,11 @@ name: .NET Backend
 on:
   push:
     branches: ["*"]
+    paths-ignore: 'Frontend/**'
   pull_request:
     branches: ["*"]
+    paths-ignore: 'Frontend/**'
+    
 
 jobs:
   build:
