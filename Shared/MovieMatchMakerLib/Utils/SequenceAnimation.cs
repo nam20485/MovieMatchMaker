@@ -2,7 +2,7 @@
 {
     public class SequenceAnimation : ConsoleAnimation
     {
-        public string[] Sequence { get; set; }
+        public string[] Sequence { get; }
 
         public SequenceAnimation(string[] sequence)  
             : base(null)

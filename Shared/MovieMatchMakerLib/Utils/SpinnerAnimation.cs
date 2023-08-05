@@ -2,7 +2,7 @@
 {
     public class SpinnerAnimation : SequenceAnimation
     {
-        private static readonly string[] _spinnerSequence = { "/", "-", "\\" };
+        protected static readonly string[] _spinnerSequence = { "/", "-", "\\" };
 
         public SpinnerAnimation()
             : base(_spinnerSequence)
