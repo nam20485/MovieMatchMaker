@@ -12,7 +12,8 @@ namespace MovieMatchMakerLibTests
     {
         public static JsonFileCache LoadJsonFileCache()
         {
-            var dataCache = JsonFileCache.Load(Constants.Strings.MovieDataFilePath);
+            var dataCache = JsonFileCache.Load(GetTestMovieDataFilePath());
+            dataCache.Should().NotBeNull();
             return dataCache;
         }
 
@@ -22,14 +23,14 @@ namespace MovieMatchMakerLibTests
             var connectionBuilder = new MovieConnectionBuilder(dataCache);
             if (loaded)
             {
-                connectionBuilder.LoadMovieConnections(Constants.Strings.MovieConnectionsFilePath);
+                connectionBuilder.LoadMovieConnections(GetTestMovieConnectionsFilePath());
             }
             return connectionBuilder;
         }        
 
         public static CachedDataSource CreateCachedDataSource()
         {
-            var dataCache = LoadJsonFileCache();
+            var dataCache = LoadJsonFileCache();           
             var apiDataSource = new ApiDataSource();
             var dataSource = new CachedDataSource(dataCache, apiDataSource);
             return dataSource;
@@ -58,6 +59,39 @@ namespace MovieMatchMakerLibTests
             {
                 //
             }).CreateLogger<T>();
+        }
+
+        public static string? GetTestDataDir()
+        {
+            var testDataDir = Environment.GetEnvironmentVariable(Constants.Strings.TestDataDirEnvVarName);
+
+            testDataDir.Should().NotBeNull($"no {Constants.Strings.TestDataDirEnvVarName} environment variable was found");
+            testDataDir.Should().NotBeEmpty();            
+            Directory.Exists(testDataDir).Should().BeTrue();
+            
+            return testDataDir;
+        }
+
+        public static string MakeTestDataFilePath(string filename)
+        {
+            // guaranteed !null b/c of asserts inside GetTestDataDir()
+            var path = Path.Combine(GetTestDataDir()!, filename);
+
+            path.Should().NotBeNull();
+            path.Should().NotBeEmpty();
+            File.Exists(path).Should().BeTrue();
+
+            return path;
+        }
+
+        public static string GetTestMovieDataFilePath()
+        {
+            return MakeTestDataFilePath(Constants.Strings.MovieDataFilename);
+        }
+
+        public static string GetTestMovieConnectionsFilePath()
+        {
+            return MakeTestDataFilePath(Constants.Strings.MovieConnectionsFilename);
         }
     }
 }

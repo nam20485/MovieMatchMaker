@@ -11,7 +11,6 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public async void Test_GetMovie_DarkCity_1998()
         {
-            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataSource = Utils.CreateCachedDataSource();
             dataSource.Should().NotBeNull();            
             

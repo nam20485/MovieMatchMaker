@@ -66,7 +66,7 @@ namespace MovieMatchMakerLibTests
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(17413);
 
-            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Numbers.DarkCityReleaseYear);
             movieConnectionsForDarkCity.Should().NotBeNull();
             movieConnectionsForDarkCity.Should().NotBeEmpty();
             movieConnectionsForDarkCity.Should().HaveCount(532);
@@ -96,7 +96,7 @@ namespace MovieMatchMakerLibTests
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(17413);
 
-            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Numbers.DarkCityReleaseYear);
             movieConnectionsForDarkCity.Should().NotBeNull();
             movieConnectionsForDarkCity.Should().NotBeEmpty();
             movieConnectionsForDarkCity.Should().HaveCount(532);

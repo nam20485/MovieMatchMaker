@@ -5,7 +5,6 @@
         [Fact]
         public void Test_Load()
         {
-            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
@@ -17,29 +16,27 @@
         [Fact]
         public async void Test_GetMovieAsync_DarkCity_1998()
         {
-            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
            
-            var movie = await dataCache.GetMovieAsync(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            var movie = await dataCache.GetMovieAsync(Constants.Strings.DarkCityTitle, Constants.Numbers.DarkCityReleaseYear);
             movie.Should().NotBeNull();
-            movie.MovieId.Should().Be(Constants.Ints.DarkCityMovieId);
+            movie.MovieId.Should().Be(Constants.Numbers.DarkCityMovieId);
             movie.Title.Should().Be(Constants.Strings.DarkCityTitle);
-            movie.ReleaseYear.Should().Be(Constants.Ints.DarkCityReleaseYear);           
+            movie.ReleaseYear.Should().Be(Constants.Numbers.DarkCityReleaseYear);           
         }
 
         [Fact]
         public void Test_GetMovie_ById_DarkCity_1998()
         {
-            File.Exists(Constants.Strings.MovieDataFilePath).Should().BeTrue();
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
-            var movieById = dataCache.GetMovie(Constants.Ints.DarkCityMovieId);
+            var movieById = dataCache.GetMovie(Constants.Numbers.DarkCityMovieId);
             movieById.Should().NotBeNull();
-            movieById.MovieId.Should().Be(Constants.Ints.DarkCityMovieId);
+            movieById.MovieId.Should().Be(Constants.Numbers.DarkCityMovieId);
             movieById.Title.Should().Be(Constants.Strings.DarkCityTitle);
-            movieById.ReleaseYear.Should().Be(Constants.Ints.DarkCityReleaseYear);
+            movieById.ReleaseYear.Should().Be(Constants.Numbers.DarkCityReleaseYear);
         }
     }
 }
