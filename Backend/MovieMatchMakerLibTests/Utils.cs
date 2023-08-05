@@ -63,9 +63,10 @@ namespace MovieMatchMakerLibTests
 
         public static string? GetTestDataDir()
         {
-            var testDataDir = Environment.GetEnvironmentVariable(Constants.Strings.TestDataDirEnvVarName);
+            const string testDataEnvVarName = Constants.Strings.TestDataDirEnvVarName;
+            var testDataDir = Environment.GetEnvironmentVariable(testDataEnvVarName);
 
-            testDataDir.Should().NotBeNull($"no {Constants.Strings.TestDataDirEnvVarName} environment variable was found");
+            testDataDir.Should().NotBeNull($"no {testDataEnvVarName} environment variable was found");
             testDataDir.Should().NotBeEmpty();            
             Directory.Exists(testDataDir).Should().BeTrue();
             

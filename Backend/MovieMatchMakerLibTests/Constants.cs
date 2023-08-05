@@ -11,7 +11,7 @@
             public const string MovieDataFilename = "movie-data.json";
             public const string MovieConnectionsFilename = "movie-connections.json";
             
-            public const string TestDataDirEnvVarName = "TEST_DATA_DIR";
+            public const string TestDataDirEnvVarName = "TEST_DATA_DIR_PATH";
         }
 
         internal static class Numbers
