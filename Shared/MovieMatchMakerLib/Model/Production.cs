@@ -53,6 +53,11 @@ namespace MovieMatchMakerLib.Model
             return HashCode.Combine(Title, ReleaseYear);
         }
 
+        public string MakePosterImagePath(TmdbApiHelper.PosterImageSize posterImageSize)
+        {
+            return TmdbApiHelper.MakeImagePath(posterImageSize, PosterImagePathSuffix);
+        }
+
         public static bool operator ==(Production left, Production right)
         {
             return EqualityComparer<Production>.Default.Equals(left, right);
