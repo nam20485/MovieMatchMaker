@@ -7,14 +7,21 @@ namespace MovieMatchMakerApp
 {
     internal class Program
     {
-        private const string MovieConnectionsFilePath = "./movie-connections.json";       
+        private const string MovieConnectionsFilePath = "./movie-connections.json";
+
+        private static readonly ConsoleLogger _consoleLogger = new ();
+        private static readonly FileLogger _fileLogger = new ();
 
         static async Task<int> Main(string[] args)
         {
+            var exitCode = ExitCode.UnknownError;
+
+            _consoleLogger.Start();
+            _fileLogger.Start();
+
             ErrorLog.Reset();
 
-            Console.WriteLine(Constants.Strings.HeaderWithVersion);
-            Console.WriteLine(/* blank line for separation */);
+            Console.WriteLine(Constants.Strings.HeaderWithVersion+Environment.NewLine);            
 
             if (args.Length > 0)
             {
@@ -37,57 +44,57 @@ namespace MovieMatchMakerApp
                     }
                 }
 
-                if (args[0] == "--build-connections")
+                if (args[0] == "--build-connections" &&
+                    args.Length == 5)
                 {
-                    if (args.Length == 5)
-                    {
-                        //--build-connections --threaded true --file ./movie-data.json
+                    //--build-connections --threaded true --file ./movie-data.json
 
-                        if (!string.IsNullOrWhiteSpace(file))
-                        {                           
-                            if (await BuildMovieConnections(file, threaded))
-                            {
-                                return 0;
-                            }
-                        }
-                    }
-                }
-                else if (args[0] == "--build-data")
-                {
-                    if (args.Length == 13 ||
-                        args.Length == 9)       // no title and releaseYear
-                    {
-                        //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue false
-
-                        if (!string.IsNullOrWhiteSpace(title) &&
-                            releaseYear > -1 &&
-                            degree > -1 &&
-                            !string.IsNullOrWhiteSpace(file))
+                    if (!string.IsNullOrWhiteSpace(file))
+                    {                           
+                        if (await BuildMovieConnections(file, threaded))
                         {
-                            if (await BuildMovieDataAsync(title, releaseYear, degree, file, threaded, continueExisting))
-                            {
-                                return 0;
-                            }
-                        }
-                    }
+                            exitCode = ExitCode.Success;
+                        }                    
                 }
-                //else if (args[0] == "--time")
+                }
+                else if (args[0] == "--build-data" &&
+                         (args.Length == 13 ||
+                          args.Length == 9))
+                {
+                    //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue false
+
+                    if (!string.IsNullOrWhiteSpace(title) &&
+                        releaseYear > -1 &&
+                        degree > -1 &&
+                        !string.IsNullOrWhiteSpace(file))
+                    {
+                        if (await BuildMovieDataAsync(title, releaseYear, degree, file, threaded, continueExisting))
+                        {
+                            exitCode= ExitCode.Success;
+                        }
+                    }                
+                }
+                //else if (args[0] == "--timing" &&
+                //         args.Length == 7)
                 //{
-                //    if (args.Length == 7)
+                //    if (!string.IsNullOrWhiteSpace(file))
                 //    {
-                //        if (!string.IsNullOrWhiteSpace(file))
+                //        if (TimeBuildingConnectionsAndApplyingFilters(file, threaded, continueExisting))
                 //        {
-                //            if (TimeBuildingConnectionsAndApplyingFilters(file, threaded, continueExisting))
-                //            {
-                //                return 0;
-                //            }
+                //            exitCode = ExitCode.Success;
                 //        }
-                //    }
-                //}                       
+                //    }                
+                //}
+                else
+                {
+                    exitCode = ExitCode.InvalidArguments;
+                }
             }
 
-            // invalid args
-            return 1;
+            _consoleLogger.Dispose();
+            _fileLogger.Dispose();
+            
+            return (int)exitCode;
         }
 
         /// <summary>
@@ -134,7 +141,7 @@ namespace MovieMatchMakerApp
             }
 
             connectionBuilder.Stop();
-            Console.WriteLine($"\n\nSaving ({MovieConnectionsFilePath})...");            
+            Console.WriteLine($"\n\nSaving to {MovieConnectionsFilePath}...");            
             connectionBuilder.SaveMovieConnections(MovieConnectionsFilePath);
 
             return true;
