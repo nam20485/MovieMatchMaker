@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace MovieMatchMakerLib.Utils
 {
-    public class Convert
+    public static class Convert
     {
         public static T To<T>(string value)
         {

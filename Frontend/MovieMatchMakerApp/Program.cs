@@ -9,91 +9,70 @@ namespace MovieMatchMakerApp
     {
         private const string MovieConnectionsFilePath = "./movie-connections.json";
 
-        private static readonly ConsoleLogger _consoleLogger = new ();
-        private static readonly FileLogger _fileLogger = new ();
+        public static ConsoleLogger ConsoleLogger { get; }
+        public static FileLogger FileLogger { get; }
+
+        static Program()
+        {
+            ConsoleLogger = new ();
+            FileLogger = new ();
+        }
 
         static async Task<int> Main(string[] args)
         {
             var exitCode = ExitCode.UnknownError;
 
-            _consoleLogger.Start();
-            _fileLogger.Start();
-
+            ConsoleLogger.Start();
+            FileLogger.Start();
             ErrorLog.Reset();
 
-            Console.WriteLine(Constants.Strings.HeaderWithVersion+Environment.NewLine);            
+            Console.WriteLine(Constants.Strings.HeaderWithVersion + Environment.NewLine);                               
 
-            if (args.Length > 0)
+            var mmmArgs = new MmmCliArguments(args);            
+            if (mmmArgs.BuildConnections && mmmArgs.Count() >= 2)
             {
-                var title = "";
-                var releaseYear = -1;
-                var degree = -1;
-                var threaded = false;
-                var file = "";
-                var continueExisting = true;
-                for (int i = 1; i < args.Length - 1; i++)
+                //--build-connections --threaded true --file ./movie-data.json
+                //--build-connections --threaded --file ./movie-data.json
+
+                if (!string.IsNullOrWhiteSpace(mmmArgs.File))
                 {
-                    switch (args[i])
+                    if (await BuildMovieConnections(mmmArgs.File, mmmArgs.Threaded))
                     {
-                        case "--title": title = args[i+++1]; break;
-                        case "--releaseYear": releaseYear = int.Parse(args[++i]); break;
-                        case "--degree": degree = int.Parse(args[++i]); break;
-                        case "--file": file = args[++i]; break;
-                        case "--continue": continueExisting = bool.Parse(args[++i]); break;
-                        case "--threaded": threaded = bool.Parse(args[++i]); break;
+                        exitCode = ExitCode.Success;
                     }
                 }
+            }
+            else if (mmmArgs.BuildData && mmmArgs.Count() >= 4)
+            {
+                //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue-existing false
+                //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded --file ./movie-data.json
 
-                if (args[0] == "--build-connections" &&
-                    args.Length == 5)
+                if (!string.IsNullOrWhiteSpace(mmmArgs.File))
                 {
-                    //--build-connections --threaded true --file ./movie-data.json
-
-                    if (!string.IsNullOrWhiteSpace(file))
-                    {                           
-                        if (await BuildMovieConnections(file, threaded))
-                        {
-                            exitCode = ExitCode.Success;
-                        }                    
-                }
-                }
-                else if (args[0] == "--build-data" &&
-                         (args.Length == 13 ||
-                          args.Length == 9))
-                {
-                    //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue false
-
-                    if (!string.IsNullOrWhiteSpace(title) &&
-                        releaseYear > -1 &&
-                        degree > -1 &&
-                        !string.IsNullOrWhiteSpace(file))
+                    if (await BuildMovieDataAsync(mmmArgs.Title, mmmArgs.ReleaseYear, mmmArgs.Degree, mmmArgs.File, mmmArgs.Threaded, mmmArgs.ContinueExisting))
                     {
-                        if (await BuildMovieDataAsync(title, releaseYear, degree, file, threaded, continueExisting))
-                        {
-                            exitCode= ExitCode.Success;
-                        }
-                    }                
-                }
-                //else if (args[0] == "--timing" &&
-                //         args.Length == 7)
-                //{
-                //    if (!string.IsNullOrWhiteSpace(file))
-                //    {
-                //        if (TimeBuildingConnectionsAndApplyingFilters(file, threaded, continueExisting))
-                //        {
-                //            exitCode = ExitCode.Success;
-                //        }
-                //    }                
-                //}
-                else
-                {
-                    exitCode = ExitCode.InvalidArguments;
+                        exitCode = ExitCode.Success;
+                    }
                 }
             }
+            //else if (mmmArgs.Timing && args.Length >= 1)
+            //{
+            //    if (!string.IsNullOrWhiteSpace(mmmArgs.File))
+            //    {
+            //        if (TimeBuildingConnectionsAndApplyingFilters(mmmArgs.File, mmmArgs.Threaded, mmmArgs.ContinueExisting))
+            //        {
+            //            exitCode = ExitCode.Success;
+            //        }
+            //    }
+            //}
+            else
+            {
+                exitCode = ExitCode.InvalidArguments;
+            }
 
-            _consoleLogger.Dispose();
-            _fileLogger.Dispose();
-            
+            ConsoleLogger.Dispose();
+            FileLogger.Dispose();
+
             return (int)exitCode;
         }
 

@@ -6,46 +6,76 @@ namespace MovieMatchMakerLib.Utils
 {
     public class CliArguments
     {
+        private readonly static string[] ArgumentPrefixes = { "--", "/" };
+        private readonly static string[] ArgumentControlCharacters = { "-", "/" };
+
         private readonly string[] _args;        
 
         public CliArguments(string[] args)
-        {
+        {           
             _args = args;
             if (args.Length == 0)
             {
                 throw new EmptyArgumentsException();
-            }
+            }            
         }
 
-        public T GetPropertyArgumentValue<T>([CallerMemberName] string propertyName = null) => GetValue<T>(propertyName);
+        public T GetArgumentValueForCallableName<T>([CallerMemberName] string callableName = null) => GetValue<T>(callableName);
+        public T GetArgumentValueForPropertyName<T>([CallerMemberName] string propertyName = null) => GetValue<T>(propertyName);
+        public T GetArgumentValueForMethodName<T>([CallerMemberName] string methodName = null) => GetValue<T>(methodName);
+
+        public int Count()
+        {
+            var count = 0;
+            for (int i = 0; i < _args.Length; i++)
+            {
+                if (_args[i].StartsWithAny(ArgumentPrefixes))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
 
         public string GetValue(string name)
         {
-            for (int i = 0; i < _args.Length; i++)
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                var stripped = _args[i].Replace("-", string.Empty).Replace("/", string.Empty);                
-                if (stripped.Equals(name, StringComparison.OrdinalIgnoreCase))
+                for (int i = 0; i < _args.Length; i++)
                 {
-                    if (i + 1 >= _args.Length ||        // end of args
-                        _args[i + 1].StartsWith("--") ||
-                        _args[i + 1].StartsWith("/"))
+                    var strippedAndTrimmed = _args[i].Trim();
+                    foreach (var prefix in ArgumentControlCharacters)
                     {
-                        // "value-less"/single argument
-                        return "true";                        
+                        strippedAndTrimmed = strippedAndTrimmed.RemoveAll(ArgumentControlCharacters);
                     }
-                    else
+
+                    if (strippedAndTrimmed.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
-                        // 'valued'/pair argument 
-                        return _args[i + 1];
+                        if (i + 1 >= _args.Length ||
+                            _args[i + 1].StartsWithAny(ArgumentPrefixes))
+                        {
+                            // "value-less"/single argument
+                            return "true";
+                        }
+                        else
+                        {
+                            // 'valued'/double argument 
+                            if (string.IsNullOrWhiteSpace(_args[i+1]))
+                            {
+                                throw new ArgumentException($"Value for \"{name}\" argument is null, empty, or whitespace.");
+                            }
+
+                            return _args[i + 1];
+                        }
                     }
                 }
             }
 
-            throw new ArgumentNotFoundException($"Argument with name {name} not found");           
+            return null;
         }
 
         public T GetValue<T>(string name)
-        {
+        {            
             if (GetValue(name) is string value)
             {
                 return Convert.To<T>(value);
