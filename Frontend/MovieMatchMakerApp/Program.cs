@@ -9,16 +9,10 @@ namespace MovieMatchMakerApp
     {
         private const string MovieConnectionsFilePath = "./movie-connections.json";
 
-        public static ConsoleLogger ConsoleLogger { get; }
-        public static FileLogger FileLogger { get; }
-
-        static Program()
-        {
-            ConsoleLogger = new ();
-            FileLogger = new ();
-        }
-
-        static async Task<int> Main(string[] args)
+        public static ConsoleLogger ConsoleLogger { get; } = new ();
+        public static FileLogger FileLogger { get; } = new ();
+      
+        private static async Task<int> Main(string[] args)
         {
             var exitCode = ExitCode.UnknownError;
 
@@ -31,9 +25,6 @@ namespace MovieMatchMakerApp
             var mmmArgs = new MmmCliArguments(args);            
             if (mmmArgs.BuildConnections && mmmArgs.Count() >= 2)
             {
-                //--build-connections --threaded true --file ./movie-data.json
-                //--build-connections --threaded --file ./movie-data.json
-
                 if (!string.IsNullOrWhiteSpace(mmmArgs.File))
                 {
                     if (await BuildMovieConnections(mmmArgs.File, mmmArgs.Threaded))
@@ -44,9 +35,6 @@ namespace MovieMatchMakerApp
             }
             else if (mmmArgs.BuildData && mmmArgs.Count() >= 4)
             {
-                //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue-existing false
-                //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded --file ./movie-data.json
-
                 if (!string.IsNullOrWhiteSpace(mmmArgs.File))
                 {
                     if (await BuildMovieDataAsync(mmmArgs.Title, mmmArgs.ReleaseYear, mmmArgs.Degree, mmmArgs.File, mmmArgs.Threaded, mmmArgs.ContinueExisting))
@@ -85,6 +73,9 @@ namespace MovieMatchMakerApp
         /// <returns><see langword="true"/> on success, <see langword="false"/> otherwise</returns>
         private static async Task<bool> BuildMovieConnections(string file, bool threaded)
         {
+            //--build-connections --threaded true --file ./movie-data.json
+            //--build-connections --threaded --file ./movie-data.json
+
             Console.Write("Loading movie data");
 
             using var loadingAnimation = new EllipsisAnimation()
@@ -139,6 +130,9 @@ namespace MovieMatchMakerApp
         /// <returns></returns>
         private static async Task<bool> BuildMovieDataAsync(string title, int releaseYear, int degree, string file, bool threaded, bool continueExisting)
         {
+            //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue-existing false
+            //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded --file ./movie-data.json
+
             Console.WriteLine("Building movie data...");
 
             using var movieDataBuilder = CreateMovieDataBuilder(file, threaded, continueExisting);
