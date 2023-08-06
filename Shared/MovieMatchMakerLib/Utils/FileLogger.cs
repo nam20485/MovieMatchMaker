@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.Extensions.Logging;
+﻿using System.IO;
 
 namespace MovieMatchMakerLib.Utils
 {
@@ -13,38 +6,49 @@ namespace MovieMatchMakerLib.Utils
     {
         public string FilePath { get; }
 
-        private readonly StreamWriter _fileWriter;
+        private const string DefaultFilePath = "./log.txt";        
 
-        public FileLogger(string filePath, LogLevel logLevel)
+        public FileLogger(string filePath, Level logLevel)
             : base(logLevel)
         {
             FilePath = filePath;
-            _fileWriter = new StreamWriter(filePath, false);
+            TextWriterOutputs.Add(new StreamWriter(filePath, false));
         }
 
-        private bool _disposed = false;
-        protected override void Dispose(bool disposing)
+        public FileLogger(Level logLevel)
+            : this(DefaultFilePath, logLevel)
+        {           
+        }
+
+        public FileLogger()
+            : this(DefaultLogLevel)
         {
-            base.Dispose(disposing);
-
-            if (!_disposed)
-            {
-
-                if (disposing)
-                {
-                    _fileWriter.Flush();
-                    _fileWriter.Close();
-                    _fileWriter.Dispose();
-                    //foreach (var textWriterOutput in TextWriterOutputs)
-                    //{
-                    //    textWriterOutput.Flush();
-                    //    textWriterOutput.Close();
-                    //    textWriterOutput.Dispose();
-                    //}
-                }
-
-                _disposed = true;
-            }
         }
+
+        //private bool _disposed = false;
+        //protected override void Dispose(bool disposing)
+        //{
+        //    base.Dispose(disposing);
+
+        //    if (!_disposed)
+        //    {
+
+        //        if (disposing)
+        //        {
+        //            //Stop();
+        //            _fileWriter.Flush();
+        //            _fileWriter.Close();
+        //            _fileWriter.Dispose();
+        //            //foreach (var textWriterOutput in TextWriterOutputs)
+        //            //{
+        //            //    textWriterOutput.Flush();
+        //            //    textWriterOutput.Close();
+        //            //    textWriterOutput.Dispose();
+        //            //}
+        //        }
+
+        //        _disposed = true;
+        //    }
+        //}
     }
 }

@@ -3,36 +3,50 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Logging;
-
 namespace MovieMatchMakerLib.Utils
 {
     public class Logger : IDisposable
     {
-        public LogLevel MinimumLogLevel { get; set; }
+        public enum Level
+        {
+            Trace = 0,
+            Debug = 1,
+            Information = 2,
+            Warning = 3,
+            Error = 4,
+            Critical = 5,
+            None = 6,
+        }
 
-        public IEnumerable<TextWriter> TextWriterOutputs { get; protected set; }
+        public Level MinimumLogLevel { get; set; }
+
+        public List<TextWriter> TextWriterOutputs { get; protected set; }
 
         public string MessageFormat { get; set; }
 
         private const string DefaultMessageFormat = "[{0}] {1} {2}";
-        private const LogLevel DefaultLogLevel = LogLevel.Warning;        
+        protected const Level DefaultLogLevel = Level.Warning;        
 
         private readonly RequestProcessingLoopThread<LogMessageRequest> _logMessagesLoopThread;
 
-        private bool disposedValue;
+        private bool disposedValue;       
 
-        protected Logger(LogLevel logLevel)
+        protected Logger(Level logLevel)
         {
+            TextWriterOutputs = new ();
             MinimumLogLevel = logLevel;
+            MessageFormat = DefaultMessageFormat;           
+            _logMessagesLoopThread = new RequestProcessingLoopThread<LogMessageRequest>(LogMessageRequestFunc);
+        }
+        protected Logger()
+           : this(DefaultLogLevel)
+        {
         }
 
-        public Logger(IEnumerable<TextWriter> outputs, LogLevel logLevel)
+        public Logger(IEnumerable<TextWriter> outputs, Level logLevel)
             : this(logLevel)
         {
-            MessageFormat = DefaultMessageFormat;
-            TextWriterOutputs = outputs;
-            _logMessagesLoopThread = new RequestProcessingLoopThread<LogMessageRequest>(LogMessageRequestFunc);
+            TextWriterOutputs.AddRange(outputs);
         }
 
         public Logger(IEnumerable<TextWriter> outputs)
@@ -60,7 +74,7 @@ namespace MovieMatchMakerLib.Utils
             _logMessagesLoopThread.StopProcessingRequests();
         }
 
-        public void Log(LogLevel logLevel, string message)
+        public void Log(Level logLevel, string message)
         {
             if (logLevel >= MinimumLogLevel)
             {                
@@ -68,10 +82,45 @@ namespace MovieMatchMakerLib.Utils
             }
         }
 
-        public void Log(LogLevel logLevel, string format, params object[] @params)
+        public void Log(Level logLevel, string format, params object[] @params)
         {
             Log(logLevel, string.Format(format, @params));
-        }       
+        }
+
+        public void Trace(string format, params object[] @params)
+        {
+            Log(Level.Trace, format, @params);
+        }
+
+        public void Debug(string format, params object[] @params)
+        {
+            Log(Level.Debug, format, @params);
+        }
+
+        public void Information(string format, params object[] @params)
+        {
+            Log(Level.Information, format, @params);
+        }
+
+        public void Warning(string format, params object[] @params)
+        {
+            Log(Level.Warning, format, @params);
+        }
+
+        public void Error(string format, params object[] @params)
+        {
+            Log(Level.Error, format, @params);
+        }
+
+        public void Critical(string format, params object[] @params)
+        {
+            Log(Level.Critical, format, @params);
+        }
+
+        //public void None(string format, params object[] @params)
+        //{
+        //    Log(Level.None, format, @params);
+        //}       
 
         private string FormatMessage(LogMessageRequest request)
         {
@@ -85,7 +134,7 @@ namespace MovieMatchMakerLib.Utils
                 if (disposing)
                 {
                     Stop();
-                    // TODO: will Dispose()'ing Console.Out throw an exception
+                    // TODO: will Dispose()'ing Console.Out throw an exception?
                     foreach (var textWriterOutput in TextWriterOutputs)
                     {
                         textWriterOutput.Flush();
@@ -108,10 +157,10 @@ namespace MovieMatchMakerLib.Utils
         private struct LogMessageRequest
         {
             public DateTime TimeStamp;
-            public LogLevel LogLevel;
+            public Level LogLevel;
             public string Message;
 
-            public LogMessageRequest(DateTime timeStamp, LogLevel level, string message)
+            public LogMessageRequest(DateTime timeStamp, Level level, string message)
             {
                 TimeStamp = timeStamp;
                 LogLevel = level;
