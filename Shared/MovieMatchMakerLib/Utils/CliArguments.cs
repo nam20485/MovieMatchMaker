@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Formats.Tar;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
 
 namespace MovieMatchMakerLib.Utils
 {
@@ -16,12 +10,14 @@ namespace MovieMatchMakerLib.Utils
 
         public CliArguments(string[] args)
         {
-            _args = args;            
+            _args = args;
+            if (args.Length == 0)
+            {
+                throw new EmptyArgumentsException();
+            }
         }
 
-        protected int GetPropertyIntValue([CallerMemberName] string propertyName = null) => int.Parse(GetValue(propertyName));
-        protected string GetPropertyStringValue([CallerMemberName] string propertyName = null) => GetValue(propertyName);
-        protected bool GetPropertyBoolValue([CallerMemberName] string propertyName = null) => bool.Parse(GetValue(propertyName));
+        public T GetPropertyArgumentValue<T>([CallerMemberName] string propertyName = null) => GetValue<T>(propertyName);
 
         public string GetValue(string name)
         {
@@ -30,37 +26,74 @@ namespace MovieMatchMakerLib.Utils
                 var stripped = _args[i].Replace("-", string.Empty).Replace("/", string.Empty);                
                 if (stripped.Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (i + 1 >= _args.Length ||          // end of args/
+                    if (i + 1 >= _args.Length ||        // end of args
                         _args[i + 1].StartsWith("--") ||
                         _args[i + 1].StartsWith("/"))
                     {
+                        // "value-less"/single argument
                         return "true";                        
                     }
                     else
                     {
-                        // 'valued' argument 
+                        // 'valued'/pair argument 
                         return _args[i + 1];
                     }
                 }
             }
-            return null;            
+
+            throw new ArgumentNotFoundException($"Argument with name {name} not found");           
         }
 
-        public bool Bool(string name)
+        public T GetValue<T>(string name)
         {
-            return bool.Parse(GetValue(name));
+            if (GetValue(name) is string value)
+            {
+                return Convert.To<T>(value);
+            }
+            else
+            {
+                return default;
+            }
+        }        
+
+        [Serializable]
+        private class ArgumentNotFoundException : Exception
+        {
+            public ArgumentNotFoundException()
+            {
+            }
+
+            public ArgumentNotFoundException(string message) : base(message)
+            {
+            }
+
+            public ArgumentNotFoundException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+
+            protected ArgumentNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
         }
 
-        public int Int(string name)
+        [Serializable]
+        private class EmptyArgumentsException : Exception
         {
-            return int.Parse(GetValue(name));
+            public EmptyArgumentsException()
+            {
+            }
+
+            public EmptyArgumentsException(string message) : base(message)
+            {
+            }
+
+            public EmptyArgumentsException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+
+            protected EmptyArgumentsException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
         }
-
-        public string Str(string name)
-        {
-            return GetValue(name);
-        }  
-        
-
     }
 }
