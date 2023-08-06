@@ -98,7 +98,7 @@ namespace MovieMatchMakerLib
                 {
                     // if Fetched, then it wasn't from the cache. Otherwise it -came from the cache and
                     // therefor it's already had its credits and its roles' credits fetched and filled out
-                    await ProcessMovieCreditsRequestAsync(new MovieCreditsRequest(movie.MovieId, movieRequest.Degree));
+                    await ProcessMovieCreditsRequestAsync(new MovieCreditsRequest(movie.ApiId, movieRequest.Degree));
                 }
             }            
         }

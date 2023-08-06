@@ -54,7 +54,7 @@ namespace MovieMatchMakerLib
                     // not from the cache (if so we already have its credits)
                     if (sourceMovie.Fetched || degree > 0)
                     {
-                        await FindMoviesConnectedToMovie(sourceMovie.MovieId, degree);
+                        await FindMoviesConnectedToMovie(sourceMovie.ApiId, degree);
                     }
                 }
             }

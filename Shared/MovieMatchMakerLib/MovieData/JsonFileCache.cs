@@ -143,7 +143,7 @@ namespace MovieMatchMakerLib.Data
         {
             var movie = Movies.Find(m =>
             {
-                return m.MovieId == movieId;
+                return m.ApiId == movieId;
             });
             MoviesFetched++;
             return movie;

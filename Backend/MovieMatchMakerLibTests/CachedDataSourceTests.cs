@@ -16,7 +16,7 @@ namespace MovieMatchMakerLibTests
             
             var movie = await dataSource.GetMovieAsync(title, releaseYear);
             Assert.NotNull(movie);
-            movie.MovieId.Should().Be(darkCityMovieId);
+            movie.ApiId.Should().Be(darkCityMovieId);
             Assert.Equal(title, movie.Title);
             Assert.Equal(releaseYear, movie.ReleaseYear);
         }       

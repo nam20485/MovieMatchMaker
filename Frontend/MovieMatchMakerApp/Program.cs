@@ -2,7 +2,6 @@
 using MovieMatchMakerLib.Utils;
 using MovieMatchMakerLib.Data;
 
-
 namespace MovieMatchMakerApp
 {
     internal class Program

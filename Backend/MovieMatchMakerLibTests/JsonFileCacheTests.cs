@@ -21,7 +21,7 @@
            
             var movie = await dataCache.GetMovieAsync(Constants.Strings.DarkCityTitle, Constants.Numbers.DarkCityReleaseYear);
             movie.Should().NotBeNull();
-            movie.MovieId.Should().Be(Constants.Numbers.DarkCityMovieId);
+            movie.ApiId.Should().Be(Constants.Numbers.DarkCityMovieId);
             movie.Title.Should().Be(Constants.Strings.DarkCityTitle);
             movie.ReleaseYear.Should().Be(Constants.Numbers.DarkCityReleaseYear);           
         }
@@ -34,7 +34,7 @@
 
             var movieById = dataCache.GetMovie(Constants.Numbers.DarkCityMovieId);
             movieById.Should().NotBeNull();
-            movieById.MovieId.Should().Be(Constants.Numbers.DarkCityMovieId);
+            movieById.ApiId.Should().Be(Constants.Numbers.DarkCityMovieId);
             movieById.Title.Should().Be(Constants.Strings.DarkCityTitle);
             movieById.ReleaseYear.Should().Be(Constants.Numbers.DarkCityReleaseYear);
         }

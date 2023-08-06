@@ -8,7 +8,7 @@ namespace MovieMatchMakerLib.Model
     public class Movie : Production, ITmdbLinkable
     {
         [JsonIgnore]
-        public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", MovieId);
+        public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", ApiId);
 
         public Movie()
         {

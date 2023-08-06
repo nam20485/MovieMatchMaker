@@ -10,7 +10,7 @@ namespace MovieMatchMakerLib.Model
     {
         public string Title { get; set; }
         public int ReleaseYear { get; set; }
-        public int MovieId { get; set; }
+        public int ApiId { get; set; }
         public string PosterImagePathSuffix { get; set; }        
         public string PosterImagePath => TmdbApiHelper.MakeImagePath(TmdbApiHelper.PosterImageSize.w92, PosterImagePathSuffix);
         [JsonIgnore]
@@ -29,7 +29,7 @@ namespace MovieMatchMakerLib.Model
         {
             Title = title;
             ReleaseYear = releaseYear;
-            MovieId = movieId;
+            ApiId = movieId;
             PosterImagePathSuffix = posterImagePath;
             Fetched = false;
         }

@@ -136,7 +136,7 @@ namespace MovieMatchMakerLib
 
         protected async Task FindMovieConnectionsFor(Model.Movie sourceMovie)
         {
-            var sourceMoviesCredits = await _dataCache.GetCreditsForMovieAsync(sourceMovie.MovieId);
+            var sourceMoviesCredits = await _dataCache.GetCreditsForMovieAsync(sourceMovie.ApiId);
             if (sourceMoviesCredits != null)
             {
                 foreach (var sourceRole in sourceMoviesCredits.Credits.Cast)
