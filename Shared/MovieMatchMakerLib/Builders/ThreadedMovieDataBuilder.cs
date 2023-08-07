@@ -24,12 +24,12 @@ namespace MovieMatchMakerLib
         public TimeSpan TotalRunTime => _stopped - _started;
         public TimeSpan RunningTime => DateTime.UtcNow - _started;
 
-        public double MoviesFetchPerSecond => CalculateRate(MoviesFetched, DateTime.UtcNow - _started);       
-        public double MovieCreditsFetchPerSecond => CalculateRate(MovieCreditsFetched, DateTime.UtcNow - _started);
-        public double PersonMovieCreditsFetchPerSecond => CalculateRate(PersonMovieCreditsFetched, DateTime.UtcNow - _started);
-        public double TotalFetchPerSecond => CalculateRate(TotalFetched, DateTime.UtcNow - _started);
+        public double MoviesFetchPerSecond => CalculateRate(MoviesFetched, RunningTime);       
+        public double MovieCreditsFetchPerSecond => CalculateRate(MovieCreditsFetched, RunningTime);
+        public double PersonMovieCreditsFetchPerSecond => CalculateRate(PersonMovieCreditsFetched, RunningTime);
+        public double TotalFetchPerSecond => CalculateRate(TotalFetched, RunningTime);
 
-        public int MovieCreditsFetched => _dataSource.MovieCreditsFetched;
+        public int MovieCreditsFetched => _dataSource.MovieCreditsFetched;  
         public int MoviesFetched => _dataSource.MoviesFetched;
         public int PersonMovieCreditsFetched => _dataSource.PersonMoviesCreditsFetched;
         public int TotalFetched => MoviesFetched + MovieCreditsFetched + PersonMovieCreditsFetched;
