@@ -13,7 +13,7 @@ namespace MovieMatchMakerApi.Services
         {
             _logger = logger;
             
-            var cachedDataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(MovieDataBuilder.FilePath, true);
+            var cachedDataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(MovieDataBuilder.FilePath, true, false);
             MovieDataBuilder = new MovieDataBuilder(cachedDataSource);
         }
     }

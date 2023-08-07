@@ -13,11 +13,16 @@ namespace MovieMatchMakerLib.Data
 {
     public class JsonFileCache : IDataCache, IDisposable
     {
-        public string FilePath { get; set; }
+        public string FilePath { get; set; }        
 
         public Movie.List Movies { get; set; }
         public PersonsMovieCredits.IntDictionary PersonsMovieCreditsById { get; set; }        
         public MoviesCredits.IntDictionary MoviesCreditsById { get; set; }
+
+        [JsonIgnore]
+        public int SaveFrequencyPerS { get; set; }
+        [JsonIgnore]
+        public bool WriteBackupFile { get; set; }
 
         [JsonIgnore]
         public int MoviesFetched { get; set; }
@@ -28,24 +33,31 @@ namespace MovieMatchMakerLib.Data
 
         public int MovieCount => Movies.Count;
         public int MovieCreditsCount => MoviesCreditsById.Count;
-        public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;
-
-        private const int SaveFrequencyPerS = 4;
+        public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;        
+        
         private const int MsPerS = 1000;
-        public const int SavePeriodMs = MsPerS / SaveFrequencyPerS;
+        public int SavePeriodMs => MsPerS / SaveFrequencyPerS;
 
         private readonly object _fileLockObj = new();
 
         private readonly Timer _saveTimer;
 
-        private bool disposedValue;
+        private bool _disposed;
         private bool _stopped;
+        private bool _started;
 
         public JsonFileCache()
         {
             Movies = new ();
             PersonsMovieCreditsById = new ();
             MoviesCreditsById = new ();
+
+            SaveFrequencyPerS = 4;
+            WriteBackupFile = true;
+
+            _started = false;
+            _stopped = false;
+            _disposed = false;
 
             // no state is passed, and timer is started for one cycle/non-periodic (we restart the timer one cycle at a time)
             _saveTimer = new Timer(new TimerCallback(TimerCallback), null, Timeout.Infinite, Timeout.Infinite);
@@ -193,8 +205,11 @@ namespace MovieMatchMakerLib.Data
                 //var json = JsonSerializer.Serialize(this, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options));
                 var json = JsonSerializer.Serialize(this);
                 File.WriteAllText(FilePath, json);
-                // write a backup so if one gets corrupted by an error during write, the other should still be OK
-                File.WriteAllText(FilePath.Replace(".json", string.Empty) + ".bak.json", json);
+                if (WriteBackupFile)
+                {
+                    // write a backup so if one gets corrupted by an error during write, the other should still be OK
+                    File.WriteAllText(FilePath.Replace(".json", string.Empty) + ".bak.json", json);
+                }
             }      
             return Task.CompletedTask;
         }
@@ -233,9 +248,13 @@ namespace MovieMatchMakerLib.Data
 
         public void Start()
         {
-            _stopped = false;
-            //start the timer for one cycle
-            _saveTimer.Change(SavePeriodMs, Timeout.Infinite);
+            if (!_started)
+            {
+                _stopped = false;
+                //start the timer for one cycle
+                _saveTimer.Change(SavePeriodMs, Timeout.Infinite);
+                _started = true;
+            }
         }
 
         public void Stop()
@@ -247,7 +266,7 @@ namespace MovieMatchMakerLib.Data
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposed)
             {
                 if (disposing)
                 {
@@ -257,7 +276,7 @@ namespace MovieMatchMakerLib.Data
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                disposedValue = true;
+                _disposed = true;
             }
         }     
 

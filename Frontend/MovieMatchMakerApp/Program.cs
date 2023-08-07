@@ -134,7 +134,7 @@ namespace MovieMatchMakerApp
 
             Console.WriteLine("Building movie data...");
 
-            using var movieDataBuilder = CreateMovieDataBuilder(file, threaded, continueExisting);
+            using var movieDataBuilder = CreateMovieDataBuilder(file, threaded, continueExisting, true);
             if (!continueExisting)
             {
                 await movieDataBuilder.BuildFreshFromInitial(title, releaseYear, degree);
@@ -218,9 +218,9 @@ namespace MovieMatchMakerApp
             }
         }
 
-        private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded, bool load)
+        private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded, bool load, bool startSavingCache)
         {
-            var dataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(cacheFilePath, load);
+            var dataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(cacheFilePath, load, startSavingCache);
             if (threaded)
             {
                 return new ThreadedMovieDataBuilder(dataSource);

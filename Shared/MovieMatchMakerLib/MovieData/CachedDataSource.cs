@@ -20,7 +20,7 @@ namespace MovieMatchMakerLib.Data
             _dataSource = dataSource;           
         }
 
-        public static CachedDataSource CreateWithJsonFileCacheAndApiDataSource(string cacheFilePath, bool loadCache)
+        public static CachedDataSource CreateWithJsonFileCacheAndApiDataSource(string cacheFilePath, bool loadCache, bool startSavingCache)
         {
             JsonFileCache dataCache;
             if (loadCache)
@@ -31,6 +31,12 @@ namespace MovieMatchMakerLib.Data
             {
                 dataCache = new JsonFileCache(cacheFilePath);
             }
+
+            if (startSavingCache)
+            {
+                dataCache.Start();
+            }                
+
             var apiDataSource = new ApiDataSource();
             return new CachedDataSource(dataCache, apiDataSource);
         }
