@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -22,7 +23,12 @@ namespace MovieMatchMakerLib.Data
         [JsonIgnore]
         public int SaveFrequencyPerS { get; set; }
         [JsonIgnore]
+        public int SavePeriodMs => MsPerS / SaveFrequencyPerS;
+
+        [JsonIgnore]
         public bool WriteBackupFile { get; set; }
+        [JsonIgnore]
+        public bool ClearUnneededData { get; set; }
 
         [JsonIgnore]
         public int MoviesFetched { get; set; }
@@ -35,8 +41,7 @@ namespace MovieMatchMakerLib.Data
         public int MovieCreditsCount => MoviesCreditsById.Count;
         public int PersonMoviesCreditsCount => PersonsMovieCreditsById.Count;        
         
-        private const int MsPerS = 1000;
-        public int SavePeriodMs => MsPerS / SaveFrequencyPerS;
+        private const int MsPerS = 1000;               
 
         private readonly object _fileLockObj = new();
 
@@ -54,6 +59,7 @@ namespace MovieMatchMakerLib.Data
 
             SaveFrequencyPerS = 4;
             WriteBackupFile = true;
+            ClearUnneededData = true;
 
             _started = false;
             _stopped = false;
@@ -177,15 +183,15 @@ namespace MovieMatchMakerLib.Data
 
         public static JsonFileCache Load(string filePath)
         {
-            try
+            //try
             {
                 var fileContent = File.ReadAllText(filePath);                                                
                 return JsonSerializer.Deserialize<JsonFileCache>(fileContent, GlobalSerializerOptions.Options);
                 //instance = JsonSerializer.Deserialize(fileContent, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options)) as JsonFileCache;
             }
-            catch (FileNotFoundException)
+            //catch (FileNotFoundException)
             {
-                return null;
+            //    return null;
             }            
         }
 
@@ -203,7 +209,13 @@ namespace MovieMatchMakerLib.Data
             {
                 // TODO: use JsonSerializerContext-dervied class to optimize serialization
                 //var json = JsonSerializer.Serialize(this, typeof(JsonFileCache), new JsonFileCacheSerializationContext(GlobalSerializerOptions.Options));
-                var json = JsonSerializer.Serialize(this);
+
+                if (ClearUnneededData)
+                {
+                    ClearUneededData();
+                }
+
+                var json = JsonSerializer.Serialize(this, GlobalSerializerOptions.Options);
                 File.WriteAllText(FilePath, json);
                 if (WriteBackupFile)
                 {
@@ -212,6 +224,49 @@ namespace MovieMatchMakerLib.Data
                 }
             }      
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Clear out (set to null) all unneeded data fields to reduce file size
+        /// </summary>
+        private void ClearUneededData()
+        {
+            // set empty string b/c its 2 characters shorter than "null"
+            const string valueToSet = default;
+
+            foreach (var movieCredit in MoviesCreditsById.Values)
+            {                
+                foreach (var cast in movieCredit.Credits.Cast)
+                {
+                    // DO NOT clear the Id field!
+                    //cast.Id = default;
+                    cast.CreditId = valueToSet;
+                    cast.KnownForDepartment = valueToSet;
+                    cast.OriginalName = valueToSet;                    
+                }
+                foreach (var crew in movieCredit.Credits.Crew)
+                {
+                    //crew.Id = default;
+                    crew.CreditId = valueToSet;
+                    crew.KnownForDepartment = valueToSet;
+                    crew.OriginalName = valueToSet;
+                }
+            }
+            foreach (var personMovieCredit in PersonsMovieCreditsById.Values)
+            {
+                foreach (var cast in personMovieCredit.MovieCredits.Cast)
+                {
+                    //cast.Id = default;
+                    cast.CreditId = valueToSet;
+                    cast.OriginalTitle = valueToSet;
+                }
+                foreach (var crew in personMovieCredit.MovieCredits.Crew)
+                {
+                    //crew.Id = default;
+                    crew.CreditId = valueToSet;
+                    crew.OriginalTitle = valueToSet;
+                }
+            }
         }
 
         public void Save()
@@ -242,7 +297,10 @@ namespace MovieMatchMakerLib.Data
             {
                 SerializeToFile();
                 // kick the timer off again for one cycle
-                _saveTimer.Change(SavePeriodMs, 0);
+                if (!_disposed)
+                {
+                    _saveTimer.Change(SavePeriodMs, 0);
+                }
             }
         }
 
