@@ -7,7 +7,7 @@ namespace MovieMatchMakerLib
         public bool Timing => GetArgumentValueForCallableName<bool>();
         public bool BuildData => GetArgumentValueForCallableName<bool>();
         public bool BuildConnections => GetArgumentValueForCallableName<bool>();
-        public bool Threaded => GetArgumentValueForCallableName<bool>();
+        public bool SingleThreaded => GetArgumentValueForCallableName<bool>();
         public bool ContinueExisting => GetArgumentValueForCallableName<bool>();
         public string File => GetArgumentValueForCallableName<string>();
         public string Title => GetArgumentValueForCallableName<string>();

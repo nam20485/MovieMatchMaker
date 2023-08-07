@@ -2,7 +2,7 @@
   "profiles": {
     "MovieMatchMakerApp": {
       "commandName": "Project",
-      "commandLineArgs": "--build-data --title \"Dark City\" --releaseYear 1998 --degree 1 --threaded --file ./movie-data.json"
+      "commandLineArgs": "--build-data --title \"Dark City\" --releaseYear 1998 --degree 1 --file ./movie-data.json"
     },
     "WSL": {
       "commandName": "WSL2",

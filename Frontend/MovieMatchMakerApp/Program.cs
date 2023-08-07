@@ -26,7 +26,7 @@ namespace MovieMatchMakerApp
             {
                 if (!string.IsNullOrWhiteSpace(mmmArgs.File))
                 {
-                    if (await BuildMovieConnections(mmmArgs.File, mmmArgs.Threaded))
+                    if (await BuildMovieConnections(mmmArgs.File, !mmmArgs.SingleThreaded))
                     {
                         exitCode = ExitCode.Success;
                     }
@@ -36,7 +36,7 @@ namespace MovieMatchMakerApp
             {
                 if (!string.IsNullOrWhiteSpace(mmmArgs.File))
                 {
-                    if (await BuildMovieDataAsync(mmmArgs.Title, mmmArgs.ReleaseYear, mmmArgs.Degree, mmmArgs.File, mmmArgs.Threaded, mmmArgs.ContinueExisting))
+                    if (await BuildMovieDataAsync(mmmArgs.Title, mmmArgs.ReleaseYear, mmmArgs.Degree, mmmArgs.File, !mmmArgs.SingleThreaded, mmmArgs.ContinueExisting))
                     {
                         exitCode = ExitCode.Success;
                     }
@@ -68,12 +68,12 @@ namespace MovieMatchMakerApp
         /// (Previously-built using a MovieDataBuilder)
         /// </summary>
         /// <param name="file">the movie-data.json file created by an <see cref="IMovieDataBuilder"/></param>
-        /// <param name="threaded">use a multi-threaded or single-threaded <see cref="IMovieConnectionBuilder"/></param>
+        /// <param name="multithreaded">use a multi-threaded or single-threaded <see cref="IMovieConnectionBuilder"/></param>
         /// <returns><see langword="true"/> on success, <see langword="false"/> otherwise</returns>
-        private static async Task<bool> BuildMovieConnections(string file, bool threaded)
+        private static async Task<bool> BuildMovieConnections(string file, bool multithreaded)
         {
-            //--build-connections --threaded true --file ./movie-data.json
-            //--build-connections --threaded --file ./movie-data.json
+            //--build-connections --file ./movie-data.json
+            //--build-connections --file ./movie-data.json
 
             Console.Write("Loading movie data");
 
@@ -82,7 +82,7 @@ namespace MovieMatchMakerApp
                 LastFrame = "..."
             };     
             loadingAnimation.Start();
-            using var connectionBuilder = CreateMovieConnectionBuilder(file, threaded);
+            using var connectionBuilder = CreateMovieConnectionBuilder(file, multithreaded);
             loadingAnimation.Stop();
             
             Console.WriteLine($"\n\nMovies:               {connectionBuilder.MoviesCount,6}\nMovie Credits:        {connectionBuilder.MovieCreditsCount,6}\nPerson Movie Credits: {connectionBuilder.PersonMovieCreditsCount,6} ");
@@ -97,7 +97,7 @@ namespace MovieMatchMakerApp
             connectionBuilder.Start();
             await connectionBuilder.FindMovieConnections();            
 
-            if (threaded)
+            if (multithreaded)
             {                           
                 using var timerAnimation = new ConsoleAnimation(0, 12, (fn) =>
                 {
@@ -124,17 +124,17 @@ namespace MovieMatchMakerApp
         /// <param name="releaseYear">year movie was release</param>
         /// <param name="degree">recursive degree (specify 0 to get just one movie, > 0 to fetch movies connected to the intial movie amd so on...)</param>
         /// <param name="file">output path and file name to write data to, also can specify an existing file to start with</param>
-        /// <param name="threaded"><see langword="true"/> for multi-threaded builder, <see langword="false"/> for single-threaded</param>
+        /// <param name="multithreaded"><see langword="true"/> for multi-threaded builder, <see langword="false"/> for single-threaded</param>
         /// <param name="continueExisting">build further starting with data already existing in file specified</param>
         /// <returns></returns>
-        private static async Task<bool> BuildMovieDataAsync(string title, int releaseYear, int degree, string file, bool threaded, bool continueExisting)
+        private static async Task<bool> BuildMovieDataAsync(string title, int releaseYear, int degree, string file, bool multithreaded, bool continueExisting)
         {
-            //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded true --file ./movie-data.json --continue-existing false
-            //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --threaded --file ./movie-data.json
+            //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --file ./movie-data.json --continue-existing false
+            //--build-data --title "Dark City" --releaseYear 1998 --degree 1 --file ./movie-data.json
 
             Console.WriteLine("Building movie data...");
 
-            using var movieDataBuilder = CreateMovieDataBuilder(file, threaded, continueExisting, true);
+            using var movieDataBuilder = CreateMovieDataBuilder(file, multithreaded, continueExisting, true);
             if (!continueExisting)
             {
                 await movieDataBuilder.BuildFreshFromInitial(title, releaseYear, degree);
@@ -144,7 +144,7 @@ namespace MovieMatchMakerApp
                 movieDataBuilder.ContinueFromExisting(degree);
             }
 
-            if (threaded)
+            if (multithreaded)
             {
                 Console.WriteLine();
                 using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
@@ -205,10 +205,10 @@ namespace MovieMatchMakerApp
             }
         }
 
-        private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath, bool threaded)
+        private static IMovieConnectionBuilder CreateMovieConnectionBuilder(string filePath, bool multithreaded)
         {
             var dataCache = JsonFileCache.Load(filePath);
-            if (threaded)
+            if (multithreaded)
             {
                 return new ThreadedMovieConnectionBuilder(dataCache);
             }
@@ -218,10 +218,10 @@ namespace MovieMatchMakerApp
             }
         }
 
-        private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool threaded, bool load, bool startSavingCache)
+        private static IMovieDataBuilder CreateMovieDataBuilder(string cacheFilePath, bool multithreaded, bool load, bool startSavingCache)
         {
             var dataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(cacheFilePath, load, startSavingCache);
-            if (threaded)
+            if (multithreaded)
             {
                 return new ThreadedMovieDataBuilder(dataSource);
             }
