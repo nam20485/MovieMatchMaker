@@ -101,8 +101,11 @@ namespace MovieMatchMakerLib.Utils
 
         public void Stop()
         {
-            _stop = true;            
-            _thread.Join();
+            _stop = true;
+            if (_thread.IsAlive)
+            {
+                _thread.Join();
+            }
 
             SavePosition();
 

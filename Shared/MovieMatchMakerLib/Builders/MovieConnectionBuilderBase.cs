@@ -157,7 +157,7 @@ namespace MovieMatchMakerLib
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    _dataCache.Dispose();
+                    _dataCache?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

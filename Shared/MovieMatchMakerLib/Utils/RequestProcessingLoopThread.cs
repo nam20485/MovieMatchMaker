@@ -133,7 +133,10 @@ namespace MovieMatchMakerLib.Utils
 
         public void Wait()
         {
-            _processRequestsLoopThread.Join();
+            if (_processRequestsLoopThread.IsAlive)
+            {
+                _processRequestsLoopThread.Join();
+            }
             if (_useThreadPool)
             {                
                 // wait for any tasks to complete if we are using the pool
