@@ -135,49 +135,49 @@ namespace MovieMatchMakerLib.TmdbApi
             return tvShow;
         }
 
-        public async Task<Credits> FetchMovieCreditsAsync(string title, int releaseYear)
-        {
-            var timeoutDelay = InitialTimeoutDelayMs;
-            var retryCount = 0;
-            while (retryCount++ <= MaxRetryCount)
-            {
-                try
-                {
-                    var movie = await FetchMovieAsync(title, releaseYear);
-                    if (movie != null)
-                    {
-                        var credits = await FetchMovieCreditsAsync(movie.ApiId);
-                        if (credits != null)
-                        {                            
-                            return credits;
-                        }
-                    }
-                }
-                catch (TaskCanceledException tce)
-                {
-                    ErrorLog.Log(tce);
-                    if (tce.InnerException is TimeoutException)
-                    {
-                        // request timed out
-                    }
-                }
-                catch (ObjectDisposedException ode)
-                {
-                    ErrorLog.Log(ode);
-                }
-                catch (RequestLimitExceededException rlee)
-                {
-                    ErrorLog.Log(rlee);
-                    Thread.Sleep(timeoutDelay *= 2);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLog.Log(ex);
-                }
-            }
+        //public async Task<Credits> FetchMovieCreditsAsync(string title, int releaseYear)
+        //{
+        //    var timeoutDelay = InitialTimeoutDelayMs;
+        //    var retryCount = 0;
+        //    while (retryCount++ <= MaxRetryCount)
+        //    {
+        //        try
+        //        {
+        //            var movie = await FetchMovieAsync(title, releaseYear);
+        //            if (movie != null)
+        //            {
+        //                var credits = await FetchMovieCreditsAsync(movie.ApiId);
+        //                if (credits != null)
+        //                {                            
+        //                    return credits;
+        //                }
+        //            }
+        //        }
+        //        catch (TaskCanceledException tce)
+        //        {
+        //            ErrorLog.Log(tce);
+        //            if (tce.InnerException is TimeoutException)
+        //            {
+        //                // request timed out
+        //            }
+        //        }
+        //        catch (ObjectDisposedException ode)
+        //        {
+        //            ErrorLog.Log(ode);
+        //        }
+        //        catch (RequestLimitExceededException rlee)
+        //        {
+        //            ErrorLog.Log(rlee);
+        //            Thread.Sleep(timeoutDelay *= 2);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ErrorLog.Log(ex);
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public async Task<Credits> FetchMovieCreditsAsync(int movieApiId)
         {
@@ -249,49 +249,49 @@ namespace MovieMatchMakerLib.TmdbApi
             return null;
         }
 
-        public async Task<Credits> FetchTvShowCreditsAsync(string title)
-        {
-            var timeoutDelay = InitialTimeoutDelayMs;
-            var retryCount = 0;
-            while (retryCount++ <= MaxRetryCount)
-            {
-                try
-                {
-                    var tvShow = await FetchTvShowAsync(title);
-                    if (tvShow != null)
-                    {
-                        var credits = await FetchMovieCreditsAsync(tvShow.ApiId);
-                        if (credits != null)
-                        {
-                            return credits;
-                        }
-                    }
-                }
-                catch (TaskCanceledException tce)
-                {
-                    ErrorLog.Log(tce);
-                    if (tce.InnerException is TimeoutException)
-                    {
-                        // request timed out
-                    }
-                }
-                catch (ObjectDisposedException ode)
-                {
-                    ErrorLog.Log(ode);
-                }
-                catch (RequestLimitExceededException rlee)
-                {
-                    ErrorLog.Log(rlee);
-                    Thread.Sleep(timeoutDelay *= 2);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLog.Log(ex);
-                }
-            }
+        //public async Task<Credits> FetchTvShowCreditsAsync(string title)
+        //{
+        //    var timeoutDelay = InitialTimeoutDelayMs;
+        //    var retryCount = 0;
+        //    while (retryCount++ <= MaxRetryCount)
+        //    {
+        //        try
+        //        {
+        //            var tvShow = await FetchTvShowAsync(title);
+        //            if (tvShow != null)
+        //            {
+        //                var credits = await FetchMovieCreditsAsync(tvShow.ApiId);
+        //                if (credits != null)
+        //                {
+        //                    return credits;
+        //                }
+        //            }
+        //        }
+        //        catch (TaskCanceledException tce)
+        //        {
+        //            ErrorLog.Log(tce);
+        //            if (tce.InnerException is TimeoutException)
+        //            {
+        //                // request timed out
+        //            }
+        //        }
+        //        catch (ObjectDisposedException ode)
+        //        {
+        //            ErrorLog.Log(ode);
+        //        }
+        //        catch (RequestLimitExceededException rlee)
+        //        {
+        //            ErrorLog.Log(rlee);
+        //            Thread.Sleep(timeoutDelay *= 2);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ErrorLog.Log(ex);
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public async Task<MovieCredits> FetchMovieCreditsForPerson(int personApiId)
         {
