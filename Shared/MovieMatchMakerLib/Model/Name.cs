@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Text.Json.Serialization;
 
 namespace MovieMatchMakerLib.Model
 {
@@ -10,8 +10,9 @@ namespace MovieMatchMakerLib.Model
         //[Key]
         public int Id { get; set; }
         public string FirstName { get; set; }
-        public string Surname { get; set; }        
+        public string Surname { get; set; }
 
+        [JsonIgnore]
         public string FullName
         {
             get

@@ -5,10 +5,10 @@ using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLib.Model
 {
-    public class Movie : Production, ITmdbLinkable
+    public class Movie : Production
     {
         [JsonIgnore]
-        public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", ApiId);
+        public override string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", ApiId);
 
         public Movie()
         {

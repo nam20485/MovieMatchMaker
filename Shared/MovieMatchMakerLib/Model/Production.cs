@@ -6,17 +6,22 @@ using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLib.Model
 {
-    public class Production : IEquatable<Production>
+    public abstract class Production : IEquatable<Production>, ITmdbLinkable
     {
         public string Title { get; set; }
         public int ReleaseYear { get; set; }
         public int ApiId { get; set; }
-        public string PosterImagePathSuffix { get; set; }        
-        public string PosterImagePath => TmdbApiHelper.MakeImagePath(TmdbApiHelper.PosterImageSize.w92, PosterImagePathSuffix);
+        public string PosterImagePathSuffix { get; set; }
+
         [JsonIgnore]
         public bool Fetched { get; set; }        
         [JsonIgnore]
         public string DisplayId => string.Format(DisplayIdFormat, Title, ReleaseYear);
+        [JsonIgnore]
+        public string PosterImagePath => TmdbApiHelper.MakeImagePath(TmdbApiHelper.PosterImageSize.w92, PosterImagePathSuffix);
+
+        [JsonIgnore]
+        public abstract string TmdbLink { get; }
 
         private const string DisplayIdFormat = "{0} ({1})";
 
