@@ -15,7 +15,7 @@ namespace MovieMatchMakerLibTests
         //     var loaded = MovieConnection.List.LoadFromFile(Constants.Strings.MovieConnectionsFilePath);
         //     loaded.Should().NotBeNull();
         //     loaded.Should().NotBeEmpty();
-        //     loaded.Should().HaveCount(17413);
+        //     loaded.Should().HaveCount(11754);
           
         //     var filtered = loaded.Filter(new MinConnectedRolesCountFilter(14));
         //     filtered.Should().NotBeNull();

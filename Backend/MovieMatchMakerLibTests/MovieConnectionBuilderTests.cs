@@ -6,7 +6,7 @@
         public void Test_LoadMovieConnections()
         {
             var movieConnectionBuilder = Utils.CreateMovieConnectionBuilder(true);
-            movieConnectionBuilder.MovieConnections.Should().HaveCount(17413);                       
+            movieConnectionBuilder.MovieConnections.Should().HaveCount(11754);                       
         }
     }
 

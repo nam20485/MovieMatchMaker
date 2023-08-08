@@ -35,7 +35,7 @@
     <Content Update="wwwroot\js\scripts.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>   
-    <Content Update="wwwroot\movieconnections.json">
+    <Content Update="wwwroot\movie-connections.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>    
   </ItemGroup>

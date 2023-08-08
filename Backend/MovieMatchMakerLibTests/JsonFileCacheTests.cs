@@ -8,9 +8,9 @@
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();
 
-            dataCache.Movies.Should().HaveCount(533);
-            dataCache.MoviesCreditsById.Should().HaveCount(533);
-            dataCache.PersonsMovieCreditsById.Should().HaveCount(23533);           
+            dataCache.Movies.Should().HaveCount(306);
+            dataCache.MoviesCreditsById.Should().HaveCount(282);
+            dataCache.PersonsMovieCreditsById.Should().HaveCount(579);           
         }
 
         [Fact]
