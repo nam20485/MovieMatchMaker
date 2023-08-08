@@ -73,8 +73,7 @@ namespace MovieMatchMakerApp
         private static async Task<bool> BuildMovieConnections(string file, bool multithreaded)
         {
             //--build-connections --file ./movie-data.json
-            //--build-connections --file ./movie-data.json
-
+            
             Console.Write("Loading movie data");
 
             using var loadingAnimation = new EllipsisAnimation()
