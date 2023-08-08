@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLib.Model
@@ -10,9 +12,18 @@ namespace MovieMatchMakerLib.Model
         public int PersonId { get; set; }
         public string TargetJob { get; set; }
         public string SourceJob { get; set; }
-        public string PersonPosterPath { get; set; }
+        public string PersonPosterPathSuffix { get; set; }
 
+        [JsonIgnore]
+        public string PersonPosterPath => TmdbApiHelper.MakeImagePath(TmdbApiHelper.PosterImageSize.w92, PersonPosterPathSuffix);
+
+        [JsonIgnore]
         public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("person", PersonId);
+
+        public ConnectedRole()
+        {
+            // required for deserialization
+        }
 
         public override bool Equals(object obj)
         {

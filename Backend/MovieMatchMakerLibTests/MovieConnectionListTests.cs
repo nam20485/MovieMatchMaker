@@ -8,29 +8,26 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public void Test_FilePath()
         {
-            MovieConnectionBuilder.FilePath.Should().NotBeNull();
-            MovieConnectionBuilder.FilePath.Should().NotBeEmpty();
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
+            // assert will happen inside the call
+            _ = Utils.GetTestMovieConnectionsFilePath();
         }
 
         [Fact]
         public void Test_LoadFromFile()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder   .FilePath);
+        {         
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
         }
 
         [Fact]
         public void Test_SaveToFile()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+        {            
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
             const string filePath = "movieconnections_test_savetofile.json";
             loaded.SaveToFile(filePath);
@@ -39,12 +36,11 @@ namespace MovieMatchMakerLibTests
 
         [Fact]
         public void Test_LoadSaveToFileRoundTrip()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+        {            
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
             const string filePath = "movieconnections_test_savetofile.json";
             loaded.SaveToFile(filePath);
@@ -60,61 +56,57 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public void Test_FindForMovie()
         {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
-            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Numbers.DarkCityReleaseYear);
             movieConnectionsForDarkCity.Should().NotBeNull();
             movieConnectionsForDarkCity.Should().NotBeEmpty();
-            movieConnectionsForDarkCity.Should().HaveCount(532);
+            movieConnectionsForDarkCity.Should().HaveCount(305);
         }
 
         [Fact]
         public void Test_Movies_All()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+        {            
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
             var movies = loaded.Movies;
             movies.Should().NotBeNull();
             movies.Should().NotBeEmpty();
-            movies.Should().HaveCount(533);
+            movies.Should().HaveCount(306);
         }
 
         [Fact]
         public void Test_Movies_DarkCity_1998()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+        {            
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
-            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Ints.DarkCityReleaseYear);
+            var movieConnectionsForDarkCity = loaded.FindForMovie(Constants.Strings.DarkCityTitle, Constants.Numbers.DarkCityReleaseYear);
             movieConnectionsForDarkCity.Should().NotBeNull();
             movieConnectionsForDarkCity.Should().NotBeEmpty();
-            movieConnectionsForDarkCity.Should().HaveCount(532);
+            movieConnectionsForDarkCity.Should().HaveCount(305);
 
             var movies = movieConnectionsForDarkCity.Movies;
             movies.Should().NotBeNull();
             movies.Should().NotBeEmpty();
-            movies.Should().HaveCount(533);
+            movies.Should().HaveCount(306);
         }
 
         [Fact]
         public void Test_GetOrCreateMovieConnection()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+        {            
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
             var created = new MovieConnection.List();
             foreach (var mc in loaded)
@@ -134,12 +126,11 @@ namespace MovieMatchMakerLibTests
 
         [Fact]
         public void Test_FindMovieConnectionExact()
-        {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+        {            
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
             foreach (var mc in loaded)
             {
@@ -151,11 +142,10 @@ namespace MovieMatchMakerLibTests
         [Fact]
         public void Test_FindMovieConnection()
         {
-            File.Exists(MovieConnectionBuilder.FilePath).Should().BeTrue();
-            var loaded = MovieConnection.List.LoadFromFile(MovieConnectionBuilder.FilePath);
+            var loaded = MovieConnection.List.LoadFromFile(Utils.GetTestMovieConnectionsFilePath());
             loaded.Should().NotBeNull();
             loaded.Should().NotBeEmpty();
-            loaded.Should().HaveCount(17413);
+            loaded.Should().HaveCount(11754);
 
             foreach (var mc in loaded)
             {

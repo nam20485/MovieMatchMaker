@@ -5,14 +5,22 @@ namespace MovieMatchMakerLib.Utils
 {
     internal class GlobalSerializerOptions
     {
-        public static readonly JsonSerializerOptions Options = new()
+        internal static readonly JsonSerializerOptions Options;
+
+        static GlobalSerializerOptions()
         {
-            // disable pretty-printing in release builds to save file size and xfer speed
-            WriteIndented = Macros.IsDebugBuild(),
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true,
-            ReferenceHandler = ReferenceHandler.Preserve, 
-            PropertyNameCaseInsensitive = true,
-        };
+            Options = new()
+            {
+                // disable pretty-printing in release builds to save file size and xfer speed
+                WriteIndented = Macros.IsDebugBuild(),
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,                
+                // TODO: why does this need to be on if there is no reference $id metadata in the JSON file?
+                //ReferenceHandler = ReferenceHandler.Preserve, 
+                //PropertyNameCaseInsensitive = true,                
+            };
+            Options.Converters.Add(new JsonStringEnumConverter());
+        }        
     }
 }

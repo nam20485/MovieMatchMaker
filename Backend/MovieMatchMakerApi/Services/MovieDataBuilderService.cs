@@ -12,12 +12,9 @@ namespace MovieMatchMakerApi.Services
         public MovieDataBuilderService(ILogger<MovieDataBuilderService> logger)
         {
             _logger = logger;
-
-            var apiDataSource = new ApiDataSource();
-            var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);
-            var cachedDataSource = new CachedDataSource(dataCache, apiDataSource);
-
-            MovieDataBuilder = new MovieDataBuilder(cachedDataSource, false);
+            
+            var cachedDataSource = CachedDataSource.CreateWithJsonFileCacheAndApiDataSource(MovieDataBuilder.FilePath, true, false);
+            MovieDataBuilder = new MovieDataBuilder(cachedDataSource);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MovieMatchMakerLib.Model
                 var targetNode = _rootGraph.GetOrAddNode(movieConnection.TargetMovie.DisplayId);
                 //targetNode.SetAttribute(MovieIdAttributeName, movieConnection.SourceMovie.MovieId.ToString());
 
-                var edge = _rootGraph.GetOrAddEdge(targetNode, sourceNode, $"{movieConnection.SourceMovie.MovieId}-{movieConnection.TargetMovie.MovieId}");
+                var edge = _rootGraph.GetOrAddEdge(targetNode, sourceNode, $"{movieConnection.SourceMovie.ApiId}-{movieConnection.TargetMovie.ApiId}");
                 edge.SafeSetAttribute("label", movieConnection.ConnectedRoles.Count.ToString(), "default-value");                
             }
         }

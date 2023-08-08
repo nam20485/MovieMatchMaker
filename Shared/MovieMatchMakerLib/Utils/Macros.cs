@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Utils
 {
@@ -20,6 +16,13 @@ namespace MovieMatchMakerLib.Utils
         public static bool IsReleaseBuild()
         {
             return ! IsDebugBuild();
+        }
+
+        private const string CI_ENV_VAR_NAME = "CI";
+
+        public static bool IsCI()
+        {
+            return Environment.GetEnvironmentVariable(CI_ENV_VAR_NAME) is not null;
         }
     }
 }

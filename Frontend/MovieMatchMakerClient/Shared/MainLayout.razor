@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider />
+<MudThemeProvider IsDarkMode="_useDarkMode"/>
 @*
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -24,4 +24,6 @@
 
 @code    {
     public string Slogan = "Find movies you didn't know you liked!";
+
+    private bool _useDarkMode = false;
 }

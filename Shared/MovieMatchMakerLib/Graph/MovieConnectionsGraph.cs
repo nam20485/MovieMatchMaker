@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rubjerg.Graphviz;
+﻿using Rubjerg.Graphviz;
 
 
 using MovieMatchMakerLib.Model;
@@ -39,8 +34,24 @@ namespace MovieMatchMakerLib.Graph
                 }
             }
 
+            TrimGraph(rootGraph);
+
             return rootGraph;
-        }       
+        }
+
+        private void TrimGraph(RootGraph rootGraph)
+        {
+            foreach (var n in rootGraph.Nodes())
+            {
+                
+            }
+            // remove 'subgraphs' with less than n nodes
+        }
+
+        private int CountConnectedNodes(Node n)
+        {
+            return -1;
+        }
 
         public void ExportToSvgFile(string exportPath)
         {

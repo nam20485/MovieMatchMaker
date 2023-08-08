@@ -1,0 +1,53 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET Backend
+
+on:
+  push:
+    branches: ["*"]
+    paths-ignore: 'Frontend/**'
+  pull_request:
+    branches: ["*"]
+    paths-ignore: 'Frontend/**'
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Restore
+        working-directory: ./Backend
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ./Backend
+        run: dotnet build -c Release --no-restore
+
+      - name: Publish
+        working-directory: ./Backend
+        run: dotnet publish -c Release --no-build
+
+      - name: Checkout Test Data
+        uses: actions/checkout@v3        
+        with:
+          repository: "nam20485/mmm-test-data"
+          ref: "master"
+          path: "${{ github.workspace }}/${{ vars.TEST_DATA_DIR_NAME }}"                    
+
+      - name: Test
+        working-directory: ./Backend
+        run: |
+          echo "MMM_TEST_DATA_DIR: ($MMM_TEST_DATA_DIR)"
+          dotnet test -c Release --no-build --verbosity normal
+        env:          
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          MMM_TEST_DATA_DIR: "${{ github.workspace }}/${{ vars.TEST_DATA_DIR_NAME }}"

@@ -13,9 +13,9 @@ namespace MovieMatchMakerLib.TmdbApi
         public static string TmdbApiKey => Environment.GetEnvironmentVariable(TMDB_API_KEY_ENV_NAME);
         public static string TmdbAccessToken => Environment.GetEnvironmentVariable(TMDB_ACCESS_TOKEN_ENV_NAME);
 
-        public static string MakeTmdbUrl(string category, int id)
+        public static string MakeTmdbUrl(string type, int id)
         {
-            return $"{TMDB_URL}/{category}/{id}";
+            return $"{TMDB_URL}/{type}/{id}";
         }
 
         public enum PosterImageSize
@@ -29,9 +29,9 @@ namespace MovieMatchMakerLib.TmdbApi
             original
         }
 
-        public static string MakeMoviePosterImagePath(PosterImageSize imageSize, string posterImagePath)
+        public static string MakeImagePath(PosterImageSize imageSize, string imagePath)
         {
-            return $"{TMDB_IMAGE_BASE_PATH}/{imageSize}{posterImagePath}";
+            return $"{TMDB_IMAGE_BASE_PATH}/{imageSize}{imagePath}";
         }
     }
 }

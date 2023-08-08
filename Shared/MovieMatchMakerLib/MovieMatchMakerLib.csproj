@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>    
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>    
   </PropertyGroup>
 
     <!--
@@ -10,19 +11,18 @@
     </PropertyGroup>
     -->
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">    
+    <WarningLevel>7</WarningLevel>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">    
+    <WarningLevel>7</WarningLevel>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DbCache.cs" />
-    <Compile Remove="Model\JsonSerializerContext\MovieConnectionListSerializerContext.cs" />
+    <Compile Remove="DbCache.cs" />    
     <Compile Remove="MovieMatchMakerContext.cs" />
   </ItemGroup>
 
