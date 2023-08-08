@@ -12,7 +12,7 @@ Find movies you didn't know you liked! Website and backend used to find similar 
 
 [![.NET Frontend](https://github.com/nam20485/MovieMatchMaker/actions/workflows/dotnet-frontend.yml/badge.svg?branch=production)](https://github.com/nam20485/MovieMatchMaker/actions/workflows/dotnet-frontend.yml)
 
-[![Deploy Frontend to GitHub Pages](https://github.com/nam20485/MovieMatchMaker/actions/workflows/main.yml/badge.svg?branch=production)](https://github.com/nam20485/MovieMatchMaker/actions/workflows/main.yml)
+[![Deploy Frontend to GitHub Pages](https://github.com/nam20485/MovieMatchMaker/actions/workflows/deploy-frontend-to-github-pages.yml/badge.svg?branch=production)](https://github.com/nam20485/MovieMatchMaker/actions/workflows/deploy-frontend-to-github-pages.yml)
 
 ##### /main
 
