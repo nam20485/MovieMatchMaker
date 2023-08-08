@@ -1,20 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 using MovieMatchMakerLib.TmdbApi;
 
 namespace MovieMatchMakerLib.Model
 {
-    public class Movie : Production, ITmdbLinkable
+    public class Movie : Production
     {
-        public string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", MovieId);
+        [JsonIgnore]
+        public override string TmdbLink => TmdbApiHelper.MakeTmdbUrl("movie", ApiId);
+
+        public Movie()
+        {
+        }
 
         public Movie(string title, int releaseYear, int movieId, string posterImagePath)
             : base(title, releaseYear, movieId, posterImagePath)
         {
-        }
-
-        public string MakePosterImagePath(TmdbApiHelper.PosterImageSize posterImageSize)
-        {
-            return TmdbApiHelper.MakeMoviePosterImagePath(posterImageSize, PosterImagePath);
         }
 
         public class List : List<Movie>

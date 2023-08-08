@@ -12,7 +12,8 @@ namespace MovieMatchMakerLibTests
     {
         public static JsonFileCache LoadJsonFileCache()
         {
-            var dataCache = JsonFileCache.Load(MovieDataBuilder.FilePath);
+            var dataCache = JsonFileCache.Load(GetTestMovieDataFilePath());
+            dataCache.Should().NotBeNull();
             return dataCache;
         }
 
@@ -22,14 +23,14 @@ namespace MovieMatchMakerLibTests
             var connectionBuilder = new MovieConnectionBuilder(dataCache);
             if (loaded)
             {
-                connectionBuilder.LoadMovieConnections();
+                connectionBuilder.LoadMovieConnections(GetTestMovieConnectionsFilePath());
             }
             return connectionBuilder;
         }        
 
         public static CachedDataSource CreateCachedDataSource()
         {
-            var dataCache = LoadJsonFileCache();
+            var dataCache = LoadJsonFileCache();           
             var apiDataSource = new ApiDataSource();
             var dataSource = new CachedDataSource(dataCache, apiDataSource);
             return dataSource;
@@ -38,13 +39,15 @@ namespace MovieMatchMakerLibTests
         public static MovieDataBuilder CreateMovieDataBuilder()
         {            
             var cachedDataSource = CreateCachedDataSource();
-            var movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource, false);
+            var movieNetworkDataBuilder = new MovieDataBuilder(cachedDataSource);
             return movieNetworkDataBuilder;
         }
 
         public static MovieConnectionsController CreateMovieConnectionsController(bool applyDefaultFilters)
         {
-            return new MovieConnectionsController(CreateLogger<MovieConnectionsController>(), CreateMovieConnectionsService(), applyDefaultFilters);
+            return new MovieConnectionsController(CreateLogger<MovieConnectionsController>(),
+                                                  CreateMovieConnectionsService(),
+                                                  applyDefaultFilters);
         }
 
         public static MovieConnectionsService CreateMovieConnectionsService()
@@ -58,6 +61,40 @@ namespace MovieMatchMakerLibTests
             {
                 //
             }).CreateLogger<T>();
+        }
+
+        public static string? GetTestDataDir()
+        {
+            const string testDataEnvVarName = Constants.Strings.TestDataDirEnvVarName;
+            var testDataDir = Environment.GetEnvironmentVariable(testDataEnvVarName);
+
+            testDataDir.Should().NotBeNull($"no {testDataEnvVarName} environment variable was found");
+            testDataDir.Should().NotBeEmpty();            
+            Directory.Exists(testDataDir).Should().BeTrue();
+            
+            return testDataDir;
+        }
+
+        public static string MakeTestDataFilePath(string filename)
+        {
+            // guaranteed !null b/c of asserts inside GetTestDataDir()
+            var path = Path.Combine(GetTestDataDir()!, filename);
+
+            path.Should().NotBeNull();
+            path.Should().NotBeEmpty();
+            File.Exists(path).Should().BeTrue();
+
+            return path;
+        }
+
+        public static string GetTestMovieDataFilePath()
+        {
+            return MakeTestDataFilePath(Constants.Strings.MovieDataFilename);
+        }
+
+        public static string GetTestMovieConnectionsFilePath()
+        {
+            return MakeTestDataFilePath(Constants.Strings.MovieConnectionsFilename);
         }
     }
 }

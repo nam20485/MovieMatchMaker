@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,7 +17,7 @@ namespace MovieMatchMakerLib.Client
 {
     public class MovieConnectionsStaticFileClient : IMovieConnectionsClient
     {
-        public const string MovieConnectionsFilename = "movieconnections.json";       
+        public const string MovieConnectionsFilename = "movie-connections.json";       
 
         private readonly IHttpClientFactory _httpClientFactory;
 

@@ -12,10 +12,10 @@ COPY ["Backend", "Backend/"]
 COPY ["Shared", "Shared/"]
 RUN dotnet restore "Backend/MovieMatchMakerApi/MovieMatchMakerApi.csproj"
 WORKDIR "/src/Backend/MovieMatchMakerApi"
-RUN dotnet build "MovieMatchMakerApi.csproj" -c Release -o /app/build
+RUN dotnet build "MovieMatchMakerApi.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
-RUN dotnet publish "MovieMatchMakerApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "MovieMatchMakerApi.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app

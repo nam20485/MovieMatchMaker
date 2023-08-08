@@ -1,6 +1,5 @@
 ﻿using MovieMatchMakerLib;
 using MovieMatchMakerLib.Data;
-using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerApi.Services
 {

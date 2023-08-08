@@ -45,7 +45,7 @@ else
             <PropertyColumn Property="m => m.ReleaseYear" Title="Year Released"/>
             @if (HostEnvironment.IsDevelopment() && _showMovieIdColumn)
             {
-                <PropertyColumn Property="m => m.MovieId" Hideable="true" />
+                <PropertyColumn Property="m => m.ApiId" Hideable="true" />
             }
             <TemplateColumn Filterable="false" Sortable="false" >
                 <CellTemplate>
@@ -104,14 +104,14 @@ else
 
         if (HostEnvironment.IsDevelopment())
         {
-            if (x.MovieId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            if (x.ApiId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
 
         var crossColumnValues = $"{x.Title} {x.ReleaseYear}";
         if (HostEnvironment.IsDevelopment())
         {
-            crossColumnValues += $" {x.MovieId.ToString()}";
+            crossColumnValues += $" {x.ApiId.ToString()}";
         }               
         if (crossColumnValues.Contains(_searchString))
             return true;

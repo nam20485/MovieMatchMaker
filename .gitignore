@@ -44,3 +44,6 @@
 /Frontend/.vs/ProjectEvaluation
 /Backend/MovieMatchMakerApi/Dark City_1998_connections.png
 /Frontend/MovieMatchMakerClient/bin/Release/net7.0
+/Frontend/Tests/bin/Release/net7.0
+/Frontend/Tests/obj
+/Frontend/Tests/bin/Debug/net7.0
