@@ -134,7 +134,7 @@ namespace MovieMatchMakerLib.Utils
                 if (disposing)
                 {
                     Stop();
-                    // TODO: will Dispose()'ing Console.Out throw an exception?
+                    // Calling Dispose() on Console.{Out,Error} does not seem to throw an exception
                     foreach (var textWriterOutput in TextWriterOutputs)
                     {
                         textWriterOutput.Flush();
