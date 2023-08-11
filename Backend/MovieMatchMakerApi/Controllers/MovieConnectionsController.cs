@@ -102,16 +102,18 @@ namespace MovieMatchMakerApi.Controllers
             {
                 var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
                 var graph = new MovieConnectionsGraph(connections);
-                var exportPath = $"{movieId.Title}_{movieId.ReleaseYear}_connections.png";
+                var exportPath = "";
                 //var mapped = _webHostEnvironment.MapPath(exportPath);
 
                 var svg = true;                     
                 if (svg)
                 {
+                    exportPath = $"{Guid.NewGuid()}_connections.svg"; ;
                     graph.ExportToSvgFile(exportPath);
                 }
                 else
                 {
+                    exportPath = $"{Guid.NewGuid()}_connections.png"; ;
                     graph.ExportToPngFile(exportPath);
                 }
                 var bytes = System.IO.File.ReadAllBytes(exportPath);                
