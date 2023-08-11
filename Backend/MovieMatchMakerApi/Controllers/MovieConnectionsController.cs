@@ -4,6 +4,9 @@ using MovieMatchMakerApi.Services;
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.Graph;
+using System.Net;
+using Swashbuckle.AspNetCore.Annotations;
+using Rubjerg.Graphviz;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,16 +20,19 @@ namespace MovieMatchMakerApi.Controllers
 
         private readonly IMovieConnectionsService _connectionsService;
 
-        private readonly bool _applyDefaultFilters = true;     
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        private readonly bool _applyDefaultFilters; 
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
                                           IMovieConnectionsService connectionsService,
+                                          IWebHostEnvironment env,
                                           bool applyDefaultFilters = true)
         {
             _logger = logger;
-
             _applyDefaultFilters = applyDefaultFilters;
             _connectionsService = connectionsService;
+            _webHostEnvironment = env;
         }
 
         // get all movie connections
@@ -37,10 +43,17 @@ namespace MovieMatchMakerApi.Controllers
         }
 
         // get movie connections for a movie
-        [HttpGet("movieconnections/{title}/{releaseYear}")]
-        public IEnumerable<MovieConnection> GetMovieConnectionsForMovie([FromRoute] string title, [FromRoute] int releaseYear)
+        [HttpGet("movieconnections/{Title}/{ReleaseYear:int}")]
+        public ActionResult<IEnumerable<MovieConnection>> GetMovieConnectionsForMovie([FromRoute] MovieIdentifier movieId)
         {
-            return FindForMovie(title, releaseYear);
+            if (ModelState.IsValid)
+            {
+                return FindForMovie(movieId.Title, movieId.ReleaseYear);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }        
 
         // get filtered movie connections
@@ -51,10 +64,17 @@ namespace MovieMatchMakerApi.Controllers
         }      
 
         // get movie connections for a movie and then filter
-        [HttpPost("movieconnections/filter/{title}/{releaseYear}")]
-        public IEnumerable<MovieConnection> FilterMovieConnectionsForMovie([FromRoute] string title, [FromRoute] int releaseYear, [FromBody] List<IMovieConnectionListFilter> filters)
-        {            
-            return Filter(FindForMovie(title, releaseYear), filters);
+        [HttpPost("movieconnections/filter/{Title}/{ReleaseYear:int}")]
+        public ActionResult<IEnumerable<MovieConnection>> FilterMovieConnectionsForMovie([FromRoute] MovieIdentifier movieId, [FromBody] List<IMovieConnectionListFilter> filters)
+        {
+            if (ModelState.IsValid)
+            {
+                return Filter(FindForMovie(movieId.Title, movieId.ReleaseYear), filters);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         // get movie connection by source and target movie        
@@ -72,18 +92,39 @@ namespace MovieMatchMakerApi.Controllers
         }
 
         // get movie connections for a movie
-        [HttpGet("movieconnections/graph/{title}/{releaseYear}")]
-        public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] string title, [FromRoute] int releaseYear)
+        //[Consumes(typeof(MovieIdentifier), "image/png", "image/svg+xml")]      
+        [SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
+        [ProducesResponseType(typeof(FileContentResult), (int) HttpStatusCode.OK, "image/png", "image/svg+xml")]        
+        [HttpGet("movieconnections/graph/{Title}/{ReleaseYear:int}")]
+        public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] MovieIdentifier movieId)
         {
-            var connections = FindForMovie(title, releaseYear);
-            var graph = new MovieConnectionsGraph(connections);
-            var exportPath = $"{title}_{releaseYear}_connections.png";
-            graph.ExportToPngFile(exportPath);
-            var bytes = System.IO.File.ReadAllBytes(exportPath);
-            //return File(bytes, "image/svg+xml");
-            return File(bytes, "image/png");
-        }
+            if (ModelState.IsValid)
+            {
+                var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
+                var graph = new MovieConnectionsGraph(connections);
+                var exportPath = "";
+                //var mapped = _webHostEnvironment.MapPath(exportPath);
 
+                var svg = true;                     
+                if (svg)
+                {
+                    exportPath = $"{Guid.NewGuid()}_connections.svg"; ;
+                    graph.ExportToSvgFile(exportPath);
+                }
+                else
+                {
+                    exportPath = $"{Guid.NewGuid()}_connections.png"; ;
+                    graph.ExportToPngFile(exportPath);
+                }
+                var bytes = System.IO.File.ReadAllBytes(exportPath);                
+                return File(bytes, svg? "image/svg+xml" : "image/png");                
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+     
         private MovieConnection.List GetMovieConnections()
         {
             var movieConnections = _connectionsService.MovieConnections;

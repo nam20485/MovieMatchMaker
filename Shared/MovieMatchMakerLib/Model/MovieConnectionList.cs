@@ -14,6 +14,7 @@ namespace MovieMatchMakerLib.Model
         {
             public static readonly List Empty = new();
 
+            // protects access to Items and Item.ConnectedRoles
             private readonly object _accessLock = new();
 
             public List()

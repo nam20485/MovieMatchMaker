@@ -5,10 +5,10 @@ name: .NET Frontend
 
 on:
   push:
-    branches: ["*"]
+    branches: [ "main", "production", "development" ]
     paths-ignore: 'Backend/**'
   pull_request:
-    branches: ["*"]
+    branches: [ "main", "production", "development" ]
     paths-ignore: 'Backend/**'
 
 jobs:
