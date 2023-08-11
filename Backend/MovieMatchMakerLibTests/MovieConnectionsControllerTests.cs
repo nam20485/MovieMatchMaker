@@ -1,4 +1,5 @@
 ﻿using MovieMatchMakerLib.Filters;
+using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerLibTests
 {
@@ -29,9 +30,9 @@ namespace MovieMatchMakerLibTests
         {
             var controller = Utils.CreateMovieConnectionsController(true);
 
-            var darkCityConnections = controller.GetMovieConnectionsForMovie("Dark City", 1998);
-            darkCityConnections.Should().NotBeNull();
-            darkCityConnections.Should().BeEmpty();
+            var darkCityConnections = controller.GetMovieConnectionsForMovie(new MovieIdentifier("Dark City", 1998));
+            darkCityConnections.Value.Should().NotBeNull();
+            darkCityConnections.Value.Should().NotBeNull();
             //darkCityConnections.Should().HaveCount(0);
         }
 
@@ -51,9 +52,9 @@ namespace MovieMatchMakerLibTests
         {
             var controller = Utils.CreateMovieConnectionsController(true);
 
-            var allConnections = controller.FilterMovieConnectionsForMovie("Dark City", 1998, _filters);
-            allConnections.Should().NotBeNull();
-            allConnections.Should().BeEmpty();
+            var allConnections = controller.FilterMovieConnectionsForMovie(new MovieIdentifier("Dark City", 1998), _filters);
+            allConnections.Value.Should().NotBeNull();
+            allConnections.Value.Should().NotBeNull();
             //allConnections.Should().HaveCount(0);
         }
 
@@ -73,10 +74,10 @@ namespace MovieMatchMakerLibTests
         {
             var controller = Utils.CreateMovieConnectionsController(false);
 
-            var darkCityConnections = controller.GetMovieConnectionsForMovie("Dark City", 1998);
-            darkCityConnections.Should().NotBeNull();
-            darkCityConnections.Should().NotBeEmpty();
-            darkCityConnections.Should().HaveCount(305);
+            var darkCityConnections = controller.GetMovieConnectionsForMovie(new MovieIdentifier("Dark City", 1998));
+            darkCityConnections.Value.Should().NotBeNull();
+            darkCityConnections.Value.Should().NotBeNull();            
+            darkCityConnections.Value.Should().HaveCount(305);
         }
 
         [Fact]
@@ -95,10 +96,10 @@ namespace MovieMatchMakerLibTests
         {
             var controller = Utils.CreateMovieConnectionsController(false);
 
-            var allConnections = controller.FilterMovieConnectionsForMovie("Dark City", 1998, _filters);
-            allConnections.Should().NotBeNull();
-            allConnections.Should().NotBeEmpty();
-            allConnections.Should().HaveCount(14);
+            var allConnections = controller.FilterMovieConnectionsForMovie(new MovieIdentifier("Dark City", 1998), _filters);
+            allConnections.Value.Should().NotBeNull();
+            allConnections.Value.Should().NotBeEmpty();
+            allConnections.Value.Should().HaveCount(14);
         }
     }
 }
