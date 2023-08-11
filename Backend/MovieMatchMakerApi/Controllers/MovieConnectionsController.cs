@@ -133,9 +133,7 @@ namespace MovieMatchMakerApi.Controllers
 
         private string MapPath(string path)
         {
-            var webRoot = _webHostEnvironment.WebRootPath;
-            var mapped = Path.Combine(webRoot, path);
-            return mapped;
+            return Path.Combine(_webHostEnvironment.WebRootPath, path);            
         }
     }
 }
