@@ -84,24 +84,24 @@ namespace MovieMatchMakerLib.Client
             return _movieConnections;
         }
 
-        private async Task<MovieConnection.List> DeserializeMovieConnections()
-        {
-            var stopWatch = new PrintStopwatch();
-            var httpClient = _httpClientFactory.CreateClient("Static");
+        //private async Task<MovieConnection.List> DeserializeMovieConnections()
+        //{
+        //    var stopWatch = new PrintStopwatch();
+        //    var httpClient = _httpClientFactory.CreateClient("Static");
 
-            stopWatch.Start();
-            var json = await httpClient.GetStringAsync(MovieConnectionsFilename);
-            stopWatch.Stop();
-            _logger.LogInformation("MovieConnections' json fectched in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
+        //    stopWatch.Start();
+        //    var json = await httpClient.GetStringAsync(MovieConnectionsFilename);
+        //    stopWatch.Stop();
+        //    _logger.LogInformation("MovieConnections' json fectched in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
 
-            stopWatch.Restart();                        
-            MovieConnection.List movieConnections = null;
-            movieConnections = JsonSerializer.Deserialize(json, typeof(MovieConnection.List), new MovieConnectionListJsonSerializerContext(GlobalSerializerOptions.Options)) as MovieConnection.List;
-            //movieConnections = MovieConnection.List.FromJson(json);
-            stopWatch.Stop();
-            _logger.LogInformation("MovieConnections deserialized in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
+        //    stopWatch.Restart();                        
+        //    MovieConnection.List movieConnections = null;
+        //    movieConnections = JsonSerializer.Deserialize(json, typeof(MovieConnection.List), new MovieConnectionListJsonSerializerContext(GlobalSerializerOptions.Options)) as MovieConnection.List;
+        //    //movieConnections = MovieConnection.List.FromJson(json);
+        //    stopWatch.Stop();
+        //    _logger.LogInformation("MovieConnections deserialized in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
 
-            return movieConnections;
-        }
+        //    return movieConnections;
+        //}
     }
 }
