@@ -18,16 +18,20 @@ namespace MovieMatchMakerApi.Controllers
 
         private readonly IMovieConnectionsService _connectionsService;
 
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
         private readonly bool _applyDefaultFilters = true;     
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
                                           IMovieConnectionsService connectionsService,
+                                          IWebHostEnvironment env,
                                           bool applyDefaultFilters = true)
         {
             _logger = logger;
 
             _applyDefaultFilters = applyDefaultFilters;
             _connectionsService = connectionsService;
+            _webHostEnvironment = env;
         }
 
         // get all movie connections
@@ -47,7 +51,7 @@ namespace MovieMatchMakerApi.Controllers
             }
             else
             {
-                return BadRequest("invalid arguments");
+                return BadRequest(ModelState);
             }
         }        
 
@@ -68,7 +72,7 @@ namespace MovieMatchMakerApi.Controllers
             }
             else
             {
-                return BadRequest("invalid arguments");
+                return BadRequest(ModelState);
             }
         }
 
@@ -95,14 +99,15 @@ namespace MovieMatchMakerApi.Controllers
                 var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
                 var graph = new MovieConnectionsGraph(connections);
                 var exportPath = $"{movieId.Title}_{movieId.ReleaseYear}_connections.png";
-                graph.ExportToPngFile(exportPath);
+                var mapped = MapPath(exportPath);
+                graph.ExportToPngFile(mapped);
                 var bytes = System.IO.File.ReadAllBytes(exportPath);
                 //return File(bytes, "image/svg+xml");
                 return File(bytes, "image/png");                
             }
             else
             {
-                return BadRequest("Invalid arguments");
+                return BadRequest(ModelState);
             }
         }
      
@@ -124,6 +129,13 @@ namespace MovieMatchMakerApi.Controllers
         private static MovieConnection.List Filter(MovieConnection.List list, List<IMovieConnectionListFilter> filters)
         {
             return list.Filter(filters);
+        }
+
+        private string MapPath(string path)
+        {
+            var webRoot = _webHostEnvironment.WebRootPath;
+            var mapped = Path.Combine(webRoot, path);
+            return mapped;
         }
     }
 }

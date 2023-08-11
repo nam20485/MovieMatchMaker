@@ -1,15 +1,29 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+
+using Moq;
 
 using MovieMatchMakerApi.Controllers;
 using MovieMatchMakerApi.Services;
 
 using MovieMatchMakerLib;
 using MovieMatchMakerLib.Data;
+using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerLibTests
 {
     public class Utils
-    {
+    {     
+        private static MovieConnection.List LoadMovieConnections()
+        {
+            return LoadMovieConnections(Utils.GetTestMovieConnectionsFilePath());
+        }
+
+        private static MovieConnection.List LoadMovieConnections(string filePath)
+        {
+            return MovieConnection.List.LoadFromFile(filePath);
+        }
+
         public static JsonFileCache LoadJsonFileCache()
         {
             var dataCache = JsonFileCache.Load(GetTestMovieDataFilePath());
@@ -44,11 +58,21 @@ namespace MovieMatchMakerLibTests
         }
 
         public static MovieConnectionsController CreateMovieConnectionsController(bool applyDefaultFilters)
-        {
-            return new MovieConnectionsController(CreateLogger<MovieConnectionsController>(),
-                                                  CreateMovieConnectionsService(),
+        {           
+            var mockMovieConnectionsService = new Mock<IMovieConnectionsService>();
+            mockMovieConnectionsService
+                .Setup(service => service.MovieConnections)
+                .Returns(LoadMovieConnections());
+
+            IWebHostEnvironment env = null;
+
+            var logger = CreateLogger<MovieConnectionsController>();
+
+            return new MovieConnectionsController(logger,
+                                                  mockMovieConnectionsService.Object,
+                                                  env,
                                                   applyDefaultFilters);
-        }
+        }        
 
         public static MovieConnectionsService CreateMovieConnectionsService()
         {
