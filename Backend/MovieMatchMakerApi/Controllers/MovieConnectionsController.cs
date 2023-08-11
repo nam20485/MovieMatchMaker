@@ -4,7 +4,9 @@ using MovieMatchMakerApi.Services;
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib.Graph;
-using System.Diagnostics.Eventing.Reader;
+using System.Net;
+using Swashbuckle.AspNetCore.Annotations;
+using Rubjerg.Graphviz;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +22,7 @@ namespace MovieMatchMakerApi.Controllers
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        private readonly bool _applyDefaultFilters = true;     
+        private readonly bool _applyDefaultFilters; 
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
                                           IMovieConnectionsService connectionsService,
@@ -28,7 +30,6 @@ namespace MovieMatchMakerApi.Controllers
                                           bool applyDefaultFilters = true)
         {
             _logger = logger;
-
             _applyDefaultFilters = applyDefaultFilters;
             _connectionsService = connectionsService;
             _webHostEnvironment = env;
@@ -89,9 +90,12 @@ namespace MovieMatchMakerApi.Controllers
         {
             return GetMovieConnections().FindConnection(id);
         }
-        
+
         // get movie connections for a movie
-        [HttpGet("movieconnections/graph/{title}/{releaseYear}")]
+        //[Consumes(typeof(MovieIdentifier), "image/png", "image/svg+xml")]      
+        [SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
+        [ProducesResponseType(typeof(FileContentResult), (int) HttpStatusCode.OK, "image/png", "image/svg+xml")]        
+        [HttpGet("movieconnections/graph/{Title}/{ReleaseYear:int}")]
         public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] MovieIdentifier movieId)
         {
             if (ModelState.IsValid)
@@ -99,11 +103,19 @@ namespace MovieMatchMakerApi.Controllers
                 var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
                 var graph = new MovieConnectionsGraph(connections);
                 var exportPath = $"{movieId.Title}_{movieId.ReleaseYear}_connections.png";
-                var mapped = MapPath(exportPath);
-                graph.ExportToPngFile(mapped);
-                var bytes = System.IO.File.ReadAllBytes(exportPath);
-                //return File(bytes, "image/svg+xml");
-                return File(bytes, "image/png");                
+                //var mapped = _webHostEnvironment.MapPath(exportPath);
+
+                var svg = true;                     
+                if (svg)
+                {
+                    graph.ExportToSvgFile(exportPath);
+                }
+                else
+                {
+                    graph.ExportToPngFile(exportPath);
+                }
+                var bytes = System.IO.File.ReadAllBytes(exportPath);                
+                return File(bytes, svg? "image/svg+xml" : "image/png");                
             }
             else
             {
@@ -129,11 +141,6 @@ namespace MovieMatchMakerApi.Controllers
         private static MovieConnection.List Filter(MovieConnection.List list, List<IMovieConnectionListFilter> filters)
         {
             return list.Filter(filters);
-        }
-
-        private string MapPath(string path)
-        {
-            return Path.Combine(_webHostEnvironment.WebRootPath, path);            
         }
     }
 }
