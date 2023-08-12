@@ -102,7 +102,8 @@ namespace MovieMatchMakerApi.Controllers
             {
                 var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
                 var graph = new MovieConnectionsGraph(connections);
-                var exportPath = "";
+
+                string exportPath;
                 //var mapped = _webHostEnvironment.MapPath(exportPath);
 
                 var svg = true;                     
@@ -116,6 +117,7 @@ namespace MovieMatchMakerApi.Controllers
                     exportPath = $"{Guid.NewGuid()}_connections.png"; ;
                     graph.ExportToPngFile(exportPath);
                 }
+
                 var bytes = System.IO.File.ReadAllBytes(exportPath);                
                 return File(bytes, svg? "image/svg+xml" : "image/png");                
             }
