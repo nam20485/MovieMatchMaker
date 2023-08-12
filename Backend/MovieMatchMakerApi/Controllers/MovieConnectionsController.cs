@@ -91,7 +91,11 @@ namespace MovieMatchMakerApi.Controllers
             return GetMovieConnections().FindConnection(id);
         }
 
-        // get movie connections for a movie
+        // TODO: convert to return {.js|.mmd} file with mermaid markup built from MovieConnections.List in it
+        // MIME text/vnd.mermaid
+        // extensions: .mermaid || .mmd       
+
+        // get movie connections graph for a movie
         //[Consumes(typeof(MovieIdentifier), "image/png", "image/svg+xml")]      
         [SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
         [ProducesResponseType(typeof(FileContentResult), (int) HttpStatusCode.OK, "image/png", "image/svg+xml")]        
