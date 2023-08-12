@@ -9,7 +9,7 @@ on:
   push:
     branches: [ "main", "production", "development" ]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    #tags: [ 'v*.*.*' ]
     paths-ignore: 'Frontend/**'
   # pull_request:
   #   branches: [ "main" ]
@@ -23,7 +23,7 @@ env:
 
 
 jobs:
-  build:
+  build-and-push:
 
     runs-on: ubuntu-22.04
     permissions:
