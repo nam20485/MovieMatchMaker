@@ -13,12 +13,13 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main", "production", "development" ]
+    branches: [ "development" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "main", "production" ]
+    branches: [ "main", "production", "development" ]
 
 jobs:
+  
   analyze:
     name: Analyze
     # Runner size impacts CodeQL analysis time. To learn more, please see:
