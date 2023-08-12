@@ -5,7 +5,7 @@ using MovieMatchMakerLib.Model;
 
 namespace MovieMatchMakerLib.Data
 {
-    public interface IDataCache : IDataSource, IDisposable
+    public interface IDataCache : IDataSource
     {
         //void Load();
         Task SaveAsync();
