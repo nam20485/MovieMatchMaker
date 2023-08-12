@@ -11,8 +11,8 @@ namespace MovieMatchMakerLib.Model
         public int PersonId { get; set; }
         public MovieCredits MovieCredits { get; set; }    
         public string ProfileImagePath { get; set; }
-        [JsonIgnore]
-        public int Id { get; set; }
+        //[JsonIgnore]
+        //public int Id { get; set; }
 
         public class IntDictionary : ConcurrentDictionary<int, PersonsMovieCredits>
         {

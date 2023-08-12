@@ -10,8 +10,8 @@ namespace MovieMatchMakerLib.Model
     {
         public int MovieId { get; set; }
         public Credits Credits { get; set; }
-        [JsonIgnore]
-        public int Id { get; set; }
+        //[JsonIgnore]
+        //public int Id { get; set; }
 
         public class IntDictionary : ConcurrentDictionary<int, MoviesCredits>
         {
