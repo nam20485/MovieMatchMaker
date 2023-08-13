@@ -110,7 +110,7 @@ namespace MovieMatchMakerApi.Controllers
                 string exportPath;
                 //var mapped = _webHostEnvironment.MapPath(exportPath);
 
-                var svg = true;                     
+                var svg = false;                     
                 if (svg)
                 {
                     exportPath = $"{Guid.NewGuid()}_connections.svg"; ;
