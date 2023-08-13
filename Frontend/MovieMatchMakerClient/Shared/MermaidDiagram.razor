@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime JsRuntime
 @implements IAsyncDisposable
+@inject IJSRuntime JsRuntime
 
 <div class="@MermaidComponentClassName">
     @MermaidMarkup
@@ -8,20 +9,24 @@
 @code {
 
     [Parameter]
-    public string MermaidMarkup { get; set; }
+    public string? MermaidMarkup { get; set; }
 
     private const string MermaidComponentClassName = "mermaid";
 
-    private IJSObjectReference _mermaidModule;
+    private IJSObjectReference? _mermaidModule;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./modules/mermaidmodule.js");
-            await _mermaidModule.InvokeVoidAsync("Initialize");            
+            _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MermaidDiagram.razor.js");
+            await _mermaidModule.InvokeVoidAsync("Initialize");
         }
-        await _mermaidModule.InvokeVoidAsync("Render", "mermaid");
+
+        if (_mermaidModule is not null)
+        {
+            await _mermaidModule.InvokeVoidAsync("Render", "mermaid");
+        }
     }
 
     public async ValueTask DisposeAsync()

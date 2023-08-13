@@ -4,19 +4,14 @@ export function Initialize() {
     mermaid.initialize({ startOnLoad: true, flowchart: { useMaxWidth: true } });
 }
 
-export function Render(componentId, definition) {
-    const cb = function (svgGraph) {
-        //console.logg(svgGraph);
-    };
-    var elements = document.getElementsByClassName(componentId);
+export function Render(componentClassName) {
+    var elements = document.getElementsByClassName(componentClassName);
     for (const element of elements) {
-        const diagramdefinition = htmlDecode(element.innerHTML);
+        const diagramDefinition = htmlDecode(element.innerHTML);
         const id = "mmd" + Math.round(Math.random() * 10000);
-        mermaid.render(`${id}-mermaid-svg`, diagramdefinition, (svg, bind) => {
+        mermaid.render(`${id}-mermaid-svg`, diagramDefinition, (svg, bind) => {
             const host = element;
-            host.innerHTML = svg
-            //bind(host);
-
+            host.innerHTML = svg;
         });
     }
 }
@@ -25,3 +20,4 @@ function htmlDecode(input) {
     var doc = new DOMParser().parseFromString(input, "text/html");
     return doc.documentElement.textContent;
 }
+
