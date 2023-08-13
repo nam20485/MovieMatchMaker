@@ -10,8 +10,7 @@ export function Render(componentClassName) {
         const diagramDefinition = htmlDecode(element.innerHTML);
         const id = "mmd" + Math.round(Math.random() * 10000);
         mermaid.render(`${id}-mermaid-svg`, diagramDefinition, (svg, bind) => {
-            const host = element;
-            host.innerHTML = svg;
+            element.innerHTML = svg;
         });
     }
 }
