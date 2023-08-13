@@ -1,0 +1,34 @@
+﻿@inject IJSRuntime JsRuntime
+@implements IAsyncDisposable
+
+<div class="@MermaidComponentClassName">
+    @MermaidMarkup
+</div>
+
+@code {
+
+    [Parameter]
+    public string MermaidMarkup { get; set; }
+
+    private const string MermaidComponentClassName = "mermaid";
+
+    private IJSObjectReference _mermaidModule;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./modules/mermaidmodule.js");
+            await _mermaidModule.InvokeVoidAsync("Initialize");            
+        }
+        await _mermaidModule.InvokeVoidAsync("Render", "mermaid");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_mermaidModule is not null)
+        {
+            await _mermaidModule.DisposeAsync();
+        }
+    }
+}
