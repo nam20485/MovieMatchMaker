@@ -3,7 +3,9 @@
 @inject IJSRuntime JsRuntime
 
 <div class="@MermaidComponentClassName">
-    @MermaidMarkup
+    <div hidden>
+        @MermaidMarkup
+    </div>
 </div>
 
 @code {
@@ -18,6 +20,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
+        //if (_mermaidModule is null)
         {
             _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MermaidDiagram.razor.js");
             await _mermaidModule.InvokeVoidAsync("Initialize");
@@ -25,7 +28,8 @@
 
         if (_mermaidModule is not null)
         {
-            await _mermaidModule.InvokeVoidAsync("Render", "mermaid");
+            //await _mermaidModule.InvokeVoidAsync("RenderMarkup", "mermaid", MermaidMarkup);
+            await _mermaidModule.InvokeVoidAsync("RenderInnerHtml", "mermaid");
         }
     }
 
@@ -34,6 +38,7 @@
         if (_mermaidModule is not null)
         {
             await _mermaidModule.DisposeAsync();
+            _mermaidModule = null;
         }
     }
 }
