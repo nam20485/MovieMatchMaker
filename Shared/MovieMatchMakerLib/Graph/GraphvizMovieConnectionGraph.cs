@@ -4,12 +4,12 @@ using Rubjerg.Graphviz;
 
 namespace MovieMatchMakerLib.Graph
 {
-    public class MovieConnectionGraph
+    public class GraphvizMovieConnectionGraph
     {
         private readonly MovieConnection _movieConnection;
         private RootGraph _rootGraph;
 
-        public MovieConnectionGraph(MovieConnection movieConnection)
+        public GraphvizMovieConnectionGraph(MovieConnection movieConnection)
         {
             _movieConnection = movieConnection;
             _rootGraph = BuildGraph();

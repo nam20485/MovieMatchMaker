@@ -2,13 +2,13 @@
 
 namespace MovieMatchMakerLib.Model
 {
-    public class MovieConnectionsCluster
+    public class GraphvizMovieConnectionsCluster
     {
         private const string MovieIdAttributeName = "MovieId";
         private readonly RootGraph _rootGraph;
         private readonly MovieConnection.List _movieConnections;
 
-        public MovieConnectionsCluster(MovieConnection.List movieConnections)
+        public GraphvizMovieConnectionsCluster(MovieConnection.List movieConnections)
         {
             _movieConnections = movieConnections;
             _rootGraph = RootGraph.CreateNew("Movie Connections Cluster", GraphType.Undirected);

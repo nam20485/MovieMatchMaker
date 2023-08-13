@@ -6,12 +6,12 @@ using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib.Graph
 {
-    public class MovieConnectionsGraph
+    public class GraphvizMovieConnectionsGraph
     {
         private readonly MovieConnection.List _movieConnections;
         private RootGraph _rootGraph;
 
-        public MovieConnectionsGraph(MovieConnection.List movieConnections)
+        public GraphvizMovieConnectionsGraph(MovieConnection.List movieConnections)
         {
             _movieConnections = movieConnections;
             _rootGraph = BuildGraph();

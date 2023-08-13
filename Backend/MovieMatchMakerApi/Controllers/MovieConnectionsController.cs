@@ -3,10 +3,9 @@
 using MovieMatchMakerApi.Services;
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
-using MovieMatchMakerLib.Graph;
 using System.Net;
 using Swashbuckle.AspNetCore.Annotations;
-using Rubjerg.Graphviz;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -100,36 +99,36 @@ namespace MovieMatchMakerApi.Controllers
         [SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
         [ProducesResponseType(typeof(FileContentResult), (int) HttpStatusCode.OK, "image/png", "image/svg+xml")]        
         [HttpGet("movieconnections/graph/{Title}/{ReleaseYear:int}")]
-        public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] MovieIdentifier movieId)
-        {
-            if (ModelState.IsValid)
-            {
-                var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
-                var graph = new MovieConnectionsGraph(connections);
+        //public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] MovieIdentifier movieId)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var connections = FindForMovie(movieId.Title, movieId.ReleaseYear);
+        //        var graph = new GraphvizMovieConnectionsGraph(connections);
 
-                string exportPath;
-                //var mapped = _webHostEnvironment.MapPath(exportPath);
+        //        string exportPath;
+        //        //var mapped = _webHostEnvironment.MapPath(exportPath);
 
-                var svg = false;                     
-                if (svg)
-                {
-                    exportPath = $"{Guid.NewGuid()}_connections.svg"; ;
-                    graph.ExportToSvgFile(exportPath);
-                }
-                else
-                {
-                    exportPath = $"{Guid.NewGuid()}_connections.png"; ;
-                    graph.ExportToPngFile(exportPath);
-                }
+        //        var svg = false;                     
+        //        if (svg)
+        //        {
+        //            exportPath = $"{Guid.NewGuid()}_connections.svg"; ;
+        //            graph.ExportToSvgFile(exportPath);
+        //        }
+        //        else
+        //        {
+        //            exportPath = $"{Guid.NewGuid()}_connections.png"; ;
+        //            graph.ExportToPngFile(exportPath);
+        //        }
 
-                var bytes = System.IO.File.ReadAllBytes(exportPath);                
-                return File(bytes, svg? "image/svg+xml" : "image/png");                
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
-        }
+        //        var bytes = System.IO.File.ReadAllBytes(exportPath);                
+        //        return File(bytes, svg? "image/svg+xml" : "image/png");                
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //}
      
         private MovieConnection.List GetMovieConnections()
         {
