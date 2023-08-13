@@ -94,11 +94,27 @@ namespace MovieMatchMakerApi.Controllers
         // MIME text/vnd.mermaid
         // extensions: .mermaid || .mmd       
 
+        // get movie connections graph for a movie        
+        [SwaggerResponse((int)HttpStatusCode.OK, "Returns graph of movie's connections", typeof(FileContentResult), "text/plain")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK, "text/plain")]
+        [HttpGet("movieconnections/graph/{Title}/{ReleaseYear:int}")]
+        public ActionResult<string> GetMovieConnectionsGraphForMovie([FromRoute] MovieIdentifier movieId)
+        {
+            if (ModelState.IsValid)
+            {
+                return new MermaidMovieConnectionsGraph(FindForMovie(movieId.Title, movieId.ReleaseYear)).Export();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
         // get movie connections graph for a movie
         //[Consumes(typeof(MovieIdentifier), "image/png", "image/svg+xml")]      
-        [SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
-        [ProducesResponseType(typeof(FileContentResult), (int) HttpStatusCode.OK, "image/png", "image/svg+xml")]        
-        [HttpGet("movieconnections/graph/{Title}/{ReleaseYear:int}")]
+        //[SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
+        //[ProducesResponseType(typeof(FileContentResult), (int) HttpStatusCode.OK, "image/png", "image/svg+xml")]        
+        //[HttpGet("movieconnections/graph/{Title}/{ReleaseYear:int}")]
         //public IActionResult GetMovieConnectionsGraphForMovie([FromRoute] MovieIdentifier movieId)
         //{
         //    if (ModelState.IsValid)
