@@ -7,7 +7,7 @@ namespace MovieMatchMakerLib.Model
     {
         [Required]
         [StringLength(200)]
-        [RegularExpression("[A-Za-z0-9\\p{L}\\p{N} ]+")]   // > 0 Ascii letters & numbers, Unicode numbers and letters and space only
+        [RegularExpression("[A-Za-z0-9\\p{L}\\p{N} :']+")]   // > 0 Ascii letters & numbers, Unicode numbers and letters and space only
         public string Title { get; set; }
 
         [Required]
