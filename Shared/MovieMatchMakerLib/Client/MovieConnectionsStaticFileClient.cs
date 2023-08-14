@@ -92,7 +92,7 @@ namespace MovieMatchMakerLib.Client
             _logger.LogInformation("MovieConnections' json fectched in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
 
             stopWatch.Restart();
-            MovieConnection.List movieConnections = null;
+            MovieConnection.List movieConnections;
             //movieConnections = JsonSerializer.Deserialize(json, typeof(MovieConnection.List), new MovieConnectionListJsonSerializerContext(GlobalSerializerOptions.Options)) as MovieConnection.List;
             movieConnections = MovieConnection.List.FromJson(json);
             stopWatch.Stop();

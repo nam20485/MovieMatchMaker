@@ -18,20 +18,16 @@ namespace MovieMatchMakerApi.Controllers
         private readonly ILogger<MovieConnectionsController> _logger;
 
         private readonly IMovieConnectionsService _connectionsService;
-
-        private readonly IWebHostEnvironment _webHostEnvironment;
-
+        
         private readonly bool _applyDefaultFilters; 
 
         public MovieConnectionsController(ILogger<MovieConnectionsController> logger,
                                           IMovieConnectionsService connectionsService,
-                                          IWebHostEnvironment env,
                                           bool applyDefaultFilters = true)
         {
             _logger = logger;
             _applyDefaultFilters = applyDefaultFilters;
             _connectionsService = connectionsService;
-            _webHostEnvironment = env;
         }
 
         // get all movie connections

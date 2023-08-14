@@ -62,15 +62,12 @@ namespace MovieMatchMakerLibTests
             var mockMovieConnectionsService = new Mock<IMovieConnectionsService>();
             mockMovieConnectionsService
                 .Setup(service => service.MovieConnections)
-                .Returns(LoadMovieConnections());
-
-            IWebHostEnvironment env = null;
+                .Returns(LoadMovieConnections());            
 
             var logger = CreateLogger<MovieConnectionsController>();
 
             return new MovieConnectionsController(logger,
-                                                  mockMovieConnectionsService.Object,
-                                                  env,
+                                                  mockMovieConnectionsService.Object,                                                  
                                                   applyDefaultFilters);
         }        
 

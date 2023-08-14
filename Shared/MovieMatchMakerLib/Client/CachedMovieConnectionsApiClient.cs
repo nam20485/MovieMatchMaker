@@ -23,12 +23,7 @@ public class CachedMovieConnectionsApiClient : MovieConnectionsApiClient
     
     public override async Task<MovieConnection.List> GetAllMovieConnections()
     {
-        //return _movieConnections ??= await base.GetAllMovieConnections();
-        if (_movieConnections is null)
-        {
-            _movieConnections = await base.GetAllMovieConnections();
-        }
-        return _movieConnections;
+        return _movieConnections ??= await base.GetAllMovieConnections();        
     }
 
     public override async Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear)

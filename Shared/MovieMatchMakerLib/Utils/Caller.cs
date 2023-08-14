@@ -26,11 +26,11 @@ namespace MovieMatchMakerLib.Utils
             return $"{callerMemberName}() - Exit";
         }
 
-        public static string MemberNameDegree2([CallerMemberName] string callerMemberName = "")
-        {
-            // inception!
-            return GetMemberName();
-        }
+        //public static string MemberNameDegree2([CallerMemberName] string callerMemberName = "")
+        //{
+        //    // inception!
+        //    return GetMemberName();
+        //}
 
         public static (string Name, string path, int Line) MemberNameLocationValues([CallerMemberName] string callerMemberName = "",
                                                                      [CallerFilePath] string callerFilePath = "",

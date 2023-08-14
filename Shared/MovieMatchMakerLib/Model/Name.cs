@@ -45,7 +45,7 @@ namespace MovieMatchMakerLib.Model
 
         private void ParseFullName(string fullName)
         {
-            if (fullName.Contains(","))
+            if (fullName.Contains(','))
             {
                 var parts = fullName.Split(',');
                 if (parts.Length > 0)
@@ -78,7 +78,7 @@ namespace MovieMatchMakerLib.Model
 
         public bool Equals(Name other)
         {
-            return !(other is null) &&
+            return other is not null &&
                    FirstName == other.FirstName &&
                    Surname == other.Surname;
         }
