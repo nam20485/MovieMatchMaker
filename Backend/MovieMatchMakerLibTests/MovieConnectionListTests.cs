@@ -1,5 +1,6 @@
 ﻿using MovieMatchMakerLib;
 using MovieMatchMakerLib.Model;
+using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLibTests
 {
@@ -29,7 +30,7 @@ namespace MovieMatchMakerLibTests
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(11754);
 
-            const string filePath = "movieconnections_test_savetofile.json";
+            var filePath = $"{Caller.GetMemberName()}_movieconnections_save.json";
             loaded.SaveToFile(filePath);
             File.Exists(filePath).Should().BeTrue();
         }
@@ -42,7 +43,7 @@ namespace MovieMatchMakerLibTests
             loaded.Should().NotBeEmpty();
             loaded.Should().HaveCount(11754);
 
-            const string filePath = "movieconnections_test_savetofile.json";
+            var filePath = $"{Caller.GetMemberName()}_movieconnections_save.json";
             loaded.SaveToFile(filePath);
             File.Exists(filePath).Should().BeTrue();
 

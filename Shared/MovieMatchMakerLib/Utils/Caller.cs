@@ -1,21 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieMatchMakerLib.Utils
 {
     public static class Caller
     {
-        public static string MemberName([CallerMemberName] string callerMemberName = "") => callerMemberName;
+        public static string GetMemberName([CallerMemberName] string callerMemberName = "") => callerMemberName;
+        public static string GetFilePath([CallerFilePath] string callerFilePath = "") => callerFilePath;
+        public static int GetLineNumber([CallerLineNumber] int callerLineNumber = -1) => callerLineNumber;
+
+        public static string MemberNameAndMessage([CallerMemberName] string callerMemberName = "",
+                                                 string format = "",
+                                                 params object[] formatArgs)
+        {
+            return $"{callerMemberName}() - {string.Format(format, formatArgs)}";
+        }
+
+        public static string MemberNameEnter([CallerMemberName] string callerMemberName = "")
+        {
+            return $"{callerMemberName}() - Enter";
+        }
+
+        public static string MemberNameExit([CallerMemberName] string callerMemberName = "")
+        {
+            return $"{callerMemberName}() - Exit";
+        }
 
         public static string MemberNameDegree2([CallerMemberName] string callerMemberName = "")
         {
-            // ?
-            return MemberName();
+            // inception!
+            return GetMemberName();
         }
 
         public static (string Name, string path, int Line) MemberNameLocationValues([CallerMemberName] string callerMemberName = "",
@@ -23,41 +37,54 @@ namespace MovieMatchMakerLib.Utils
                                                                      [CallerLineNumber] int callerLineNumber = -1)
         {
             return (callerMemberName, callerFilePath, callerLineNumber);
-        }
+        }     
 
-        public static string MemberNameLocationAll([CallerMemberName] string callerMemberName = "",
-                                                   [CallerFilePath] string callerFilePath = "",
-                                                   [CallerLineNumber] int callerLineNumber = -1)
-        {
-            return $"{callerFilePath}: {callerLineNumber} - {callerMemberName}()";
-        }
-
-        public static string MemberNameLocatio([CallerMemberName] string callerMemberName = "",
-                                               [CallerFilePath] string callerFilePath = "",
-                                               [CallerLineNumber] int callerLineNumber = -1,
-                                               bool memberName = false,
-                                               bool filePath = false,
-                                               bool lineNumber = false)
+        public static string MemberNameLocation([CallerMemberName] string callerMemberName = "",
+                                                [CallerFilePath] string callerFilePath = "",
+                                                [CallerLineNumber] int callerLineNumber = -1,
+                                                bool memberName = true,
+                                                bool filePath = true,
+                                                bool lineNumber = true)
         {
             return $"{(filePath? callerFilePath:"")}: {(lineNumber? callerLineNumber:"")} - {(memberName? callerMemberName+"()":"")}";
         }
 
-        public static string MemberNameExpression<T>(T value,
+        public static string MemberNameAndExpression<T>(T value,
                                                      [CallerMemberName] string callerMemberName = "",                                                  
                                                      [CallerArgumentExpression(nameof(value))] string valueExpression = "")
         {
-            return $"{callerMemberName}({valueExpression}) was called with {value}";
+            return $"{callerMemberName}() - \'{valueExpression}\' => \'{value}\'";
         }
-        public static string ExpressionLocation<T>(T value,
-                                                   [CallerMemberName] string callerMemberName = "",
-                                                   [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+
+        public static string MemberNameCalledWith<T>(T value,
+                                                     [CallerMemberName] string callerMemberName = "",
+                                                     [CallerArgumentExpression(nameof(value))] string valueExpression = "")
         {
-            return $"{callerMemberName}(...):  {valueExpression} was {value}";
+            return $"{callerMemberName}({valueExpression} = \'{value}\')";
         }
 
-        public static string FilePath([CallerFilePath] string callerFilePath = "") => callerFilePath;
+        public static string MemberNameCalledWitEnter<T>(T value,
+                                                         [CallerMemberName] string callerMemberName = "",
+                                                         [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+        {
+            return $"{callerMemberName}({valueExpression} = \'{value}\') - Enter";
+        }
 
-        public static int LineNumber([CallerLineNumber] int callerLineNumber = -1) => callerLineNumber;
+        public static string MemberNameCalledWithExit<T>(T value,
+                                                        [CallerMemberName] string callerMemberName = "",
+                                                        [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+        {
+            return $"{callerMemberName}({valueExpression} = \'{value}\') - Exit";
+        }
+
+        public static string MemberNameCalledWithAndMessage<T>(T value,
+                                                               [CallerMemberName] string callerMemberName = "",
+                                                               [CallerArgumentExpression(nameof(value))] string valueExpression = "",
+                                                               string format = "",
+                                                               params object[] formatArgs)
+        {
+            return $"{callerMemberName}({valueExpression} = \'{value}\') - {string.Format(format, formatArgs)}";
+        }            
 
         public static string ArgumentExpression<T>(T value, 
                                                    [CallerArgumentExpression(nameof(value))] string valueExpression = "")
@@ -70,7 +97,7 @@ namespace MovieMatchMakerLib.Utils
                                                       [CallerArgumentExpression(nameof(uValue))] string uValueExpression = "",
                                                       string separator = "\n")
         {
-            return $"{tValueExpression} was {tValue}{separator}{uValueExpression} was {uValue}";
+            return $"\'{tValueExpression}\' => \'{tValue}\'{separator}\'{uValueExpression}\' => \'{uValue}\'";
         }
 
         public static void ActionExpression(Action value,

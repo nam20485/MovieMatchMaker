@@ -1,0 +1,44 @@
+﻿@inject IJSRuntime JsRuntime
+@implements IAsyncDisposable
+@inject IJSRuntime JsRuntime
+
+<div class="@MermaidComponentClassName">
+    <div hidden>
+        @MermaidMarkup
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string? MermaidMarkup { get; set; }
+
+    private const string MermaidComponentClassName = "mermaid";
+
+    private IJSObjectReference? _mermaidModule;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        //if (_mermaidModule is null)
+        {
+            _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MermaidDiagram.razor.js");
+            await _mermaidModule.InvokeVoidAsync("Initialize");
+        }
+
+        if (_mermaidModule is not null)
+        {
+            //await _mermaidModule.InvokeVoidAsync("RenderMarkup", "mermaid", MermaidMarkup);
+            await _mermaidModule.InvokeVoidAsync("RenderInnerHtml", "mermaid");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_mermaidModule is not null)
+        {
+            await _mermaidModule.DisposeAsync();
+            _mermaidModule = null;
+        }
+    }
+}

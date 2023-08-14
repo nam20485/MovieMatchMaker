@@ -8,7 +8,7 @@ namespace MovieMatchMakerLib.Utils
 
         private const string DefaultFilePath = "./log.txt";        
 
-        public FileLogger(string filePath, Level logLevel)
+        public FileLogger(Level logLevel, string filePath)
             : base(logLevel)
         {
             FilePath = filePath;
@@ -16,7 +16,7 @@ namespace MovieMatchMakerLib.Utils
         }
 
         public FileLogger(Level logLevel)
-            : this(DefaultFilePath, logLevel)
+            : this(logLevel, DefaultFilePath)
         {           
         }
 

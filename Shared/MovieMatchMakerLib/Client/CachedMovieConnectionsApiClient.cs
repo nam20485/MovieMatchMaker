@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
+
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
 
@@ -9,9 +12,11 @@ namespace MovieMatchMakerLib.Client;
 public class CachedMovieConnectionsApiClient : MovieConnectionsApiClient
 {
     private MovieConnection.List _movieConnections;
+
+    private readonly ILogger<CachedMovieConnectionsApiClient> _logger;
     
-    public CachedMovieConnectionsApiClient(IHttpClientFactory httpClient)
-        : base(httpClient)
+    public CachedMovieConnectionsApiClient(IHttpClientFactory httpClient, ILogger<CachedMovieConnectionsApiClient> logger)
+        : base(httpClient, logger)
     {
         _movieConnections = null;
     }

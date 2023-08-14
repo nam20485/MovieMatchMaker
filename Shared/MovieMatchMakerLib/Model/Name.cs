@@ -6,8 +6,8 @@ using System.Text.Json.Serialization;
 namespace MovieMatchMakerLib.Model
 {
     public class Name : IEquatable<Name>
-    {
-        //[Key]
+    {        
+        [JsonIgnore]
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }

@@ -42,18 +42,11 @@ namespace MovieMatchMakerApp
                     }
                 }
             }
-            //else if (mmmArgs.Timing && args.Length >= 1)
-            //{
-            //    if (!string.IsNullOrWhiteSpace(mmmArgs.File))
-            //    {
-            //        if (TimeBuildingConnectionsAndApplyingFilters(mmmArgs.File, mmmArgs.Threaded, mmmArgs.ContinueExisting))
-            //        {
-            //            exitCode = ExitCode.Success;
-            //        }
-            //    }
-            //}
             else
             {
+                Console.WriteLine("Invalid Arguments!\n");
+                mmmArgs.PrintUsage();
+
                 exitCode = ExitCode.InvalidArguments;
             }
 

@@ -1,6 +1,5 @@
 ﻿using MovieMatchMakerLib.Model;
 using MovieMatchMakerLib;
-using MovieMatchMakerLib.Graph;
 using MovieMatchMakerLib.Filters;
 
 namespace MovieMatchMakerLibTests

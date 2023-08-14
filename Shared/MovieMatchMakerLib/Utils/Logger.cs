@@ -74,7 +74,7 @@ namespace MovieMatchMakerLib.Utils
             _logMessagesLoopThread.StopProcessingRequests();
         }
 
-        public void Log(Level logLevel, string message)
+        private void Log(Level logLevel, string message)
         {
             if (logLevel >= MinimumLogLevel)
             {                
