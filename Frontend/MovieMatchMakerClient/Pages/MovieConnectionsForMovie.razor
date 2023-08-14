@@ -29,7 +29,16 @@ else
 
         <ToolBarContent>
             <MudText Typo="Typo.h6">Connected Movies: @Title (@ReleaseYear)</MudText>
-            <MudSpacer />
+            <MudLink Href="@MainMovie.TmdbLink" Target="_blank">
+                <MudImage Src="@MainMovie.PosterImagePath" Alt="@($"Poster image for {Title}")" ObjectFit="ObjectFit.ScaleDown"/>
+            </MudLink>
+            <MudButton Href="@($"movieconnectionsgraphformovie/{Title}/{ReleaseYear}")"
+                       Variant="Variant.Text"
+                       Size="Size.Large"
+                       Color="Color.Primary">
+                Graph
+            </MudButton>
+            <MudSpacer />           
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
         </ToolBarContent>
@@ -38,21 +47,14 @@ else
             @*<PropertyColumn Property="mc => mc.SourceMovie.DisplayId" Title="Movie" />*@
             <TemplateColumn Title="Connected Movie">
                 <CellTemplate>
-                    @if (@context.Item.SourceMovie.Title == Title)
-                    {
-                        <MudLink Href="@context.Item.TargetMovie.TmdbLink" Target="_blank">@context.Item.TargetMovie.DisplayId</MudLink>                   
-                    }
-                    else
-                    {
-                        <MudLink Href="@context.Item.SourceMovie.TmdbLink" Target="_blank">@context.Item.SourceMovie.DisplayId</MudLink>                    
-                    }
+                    <MudLink Href="@GetConnectedMovie(context.Item).TmdbLink" Target="_blank">@GetConnectedMovie(context.Item).DisplayId</MudLink>                    
                 </CellTemplate>
             </TemplateColumn>
             @* <PropertyColumn Property="mc => mc.TargetMovie.DisplayId" Title="Connected Movie" /> *@
             <PropertyColumn Property="mc => mc.ConnectedRoles.Count" Title="Connected Roles (#)" />
             <TemplateColumn Sortable="false" Filterable="false">
                 <CellTemplate>
-                    <DetailsButton Href="@($"movieconnectiondetails/{@context.Item.SourceMovie.Title}/{@context.Item.SourceMovie.ReleaseYear}/{@context.Item.TargetMovie.Title}/{@context.Item.TargetMovie.ReleaseYear}")">
+                    <DetailsButton Href="@($"movieconnectiondetails/{@MainMovie.Title}/{@MainMovie.ReleaseYear}/{@GetConnectedMovie(context.Item).Title}/{@GetConnectedMovie(context.Item).ReleaseYear}")">
                         Connection
                     </DetailsButton>               
                 </CellTemplate>
@@ -74,6 +76,8 @@ else
     [Parameter]
     public int ReleaseYear { get; set; }
 
+    public Movie MainMovie { get; set; }
+
     private MudDataGrid<MovieConnection>? _dataGrid;
 
     private MovieConnection.List _movieConnections;    
@@ -92,6 +96,34 @@ else
     protected override async Task OnInitializedAsync()
     {
         _movieConnections = await MovieConnectionsClient.GetMovieConnectionsForMovie(Title, ReleaseYear);
+        if (_movieConnections.Count > 0)
+        {         
+            if (_movieConnections.First().SourceMovie.Title == Title)
+            {
+                MainMovie = _movieConnections.First().SourceMovie;
+            }
+            else if (_movieConnections.First().TargetMovie.Title == Title)
+            {
+                MainMovie = _movieConnections.First().TargetMovie;
+            }
+        }
+    }
+
+    protected Movie GetConnectedMovie(MovieConnection connection)
+    {
+        Movie otherMovie = null;
+        if (connection is not null)
+        {
+            if (connection.SourceMovie.Title == Title)
+            {
+                otherMovie = connection.TargetMovie;
+            }
+            else if (connection.TargetMovie.Title == Title)
+            {
+                otherMovie = connection.SourceMovie;
+            }
+        }
+        return otherMovie;
     }
 
     private Func<MovieConnection, bool> _quickFilter => mc =>
