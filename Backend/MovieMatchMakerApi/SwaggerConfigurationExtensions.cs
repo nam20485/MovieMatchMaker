@@ -2,10 +2,11 @@
 
 using Microsoft.OpenApi.Models;
 
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace MovieMatchMakerApi
 {
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     public static class SwaggerConfigurationExtensions
     {
         public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
