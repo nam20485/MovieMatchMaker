@@ -17,8 +17,7 @@ namespace MovieMatchMakerLib
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 AllowTrailingCommas = true,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
-                PropertyNamingPolicy = null,
-                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = null,                
                 // TODO: why does this need to be on if there is no reference $id metadata in the JSON file?
                 //ReferenceHandler = ReferenceHandler.Preserve,                                 
             };
