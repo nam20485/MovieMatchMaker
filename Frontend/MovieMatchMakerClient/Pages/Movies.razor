@@ -48,11 +48,12 @@ else
             {
                 <PropertyColumn Property="m => m.ApiId" Hideable="true" />
             }
-            <TemplateColumn Filterable="false" Sortable="false" >
-                <CellTemplate>
-                        <DetailsButton Href="@($"movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
-                            Connections
-                        </DetailsButton>               
+            <PropertyColumn Title="Connections (#)" Property="m => _movieConnections.FindForMovie(m.Title, m.ReleaseYear).Count" />
+            <TemplateColumn Filterable="false" Sortable="false">
+                <CellTemplate>                    
+                    <DetailsButton Href="@($"movieconnectionsformovie/{context.Item.Title}/{context.Item.ReleaseYear}")">
+                        Details
+                    </DetailsButton>               
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
@@ -67,6 +68,7 @@ else
 @code {
     private MudDataGrid<Movie> _dataGrid;
 
+    private MovieConnection.List _movieConnections;
     private Movie.HashSet? _movieConnectionsMovies;
 
     private string _searchString = "";
@@ -84,10 +86,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
-        if (movieConnections is not null)
+        _movieConnections = await MovieConnectionsClient.GetAllMovieConnections();
+        if (_movieConnections is not null)
         {
-            _movieConnectionsMovies = movieConnections.Movies;          
+            _movieConnectionsMovies = _movieConnections.Movies;          
         }         
     }
 
