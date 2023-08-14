@@ -11,9 +11,6 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// configure logging from appsettings.json
-builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
-
 // MudBlazor
 builder.Services.AddMudServices();
 
