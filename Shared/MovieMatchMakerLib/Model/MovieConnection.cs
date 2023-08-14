@@ -24,6 +24,19 @@ namespace MovieMatchMakerLib.Model
             ConnectedRoles = new ConnectedRole.List();
         }
 
+        public Movie GetOtherMovie(string title, int releaseYear)
+        {
+            if (SourceMovie.Title == title && SourceMovie.ReleaseYear == releaseYear)
+            {
+                return TargetMovie;
+            }
+            else if (TargetMovie.Title == title && TargetMovie.ReleaseYear == releaseYear)
+            {
+                return SourceMovie;
+            }
+            return null;
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as MovieConnection);
