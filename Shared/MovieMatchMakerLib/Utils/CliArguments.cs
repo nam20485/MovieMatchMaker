@@ -84,7 +84,12 @@ namespace MovieMatchMakerLib.Utils
             {
                 return default;
             }
-        }        
+        }  
+        
+        public void PrintUsage()
+        {
+            Console.WriteLine("Usage: ");
+        }
 
         [Serializable]
         private class ArgumentNotFoundException : Exception
