@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 using MovieMatchMakerLib.Model;
 
@@ -8,9 +8,9 @@ namespace MovieMatchMakerApi.Controllers
     {
         protected readonly MovieConnection.List _movieConnections;
 
-        protected MovieConnectionsGraph(MovieConnection.List movieConnections)
+        protected MovieConnectionsGraph(IEnumerable<MovieConnection> movieConnections)
         {
-            _movieConnections = movieConnections;
+            _movieConnections = new (movieConnections);
         }
 
         public TExport Export()

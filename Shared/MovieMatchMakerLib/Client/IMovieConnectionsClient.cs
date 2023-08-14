@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 using MovieMatchMakerLib.Filters;
@@ -17,6 +18,8 @@ namespace MovieMatchMakerLib.Client
             RemoteApiCached
         }
 
+        HttpClient HttpClient { get; }
+
         Task<MovieConnection.List> GetAllMovieConnections();
         Task<MovieConnection.List> GetMovieConnectionsForMovie(string title, int releaseYear);
 
@@ -28,5 +31,6 @@ namespace MovieMatchMakerLib.Client
         Task<MovieConnection> GetMovieConnection(int movieConnectionId);
         
         Task<string> GetMovieConnectionsGraphForMovie(string title, int releaseYear);
+        Task<string> GetAllMovieConnectionsGraph();
     }
 }

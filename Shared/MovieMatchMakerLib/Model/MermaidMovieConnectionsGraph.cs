@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 using MovieMatchMakerApi.Controllers;
 
@@ -7,11 +8,16 @@ namespace MovieMatchMakerLib.Model
     public class MermaidMovieConnectionsGraph : MovieConnectionsGraph<string>
     {
         public bool UseElkRenderer { get; set; }
+        public bool UseDirectedEdges { get; set; }
 
-        public MermaidMovieConnectionsGraph(MovieConnection.List movieConnections)
+        private const string _directedEdgeSymbol = "-->";
+        private const string _undirectedEdgeSymbol = "---";
+
+        public MermaidMovieConnectionsGraph(IEnumerable<MovieConnection> movieConnections)
             : base(movieConnections)
         {
             UseElkRenderer = true;
+            UseDirectedEdges = true;
         }
 
         protected override string BuildGraph()
@@ -28,16 +34,16 @@ namespace MovieMatchMakerLib.Model
             return sb.ToString();
         }
 
-        private static string MakeConnection(MovieConnection connection)
+        private string MakeConnection(MovieConnection connection)
         {
-            // A[Hard]-->|Text|B[Round]
+            // e.g. A[Hard]-->|Text|B[Round]
             var sourceMovie = connection.SourceMovie;
             var targetMovie = connection.TargetMovie;
             var edgeLabel = connection.ConnectedRoles.Count.ToString();
             return $"{MakeVertex(sourceMovie)} {MakeEdge(edgeLabel)} {MakeVertex(targetMovie)}";
         }
 
-        private static string MakeEdge(string label) => $"-->|{label}|";
+        private string MakeEdge(string label) => $"{(UseDirectedEdges? _directedEdgeSymbol : _undirectedEdgeSymbol)}|{label}|";
         private static string MakeVertex(Movie movie) => $"{movie.GetHashCode()}({movie.Title})";
     }
 }

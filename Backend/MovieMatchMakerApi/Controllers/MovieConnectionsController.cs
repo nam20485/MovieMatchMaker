@@ -106,6 +106,19 @@ namespace MovieMatchMakerApi.Controllers
             }
         }
 
+        [HttpGet("movieconnections/graph")]
+        public ActionResult<string> GetAllMovieConnectionsGraph()
+        {
+            if (ModelState.IsValid)
+            {
+                return new MermaidMovieConnectionsGraph(GetAllMovieConnections()).Export();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
         // get movie connections graph for a movie
         //[Consumes(typeof(MovieIdentifier), "image/png", "image/svg+xml")]      
         //[SwaggerResponse((int) HttpStatusCode.OK, "Returns graph image of movie's connections", typeof(FileContentResult), "image/png", "image/svg+xml")]
@@ -141,7 +154,7 @@ namespace MovieMatchMakerApi.Controllers
         //        return BadRequest(ModelState);
         //    }
         //}
-     
+
         private MovieConnection.List GetMovieConnections()
         {
             var movieConnections = _connectionsService.MovieConnections;

@@ -1,0 +1,19 @@
+﻿@page "/allmovieconnectionsgraph"
+@using MovieMatchMakerLib.Client;
+
+@inject IMovieConnectionsClient MovieConnectionsClient
+@inject ILogger<MovieConnectionsForMovie> Logger
+
+<div>
+    <h1>All Movie Connections</h1>
+    <MermaidDiagram MermaidMarkup="@_mermaidMarkup" />
+</div>
+
+@code {
+    private string _mermaidMarkup;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _mermaidMarkup = await MovieConnectionsClient.GetAllMovieConnectionsGraph();
+    }
+}

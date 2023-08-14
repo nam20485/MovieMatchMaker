@@ -24,6 +24,10 @@ namespace MovieMatchMakerLib.Client
 
         private readonly bool _applyDefaultFilters = true;
 
+        private const string HttpClientName = "Static";
+
+        public HttpClient HttpClient => _httpClientFactory.CreateClient(HttpClientName);
+
         public MovieConnectionsStaticFileClient(IHttpClientFactory httpClientFactory, ILogger<MovieConnectionsStaticFileClient> logger)
         {
             _logger = logger;
@@ -66,11 +70,16 @@ namespace MovieMatchMakerLib.Client
             throw new NotImplementedException();
         }
 
+        public Task<string> GetAllMovieConnectionsGraph()
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<MovieConnection.List> LoadMovieConnectionsAsync()
         {
             if (_movieConnections is null)
             {
-                var httpClient = _httpClientFactory.CreateClient("Static");                
+                using var httpClient = HttpClient;         
                 _movieConnections = await httpClient.GetFromJsonAsync<MovieConnection.List>(MovieConnectionsFilename, GlobalSerializerOptions.Options);
                 //_movieConnections = await DeserializeMovieConnections();
                 if (_applyDefaultFilters)
@@ -84,7 +93,7 @@ namespace MovieMatchMakerLib.Client
         protected async Task<MovieConnection.List> DeserializeMovieConnections()
         {
             var stopWatch = new PrintStopwatch();
-            var httpClient = _httpClientFactory.CreateClient("Static");
+            using var httpClient = HttpClient;
 
             stopWatch.Start();
             var json = await httpClient.GetStringAsync(MovieConnectionsFilename);
@@ -99,6 +108,6 @@ namespace MovieMatchMakerLib.Client
             _logger.LogInformation("MovieConnections deserialized in {Duration} s", stopWatch.ElapsedMilliseconds / 1000.0);
 
             return movieConnections;
-        }
+        }    
     }
 }
