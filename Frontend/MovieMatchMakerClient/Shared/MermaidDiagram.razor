@@ -19,8 +19,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        //if (_mermaidModule is null)
+        if (firstRender)        
         {
             _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MermaidDiagram.razor.js");
             await _mermaidModule.InvokeVoidAsync("Initialize");

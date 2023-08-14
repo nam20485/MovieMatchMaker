@@ -1,7 +1,7 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.3.1/dist/mermaid.esm.min.mjs';
 
 export function Initialize() {
-    mermaid.initialize({ startOnLoad: true, flowchart: { useMaxWidth: true } });
+    mermaid.initialize({ startOnLoad: true, flowchart: { useMaxWidth: true }, maxTextSize: 105_000 });
 }
 
 export async function RenderInnerHtml(componentClassName) {
@@ -30,7 +30,7 @@ function htmlDecode(input) {
     return doc.documentElement.textContent;
 }
 
-// super lame random "uuid" function
+// super lame "random" "uuid" function
 function uuid() {
     return Math.round(Math.random() * 100_000);
 }
