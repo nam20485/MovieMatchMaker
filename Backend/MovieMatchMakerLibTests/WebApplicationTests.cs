@@ -29,7 +29,9 @@ namespace MovieMatchMakerLibTests
 
         [Theory]
         [InlineData("/swagger")]
-        [InlineData("/swagger/index.html")]       
+        [InlineData("/swagger/index.html")]
+        [InlineData("/api-docs")]
+        [InlineData("/api-docs/index.html")]
         public async Task Test_Get_EndpointsReturnSuccessAndCorrectContentType_Swagger(string url)
         {
             var client = _factory.CreateClient();
@@ -38,7 +40,14 @@ namespace MovieMatchMakerLibTests
             response.IsSuccessStatusCode.Should().BeTrue();
             response.Content.Headers.ContentType.Should().NotBeNull();
             response.Content.Headers.ContentType!.ToString().Should().NotBeEmpty();
-            response.Content.Headers.ContentType.ToString().Should().Be("text/html; charset=utf-8");
+            if (url == "/swagger" || url == "/swagger/index.html")
+            {
+                response.Content.Headers.ContentType.ToString().Should().Be("text/html; charset=utf-8");
+            }
+            else if (url == "/api-docs" || url == "/api-docs/index.html")
+            {
+                response.Content.Headers.ContentType.ToString().Should().StartWith("text/html");
+            }
         }
     }
 }
