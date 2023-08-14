@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
+
 using MovieMatchMakerLib.Filters;
 using MovieMatchMakerLib.Model;
-using MovieMatchMakerLib.Utils;
+
 
 namespace MovieMatchMakerLib.Client
 {
@@ -20,10 +21,12 @@ namespace MovieMatchMakerLib.Client
         private const string GetMovieConnectionByIdEndpointFormat = "MovieConnections/movieconnection/{0}";
         private const string MovieConnectionsGraphForMovieEndpointFormat = "MovieConnections/movieconnections/graph/{0}/{1}";
 
-        private readonly IHttpClientFactory _httpClientFactory;          
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<MovieConnectionsApiClient> _logger;
 
-        public MovieConnectionsApiClient(IHttpClientFactory httpClientFactory)
+        public MovieConnectionsApiClient(IHttpClientFactory httpClientFactory, ILogger<MovieConnectionsApiClient> logger)
         {
+            _logger = logger;
             _httpClientFactory = httpClientFactory;
         }
 
@@ -88,11 +91,11 @@ namespace MovieMatchMakerLib.Client
             return await httpClient.GetFromJsonAsync<MovieConnection>(uri);
         }
 
-        public async Task<Stream> GetMovieConnectionsGraphForMovie(string title, int releaseYear)
+        public async Task<string> GetMovieConnectionsGraphForMovie(string title, int releaseYear)
         {
             var httpClient = _httpClientFactory.CreateClient("Api");
             var uri = string.Format(MovieConnectionsGraphForMovieEndpointFormat, title, releaseYear);
-            var stream = await httpClient.GetStreamAsync(uri);
+            var stream = await httpClient.GetStringAsync(uri);
             return stream;
         }
     }
