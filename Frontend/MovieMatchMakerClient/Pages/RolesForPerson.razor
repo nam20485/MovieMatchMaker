@@ -33,7 +33,13 @@ else
         </ToolBarContent>
 
         <Columns>
-            <PropertyColumn Title="Movie" Property="r => r.Movie.Title" />
+            <TemplateColumn Title="Movie">
+                <CellTemplate>
+                    <MudLink Href="@context.Item.Movie.TmdbLink" Target="_blank">
+                        @context.Item.Movie.Title
+                    </MudLink>
+                </CellTemplate>
+            </TemplateColumn>            
             <PropertyColumn Title="Released" Property="r => r.Movie.ReleaseYear" />
             <PropertyColumn Title="Role" Property="r => r.Job" />
             <TemplateColumn Filterable="false" Sortable="false">
