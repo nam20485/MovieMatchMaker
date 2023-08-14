@@ -4,9 +4,9 @@ using MovieMatchMakerLib.Utils;
 
 namespace MovieMatchMakerLib
 {
-    internal class GlobalSerializerOptions
+    public class GlobalSerializerOptions
     {
-        internal static readonly JsonSerializerOptions Options;
+        public static readonly JsonSerializerOptions Options;
 
         static GlobalSerializerOptions()
         {
@@ -16,11 +16,34 @@ namespace MovieMatchMakerLib
                 WriteIndented = Macros.IsDebugBuild(),
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 AllowTrailingCommas = true,
-                //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,                
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                PropertyNamingPolicy = null,
+                PropertyNameCaseInsensitive = true,
                 // TODO: why does this need to be on if there is no reference $id metadata in the JSON file?
-                ReferenceHandler = ReferenceHandler.Preserve,                                 
+                //ReferenceHandler = ReferenceHandler.Preserve,                                 
             };
             Options.Converters.Add(new JsonStringEnumConverter());
-        }        
+        }
+        
+        public static void SetOptions(JsonSerializerOptions options)
+        {
+            // set options with our global defaults
+            options.WriteIndented = Options.WriteIndented;
+            options.ReadCommentHandling = Options.ReadCommentHandling;
+            options.AllowTrailingCommas =Options.AllowTrailingCommas;
+            options.DefaultIgnoreCondition = Options.DefaultIgnoreCondition;
+            options.PropertyNamingPolicy = Options.PropertyNamingPolicy;
+            options.PropertyNameCaseInsensitive = Options.PropertyNameCaseInsensitive;    
+            options.ReferenceHandler = Options.ReferenceHandler;
+
+            // add our converters
+            foreach (var converter in Options.Converters)
+            {
+                if (!options.Converters.Contains(converter))
+                {
+                    options.Converters.Add(converter);
+                }            
+            }
+        }
     }
 }
