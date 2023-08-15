@@ -69,9 +69,9 @@ namespace MovieMatchMakerLibTests
         }
 
         [Theory]
-        [InlineData("/api/MovieConnections/movieconnections")]
-        [InlineData("/api/MovieConnections/movieconnections/Dark%20City/1998")]
-        public async Task Test_AllMovieConnections_Deserialize(string url)
+        [InlineData("/api/MovieConnections/movieconnections", 39)]
+        [InlineData("/api/MovieConnections/movieconnections/Dark%20City/1998", 0)]
+        public async Task Test_AllMovieConnections_Deserialize(string url, int expectedCount)
         {
             var client = _factory.CreateClient();
             var response = await client.GetAsync(url);
@@ -84,9 +84,9 @@ namespace MovieMatchMakerLibTests
             var strContent = await response.Content.ReadAsStringAsync();
             strContent.Should().NotBeNull();
             strContent.Should().NotBeEmpty();
-            var movieConnections = JsonSerializer.Deserialize<MovieConnection.List>(strContent);
+            var movieConnections = MovieConnection.List.FromJson(strContent);                
             movieConnections.Should().NotBeNull();
-            movieConnections.Should().NotBeEmpty();            
+            movieConnections.Should().HaveCount(expectedCount);
         }
     }
 }
