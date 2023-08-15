@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
+using Newtonsoft.Json.Linq;
+
 namespace MovieMatchMakerLib.Utils
 {
     public static class Caller
@@ -9,9 +11,9 @@ namespace MovieMatchMakerLib.Utils
         public static string GetFilePath([CallerFilePath] string callerFilePath = "") => callerFilePath;
         public static int GetLineNumber([CallerLineNumber] int callerLineNumber = -1) => callerLineNumber;
 
-        public static string MemberNameAndMessage([CallerMemberName] string callerMemberName = "",
-                                                 string format = "",
-                                                 params object[] formatArgs)
+        public static string MemberNameAndMessage(string format,
+                                                  [CallerMemberName] string callerMemberName = "",
+                                                  params object[] formatArgs)
         {
             return $"{callerMemberName}() - {string.Format(format, formatArgs)}";
         }
@@ -63,7 +65,7 @@ namespace MovieMatchMakerLib.Utils
             return $"{callerMemberName}({valueExpression} = \'{value}\')";
         }
 
-        public static string MemberNameCalledWitEnter<T>(T value,
+        public static string MemberNameCalledWithEnter<T>(T value,
                                                          [CallerMemberName] string callerMemberName = "",
                                                          [CallerArgumentExpression(nameof(value))] string valueExpression = "")
         {
@@ -78,24 +80,34 @@ namespace MovieMatchMakerLib.Utils
         }
 
         public static string MemberNameCalledWithAndMessage<T>(T value,
-                                                               [CallerMemberName] string callerMemberName = "",
-                                                               [CallerArgumentExpression(nameof(value))] string valueExpression = "",
                                                                string format = "",
+                                                               [CallerMemberName] string callerMemberName = "",
+                                                               [CallerArgumentExpression(nameof(value))] string valueExpression = "",                                                               
                                                                params object[] formatArgs)
         {
             return $"{callerMemberName}({valueExpression} = \'{value}\') - {string.Format(format, formatArgs)}";
-        }            
+        }
+
+        public static string MemberNameCalledWithAndExpression<T, U>(T calledWith,
+                                                                     U expression,
+                                                                     [CallerMemberName] string callerMemberName = "",
+                                                                     [CallerArgumentExpression(nameof(calledWith))] string calledWithExpression = "",
+                                                                     [CallerArgumentExpression(nameof(expression))] string expressionExpression = "")
+
+        {
+            return $"{callerMemberName}({calledWithExpression} = '{calledWith}') -  \'{expressionExpression}\' => \'{expression}\'";
+        }        
 
         public static string ArgumentExpression<T>(T value, 
                                                    [CallerArgumentExpression(nameof(value))] string valueExpression = "")
         {
-            return $"{valueExpression} was {value}";
+            return $"{valueExpression} => {value}";
         }
 
         public static string ArgumentExpression<T, U>(T tValue, U uValue,
                                                       [CallerArgumentExpression(nameof(tValue))] string tValueExpression = "",
                                                       [CallerArgumentExpression(nameof(uValue))] string uValueExpression = "",
-                                                      string separator = "\n")
+                                                      string separator = "\n")  // TODO: does this work?
         {
             return $"\'{tValueExpression}\' => \'{tValue}\'{separator}\'{uValueExpression}\' => \'{uValue}\'";
         }
