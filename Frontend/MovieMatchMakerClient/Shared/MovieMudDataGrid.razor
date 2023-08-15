@@ -1,7 +1,8 @@
 ﻿@using MudBlazor
 
 @typeparam TItem
-@inherits MudDataGrid<TItem>
+@inherits MudDataGrid<TItem>    
+@* TODO: don't inherit, use composition instead, i.e. put a MudDataGrid here with @ChildContent in the middle *@
 
 @{
     // Display the base RadzenDataGrid that we are inheriting from.
