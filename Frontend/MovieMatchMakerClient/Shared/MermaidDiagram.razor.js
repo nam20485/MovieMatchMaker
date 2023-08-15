@@ -1,7 +1,7 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.3.1/dist/mermaid.esm.min.mjs';
 
 export function Initialize() {
-    mermaid.initialize({ startOnLoad: true, flowchart: { useMaxWidth: true }, maxTextSize: 105_000 });
+    mermaid.initialize({ startOnLoad: true, flowchart: { useMaxWidth: true }, maxTextSize: 150_000 });
 }
 
 export async function RenderInnerHtml(componentClassName) {
