@@ -1,6 +1,9 @@
-﻿@inject IJSRuntime JsRuntime
+﻿@using MovieMatchMakerLib.Utils;
 @implements IAsyncDisposable
+
 @inject IJSRuntime JsRuntime
+@inject IJSRuntime JsRuntime
+@inject ILogger<MermaidDiagram> Logger
 
 <div class="@MermaidComponentClassName">
     <div hidden>
@@ -19,20 +22,33 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        //Logger.LogInformation(Caller.MemberNameCalledWithEnter(firstRender));
+
         if (firstRender)        
         {
             _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MermaidDiagram.razor.js");
-            await _mermaidModule.InvokeVoidAsync("Initialize");            
+            await _mermaidModule.InvokeVoidAsync("Initialize");
+
+            //Logger.LogInformation(Caller.MemberNameCalledWithAndMessage(firstRender, "mermaid.Initialize() called"));
         }
 
+        //Logger.LogInformation(Caller.MemberNameCalledWithAndExpression(firstRender, _mermaidModule is not null));       
+
         if (_mermaidModule is not null)
-        {
+        {    
+            //Logger.LogInformation(Caller.MemberNameCalledWithAndExpression(firstRender, !string.IsNullOrWhiteSpace(MermaidMarkup)));
+            //Logger.LogInformation(Caller.MemberNameCalledWithAndExpression(firstRender, MermaidMarkup));
+
             if (!string.IsNullOrWhiteSpace(MermaidMarkup))
             {
+                //Logger.LogInformation(Caller.MemberNameCalledWithAndMessage(firstRender, "Calling mermaid.RenderInnerHtml()..."));
+                
                 //await _mermaidModule.InvokeVoidAsync("RenderMarkup", MermaidComponentClassName, MermaidMarkup);
                 await _mermaidModule.InvokeVoidAsync("RenderInnerHtml", MermaidComponentClassName);
             }
         }
+
+        //Logger.LogInformation(Caller.MemberNameCalledWithExit(firstRender));
     }
 
     public async ValueTask DisposeAsync()
