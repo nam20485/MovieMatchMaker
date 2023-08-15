@@ -22,13 +22,16 @@
         if (firstRender)        
         {
             _mermaidModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Shared/MermaidDiagram.razor.js");
-            await _mermaidModule.InvokeVoidAsync("Initialize");
+            await _mermaidModule.InvokeVoidAsync("Initialize");            
         }
 
         if (_mermaidModule is not null)
         {
-            //await _mermaidModule.InvokeVoidAsync("RenderMarkup", "mermaid", MermaidMarkup);
-            await _mermaidModule.InvokeVoidAsync("RenderInnerHtml", "mermaid");
+            if (!string.IsNullOrWhiteSpace(MermaidMarkup))
+            {
+                //await _mermaidModule.InvokeVoidAsync("RenderMarkup", MermaidComponentClassName, MermaidMarkup);
+                await _mermaidModule.InvokeVoidAsync("RenderInnerHtml", MermaidComponentClassName);
+            }
         }
     }
 
