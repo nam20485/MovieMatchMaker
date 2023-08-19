@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>bc0c69c5-7ba1-4f75-ab08-14500f37b1cb</UserSecretsId>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileFile>..\..\Dockerfile.backend</DockerfileFile>
 	<DockerfileContext>.</DockerfileContext>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
