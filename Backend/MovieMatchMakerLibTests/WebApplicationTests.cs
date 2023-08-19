@@ -1,17 +1,9 @@
-﻿using System;
-using System.Net;
-using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text.Json;
-using System.Text.Unicode;
+﻿using System.Net;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
-using MovieMatchMakerLib;
 using MovieMatchMakerLib.Model;
 
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MovieMatchMakerLibTests
 {
