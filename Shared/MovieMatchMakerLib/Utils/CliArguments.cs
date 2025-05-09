@@ -104,11 +104,7 @@ namespace MovieMatchMakerLib.Utils
 
             public ArgumentNotFoundException(string message, Exception innerException) : base(message, innerException)
             {
-            }
-
-            protected ArgumentNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
+            }            
         }
 
         [Serializable]
@@ -124,11 +120,7 @@ namespace MovieMatchMakerLib.Utils
 
             public EmptyArgumentsException(string message, Exception innerException) : base(message, innerException)
             {
-            }
-
-            protected EmptyArgumentsException(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
+            }           
         }
     }
 }

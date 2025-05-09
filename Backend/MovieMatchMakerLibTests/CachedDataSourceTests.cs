@@ -9,7 +9,7 @@ namespace MovieMatchMakerLibTests
         private const int darkCityMovieId = 2666;
 
         [Fact]
-        public async void Test_GetMovie_DarkCity_1998()
+        public async Task Test_GetMovie_DarkCity_1998()
         {
             var dataSource = Utils.CreateCachedDataSource();
             dataSource.Should().NotBeNull();            

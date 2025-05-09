@@ -14,7 +14,7 @@
         }
 
         [Fact]
-        public async void Test_GetMovieAsync_DarkCity_1998()
+        public async Task Test_GetMovieAsync_DarkCity_1998()
         {
             var dataCache = Utils.LoadJsonFileCache();
             dataCache.Should().NotBeNull();

@@ -71,11 +71,6 @@ namespace MovieMatchMakerLib.Utils
                 : base(message, innerException)
             {
             }
-
-            protected TypeNotSupportedException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
-            {
-            }
         }
     }
 }
